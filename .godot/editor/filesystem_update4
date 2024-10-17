@@ -1,0 +1,5 @@
+res://demo_project/demo_scene.tscn
+res://addons/event_sheet/default_shortcut.tres
+res://addons/event_sheet/source/VNode2D.gd
+res://addons/event_sheet/source/VNode3D.gd
+res://addons/event_sheet/source/Types.gd
