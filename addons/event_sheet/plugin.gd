@@ -9,7 +9,7 @@ var shortcut_res: Shortcut = preload("res://addons/event_sheet/default_shortcut.
 var shortcut: Shortcut
 
 func _enter_tree():
-	add_autoload_singleton("WES", "res://addons/event_sheet/scripts/autoload.gd")
+	add_autoload_singleton("WES", "res://addons/event_sheet/source/Autoload.gd")
 	shortcut = set_shortcut(PLUGIN_PATH, shortcut_res)
 	event_sheet_instance = EventSheet.instantiate()
 	EditorInterface.get_editor_main_screen().add_child(event_sheet_instance)

@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://dyoxlt8vnfv5y"]
 
 [ext_resource type="Texture2D" uid="uid://b50jpu11ld31l" path="res://icon.svg" id="1_alvq1"]
-[ext_resource type="Texture2D" uid="uid://3aayah87ti8k" path="res://addons/event_sheet/icons/divider.svg" id="3_rwgyg"]
+[ext_resource type="Texture2D" uid="uid://3aayah87ti8k" path="res://addons/event_sheet/resources/icons/divider.svg" id="3_rwgyg"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_abtk4"]
 bg_color = Color(0.139034, 0.154246, 0.194795, 1)

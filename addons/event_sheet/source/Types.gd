@@ -1,13 +1,37 @@
 extends Node
 
+enum VariableType {
+	NUMBER,
+	STRING,
+	BOOLEAN,
+}
+
+enum BlockType {
+	EVENT,
+	SINGLE_EVENT,
+	FUNCTION,
+	CYCLE,
+}
+
+enum Group {
+	NONE,
+	SYSTEM,
+}
+
+enum Category {
+	MAIN,
+	VARIABLE,
+	INPUT,
+}
+
 class EventSheet:
-	var data: Dictionary = {}
+	@export var data: Dictionary = {}
 
 	func _init():
 		data = {}
 
-class EventModule:
-	pass
+class Event:
+	@export var event: EventResource
 
-class ActionModule:
-	pass
+class Action:
+	@export var action: ActionResource

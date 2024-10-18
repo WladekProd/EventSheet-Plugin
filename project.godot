@@ -17,7 +17,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-WES="*res://addons/event_sheet/scripts/autoload.gd"
+WES="*res://addons/event_sheet/source/Autoload.gd"
 
 [editor_plugins]
 

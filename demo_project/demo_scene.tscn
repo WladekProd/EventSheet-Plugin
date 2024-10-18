@@ -1,6 +1,234 @@
-[gd_scene load_steps=2 format=3 uid="uid://qlfl8pa58q5d"]
+[gd_scene load_steps=38 format=3 uid="uid://qlfl8pa58q5d"]
 
 [ext_resource type="Script" path="res://addons/event_sheet/source/VNode2D.gd" id="1_xwkee"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/modules/Block.gd" id="2_w5ypg"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/modules/Action.gd" id="3_cx4ln"]
+[ext_resource type="Script" path="res://addons/event_sheet/modules/actions/create_object/create_object.gd" id="4_c6fhk"]
+[ext_resource type="Script" path="res://addons/event_sheet/modules/actions/print/print.gd" id="4_nsk56"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/modules/Event.gd" id="5_8b23a"]
+[ext_resource type="Resource" uid="uid://q2r64t1craon" path="res://addons/event_sheet/modules/events/standart_functions/ready.tres" id="6_kctss"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/modules/Variable.gd" id="7_3krrt"]
+[ext_resource type="Script" path="res://addons/event_sheet/modules/events/compare_variable/compare_variable.gd" id="8_bcej3"]
+
+[sub_resource type="Resource" id="Resource_cqjt0"]
+script = ExtResource("7_3krrt")
+variable_is_global = true
+variable_name = "apple"
+variable_type = 1
+variable_value = "\"red\""
+
+[sub_resource type="Resource" id="Resource_4jlcj"]
+script = ExtResource("7_3krrt")
+variable_is_global = true
+variable_name = "apple_count"
+variable_type = 0
+variable_value = "47"
+
+[sub_resource type="Resource" id="Resource_4nno5"]
+script = ExtResource("2_w5ypg")
+variables = Array[ExtResource("7_3krrt")]([SubResource("Resource_cqjt0"), SubResource("Resource_4jlcj")])
+events = Array[ExtResource("5_8b23a")]([])
+actions = Array[ExtResource("3_cx4ln")]([])
+sub_blocks = Array[ExtResource("2_w5ypg")]([])
+
+[sub_resource type="Resource" id="Resource_m5fax"]
+script = ExtResource("3_cx4ln")
+action_name = "Create object"
+action_group = 1
+action_category = 0
+action_script = ExtResource("4_c6fhk")
+action_params = Array[String](["res://demo_project/icon.tscn", "IconObject", "100", "100"])
+
+[sub_resource type="Resource" id="Resource_dbcfh"]
+script = ExtResource("3_cx4ln")
+action_name = "Print"
+action_group = 1
+action_category = 0
+action_script = ExtResource("4_nsk56")
+action_params = Array[String](["Hello World!"])
+
+[sub_resource type="Resource" id="Resource_cx1pg"]
+script = ExtResource("7_3krrt")
+variable_is_global = false
+variable_name = "local_a"
+variable_type = 0
+variable_value = "12"
+
+[sub_resource type="Resource" id="Resource_hdnlr"]
+script = ExtResource("7_3krrt")
+variable_is_global = false
+variable_name = "local_b"
+variable_type = 1
+variable_value = "\"test\""
+
+[sub_resource type="Resource" id="Resource_7606a"]
+script = ExtResource("7_3krrt")
+variable_is_global = false
+variable_name = "local_c"
+variable_type = 2
+variable_value = "true"
+
+[sub_resource type="Resource" id="Resource_8u14s"]
+script = ExtResource("2_w5ypg")
+variables = Array[ExtResource("7_3krrt")]([SubResource("Resource_cx1pg"), SubResource("Resource_hdnlr"), SubResource("Resource_7606a")])
+events = Array[ExtResource("5_8b23a")]([])
+actions = Array[ExtResource("3_cx4ln")]([])
+sub_blocks = Array[ExtResource("2_w5ypg")]([])
+
+[sub_resource type="Resource" id="Resource_q3dsi"]
+script = ExtResource("3_cx4ln")
+action_name = "Create object"
+action_group = 1
+action_category = 0
+action_script = ExtResource("4_c6fhk")
+action_params = Array[String](["res://demo_project/icon.tscn", "IconObject", "100", "100"])
+
+[sub_resource type="Resource" id="Resource_c3l0u"]
+script = ExtResource("5_8b23a")
+event_name = "Compare variable"
+event_type = 0
+event_group = 1
+event_category = 0
+event_script = ExtResource("8_bcej3")
+event_params = Array[String](["apple", "==", "\"red\""])
+
+[sub_resource type="Resource" id="Resource_8kl12"]
+script = ExtResource("2_w5ypg")
+variables = Array[ExtResource("7_3krrt")]([])
+events = Array[ExtResource("5_8b23a")]([SubResource("Resource_c3l0u")])
+actions = Array[ExtResource("3_cx4ln")]([SubResource("Resource_q3dsi")])
+sub_blocks = Array[ExtResource("2_w5ypg")]([])
+
+[sub_resource type="Resource" id="Resource_f7amr"]
+script = ExtResource("2_w5ypg")
+variables = Array[ExtResource("7_3krrt")]([])
+events = Array[ExtResource("5_8b23a")]([ExtResource("6_kctss")])
+actions = Array[ExtResource("3_cx4ln")]([SubResource("Resource_m5fax"), SubResource("Resource_dbcfh")])
+sub_blocks = Array[ExtResource("2_w5ypg")]([SubResource("Resource_8u14s"), SubResource("Resource_8kl12")])
+
+[sub_resource type="Resource" id="Resource_t7syv"]
+script = ExtResource("5_8b23a")
+event_name = "Compare variable"
+event_type = 0
+event_group = 1
+event_category = 0
+event_script = ExtResource("8_bcej3")
+event_params = Array[String](["apple", "!=", "\"red\""])
+
+[sub_resource type="Resource" id="Resource_p5wsf"]
+script = ExtResource("5_8b23a")
+event_name = "Compare variable"
+event_type = 0
+event_group = 1
+event_category = 0
+event_script = ExtResource("8_bcej3")
+event_params = Array[String](["apple_3", "!=", "\"red\""])
+
+[sub_resource type="Resource" id="Resource_dd6ie"]
+script = ExtResource("5_8b23a")
+event_name = "Compare variable"
+event_type = 0
+event_group = 1
+event_category = 0
+event_script = ExtResource("8_bcej3")
+event_params = Array[String](["apple_a", "!=", "\"red\""])
+
+[sub_resource type="Resource" id="Resource_dcp8n"]
+script = ExtResource("7_3krrt")
+variable_is_global = false
+variable_name = "var_1"
+variable_type = 2
+variable_value = "false"
+
+[sub_resource type="Resource" id="Resource_vayjk"]
+script = ExtResource("7_3krrt")
+variable_is_global = false
+variable_name = "var_2"
+variable_type = 0
+variable_value = "64"
+
+[sub_resource type="Resource" id="Resource_o1nmq"]
+script = ExtResource("2_w5ypg")
+variables = Array[ExtResource("7_3krrt")]([SubResource("Resource_dcp8n"), SubResource("Resource_vayjk")])
+events = Array[ExtResource("5_8b23a")]([])
+actions = Array[ExtResource("3_cx4ln")]([])
+sub_blocks = Array[ExtResource("2_w5ypg")]([])
+
+[sub_resource type="Resource" id="Resource_nff0k"]
+script = ExtResource("2_w5ypg")
+variables = Array[ExtResource("7_3krrt")]([])
+events = Array[ExtResource("5_8b23a")]([SubResource("Resource_dd6ie")])
+actions = Array[ExtResource("3_cx4ln")]([])
+sub_blocks = Array[ExtResource("2_w5ypg")]([SubResource("Resource_o1nmq")])
+
+[sub_resource type="Resource" id="Resource_y3ecy"]
+script = ExtResource("5_8b23a")
+event_name = "Compare variable"
+event_type = 0
+event_group = 1
+event_category = 0
+event_script = ExtResource("8_bcej3")
+event_params = Array[String](["apple_count", "!=", "76"])
+
+[sub_resource type="Resource" id="Resource_sx3j8"]
+script = ExtResource("2_w5ypg")
+variables = Array[ExtResource("7_3krrt")]([])
+events = Array[ExtResource("5_8b23a")]([SubResource("Resource_y3ecy")])
+actions = Array[ExtResource("3_cx4ln")]([])
+sub_blocks = Array[ExtResource("2_w5ypg")]([])
+
+[sub_resource type="Resource" id="Resource_1ctci"]
+script = ExtResource("3_cx4ln")
+action_name = "Print"
+action_group = 1
+action_category = 0
+action_script = ExtResource("4_nsk56")
+action_params = Array[String](["\"Daddy!\""])
+
+[sub_resource type="Resource" id="Resource_svt64"]
+script = ExtResource("3_cx4ln")
+action_name = "Create object"
+action_group = 1
+action_category = 0
+action_script = ExtResource("4_c6fhk")
+action_params = Array[String](["res://demo_project/icon.tscn", "IconObject", "100", "100"])
+
+[sub_resource type="Resource" id="Resource_n4mby"]
+script = ExtResource("2_w5ypg")
+variables = Array[ExtResource("7_3krrt")]([])
+events = Array[ExtResource("5_8b23a")]([SubResource("Resource_y3ecy")])
+actions = Array[ExtResource("3_cx4ln")]([])
+sub_blocks = Array[ExtResource("2_w5ypg")]([])
+
+[sub_resource type="Resource" id="Resource_tlimj"]
+script = ExtResource("2_w5ypg")
+variables = Array[ExtResource("7_3krrt")]([])
+events = Array[ExtResource("5_8b23a")]([SubResource("Resource_y3ecy")])
+actions = Array[ExtResource("3_cx4ln")]([SubResource("Resource_1ctci"), SubResource("Resource_svt64")])
+sub_blocks = Array[ExtResource("2_w5ypg")]([SubResource("Resource_n4mby")])
+
+[sub_resource type="Resource" id="Resource_wrqd0"]
+script = ExtResource("2_w5ypg")
+variables = Array[ExtResource("7_3krrt")]([])
+events = Array[ExtResource("5_8b23a")]([SubResource("Resource_p5wsf")])
+actions = Array[ExtResource("3_cx4ln")]([])
+sub_blocks = Array[ExtResource("2_w5ypg")]([SubResource("Resource_nff0k"), SubResource("Resource_sx3j8"), SubResource("Resource_tlimj")])
+
+[sub_resource type="Resource" id="Resource_k3qpq"]
+script = ExtResource("2_w5ypg")
+variables = Array[ExtResource("7_3krrt")]([])
+events = Array[ExtResource("5_8b23a")]([SubResource("Resource_t7syv")])
+actions = Array[ExtResource("3_cx4ln")]([])
+sub_blocks = Array[ExtResource("2_w5ypg")]([SubResource("Resource_wrqd0")])
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_xwkee")
+event_sheet = Array[ExtResource("2_w5ypg")]([SubResource("Resource_4nno5"), SubResource("Resource_f7amr"), SubResource("Resource_k3qpq")])
+
+[node name="CodeEdit" type="CodeEdit" parent="."]
+offset_left = 315.0
+offset_top = -3.0
+offset_right = 1153.0
+offset_bottom = 648.0
+size_flags_horizontal = 10
+size_flags_vertical = 6
