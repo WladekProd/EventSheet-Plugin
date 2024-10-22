@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://dkixac0fin0uv"]
+[gd_scene load_steps=2 format=3 uid="uid://cofnjhqxaif5t"]
 
-[ext_resource type="Script" path="res://addons/event_sheet/elements/Window/next_condition_frame/next_condition_frame.gd" id="1_pm3hx"]
+[ext_resource type="Script" path="res://addons/event_sheet/elements/window/first_condition_frame/first_condition_frame.gd" id="1_cixrh"]
 
-[node name="NextConditionFrame" type="Control"]
+[node name="AddConditionFrame" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,7 +11,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-script = ExtResource("1_pm3hx")
+script = ExtResource("1_cixrh")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -33,7 +33,7 @@ size_flags_vertical = 3
 horizontal_scroll_mode = 0
 vertical_scroll_mode = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/ScrollContainer"]
+[node name="Items" type="GridContainer" parent="MarginContainer/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 0
+columns = 7

@@ -53,7 +53,7 @@ static func process_block(block: BlockResource, existing_functions: Dictionary, 
 			var instance = RefCounted.new()
 			instance.set_script(action_script)
 
-			var action_params: Array[String] = action.action_params
+			var action_params: Dictionary = action.action_params
 			var action_script_params: Dictionary = instance.get("params")
 			var param_index = 0
 			for key in action_script_params:
@@ -73,7 +73,7 @@ static func process_block(block: BlockResource, existing_functions: Dictionary, 
 			var instance = RefCounted.new()
 			instance.set_script(event_script)
 
-			var event_params: Array[String] = event.event_params
+			var event_params: Dictionary = event.event_params
 			var event_script_params: Dictionary = instance.get("params")
 			var param_index = 0
 			for key in event_script_params:

@@ -5,20 +5,20 @@ extends VBoxContainer
 
 @onready var action_items: VBoxContainer = $MarginContainer/Action/VBoxContainer
 
+signal add_action_button_up
+
 func _ready() -> void:
 	pass
 
 
-
-func update_y_size(y_size: float):
-	if action_items:
-		action_items.size.y = y_size
+func update_y_size():
+	if action_items and blank_body_event:
+		var y_size = blank_body_event.event_items.size.y
 		action_items.custom_minimum_size.y = y_size
+		action_items.size.y = y_size
 
-func _on_items_child_entered_tree(node: Node) -> void:
-	if blank_body_event and action_items:
-		blank_body_event.update_y_size(action_items.size.y)
+func _on_v_box_container_resized() -> void:
+	update_y_size()
 
-func _on_items_child_exiting_tree(node: Node) -> void:
-	if blank_body_event and action_items:
-		blank_body_event.update_y_size(action_items.size.y)
+func _on_add_action_button_up() -> void:
+	add_action_button_up.emit()

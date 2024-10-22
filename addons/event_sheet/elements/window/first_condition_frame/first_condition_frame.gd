@@ -3,7 +3,7 @@ extends Control
 
 @onready var items_list: GridContainer = $MarginContainer/ScrollContainer/Items
 
-var item_template: PackedScene = load("res://addons/event_sheet/elements/Window/add_condition_frame/add_condition_item.tscn")
+var item_template: PackedScene = load("res://addons/event_sheet/elements/window/first_condition_frame/first_condition_item.tscn")
 
 signal focused_condition
 

@@ -21,6 +21,7 @@ offset_right = 393.0
 offset_bottom = 35.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+mouse_filter = 2
 script = ExtResource("1_rl1dl")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
@@ -28,6 +29,7 @@ custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+mouse_filter = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
@@ -53,6 +55,7 @@ custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 3
+mouse_filter = 2
 theme_override_constants/margin_left = 25
 theme_override_constants/margin_right = 25
 
@@ -71,5 +74,5 @@ text = "+ Add Action"
 flat = true
 alignment = 0
 
-[connection signal="child_entered_tree" from="MarginContainer/Action/VBoxContainer" to="MarginContainer" method="_on_items_child_entered_tree"]
-[connection signal="child_exiting_tree" from="MarginContainer/Action/VBoxContainer" to="MarginContainer" method="_on_items_child_exiting_tree"]
+[connection signal="resized" from="MarginContainer/Action/VBoxContainer" to="." method="_on_v_box_container_resized"]
+[connection signal="button_up" from="MarginContainer/Action/VBoxContainer/AddActionItem/AddAction" to="." method="_on_add_action_button_up"]

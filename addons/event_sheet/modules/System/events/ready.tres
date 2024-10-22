@@ -1,11 +1,11 @@
-[gd_resource type="Resource" script_class="EventResource" load_steps=4 format=3 uid="uid://q2r64t1craon"]
+[gd_resource type="Resource" script_class="EventResource" load_steps=4 format=3 uid="uid://exyy3r8qx6ux"]
 
 [ext_resource type="Script" path="res://addons/event_sheet/modules/System/events/ready.gd" id="1_hqtad"]
 [ext_resource type="Texture2D" uid="uid://dn2802kb4ium3" path="res://addons/event_sheet/resources/icons/start.svg" id="1_x0wyy"]
-[ext_resource type="Script" path="res://addons/event_sheet/source/modules/Event.gd" id="2_nmh1y"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/modules/event_resource.gd" id="3_qp77r"]
 
 [resource]
-script = ExtResource("2_nmh1y")
+script = ExtResource("3_qp77r")
 event_name = "Ready"
 event_icon = ExtResource("1_x0wyy")
 event_description = ""
@@ -13,4 +13,4 @@ event_type = 1
 event_group = 1
 event_category = 0
 event_script = ExtResource("1_hqtad")
-event_params = Array[String]([])
+event_params = {}

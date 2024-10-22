@@ -1,14 +1,16 @@
-[gd_resource type="Resource" script_class="EventResource" load_steps=3 format=3 uid="uid://dabbsffkpyw2e"]
+[gd_resource type="Resource" script_class="EventResource" load_steps=4 format=3 uid="uid://cabi6y01p1pkf"]
 
-[ext_resource type="Script" path="res://addons/event_sheet/source/modules/Event.gd" id="1_f1gqg"]
-[ext_resource type="Texture2D" uid="uid://byf2yg4kua5ik" path="res://addons/event_sheet/resources/icons/system.svg" id="1_r7rqn"]
+[ext_resource type="Texture2D" uid="uid://dn2802kb4ium3" path="res://addons/event_sheet/resources/icons/start.svg" id="1_vr677"]
+[ext_resource type="Script" path="res://addons/event_sheet/modules/System/events/input.gd" id="2_tyitg"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/modules/event_resource.gd" id="3_fef6v"]
 
 [resource]
-script = ExtResource("1_f1gqg")
+script = ExtResource("3_fef6v")
 event_name = "Input"
-event_icon = ExtResource("1_r7rqn")
+event_icon = ExtResource("1_vr677")
 event_description = ""
 event_type = 0
 event_group = 1
-event_category = 0
-event_params = Array[String]([])
+event_category = 2
+event_script = ExtResource("2_tyitg")
+event_params = {}

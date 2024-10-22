@@ -1,7 +1,11 @@
 
-var params: Dictionary = {
-	"text": ""
-}
+static func params() -> Dictionary:
+	return {
+		"text": {
+			"name": "Text",
+			"value": ""
+		}
+	}
 
-func get_template(params: Dictionary = params) -> String:
-	return """print({text})""".format(params)
+static func get_template(params: Dictionary = params()) -> String:
+	return """print({text.value})""".format(params)

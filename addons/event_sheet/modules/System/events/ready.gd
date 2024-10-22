@@ -1,5 +1,6 @@
 
-var params: Dictionary = {}
+static func params() -> Dictionary:
+	return { }
 
-func get_template(params: Dictionary = params) -> String:
+static func get_template(params: Dictionary = params()) -> String:
 	return """func __ready() -> void:""".format(params)

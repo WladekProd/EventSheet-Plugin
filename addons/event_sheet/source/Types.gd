@@ -22,11 +22,20 @@ enum Group {
 	NONE,
 	SYSTEM,
 }
+const GROUP_NAMES = {
+	Group.NONE: "None",
+	Group.SYSTEM: "System",
+}
 
 enum Category {
 	MAIN,
 	VARIABLE,
 	INPUT,
+}
+const CATEGORY_NAMES = {
+	Category.MAIN: "Main",
+	Category.VARIABLE: "Variable",
+	Category.INPUT: "Input"
 }
 
 class EventSheet:

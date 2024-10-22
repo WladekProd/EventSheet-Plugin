@@ -1,12 +1,12 @@
 [gd_scene load_steps=14 format=3 uid="uid://bch7w7cwxwqsn"]
 
-[ext_resource type="Texture2D" uid="uid://3aayah87ti8k" path="res://addons/event_sheet/resources/icons/divider.svg" id="1_a4lvh"]
-[ext_resource type="Script" path="res://addons/event_sheet/source/elements/event_sheet/code_editor/code_edit.gd" id="1_e35dg"]
-[ext_resource type="Script" path="res://addons/event_sheet/source/elements/event_sheet/event_sheet/event_sheet.gd" id="1_rlr1y"]
-[ext_resource type="Script" path="res://addons/event_sheet/source/elements/window/window.gd" id="3_8re2a"]
-[ext_resource type="Texture2D" uid="uid://0uvfcu7l4d1g" path="res://addons/event_sheet/resources/icons/divider_null.png" id="3_xmu3l"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/elements/event_sheet/event_sheet/event_sheet.gd" id="1_vq26q"]
+[ext_resource type="Texture2D" uid="uid://3aayah87ti8k" path="res://addons/event_sheet/resources/icons/divider.svg" id="2_52akj"]
+[ext_resource type="Texture2D" uid="uid://0uvfcu7l4d1g" path="res://addons/event_sheet/resources/icons/divider_null.png" id="3_a8irr"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/elements/event_sheet/code_editor/code_edit.gd" id="4_241l8"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/elements/window/window.gd" id="5_f3m08"]
 
-[sub_resource type="CodeHighlighter" id="CodeHighlighter_hg8pi"]
+[sub_resource type="CodeHighlighter" id="CodeHighlighter_6sb7y"]
 number_color = Color(0.631373, 1, 0.878431, 1)
 symbol_color = Color(0.670588, 0.788235, 1, 1)
 function_color = Color(0.341176, 0.701961, 1, 1)
@@ -122,7 +122,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-script = ExtResource("1_rlr1y")
+script = ExtResource("1_vq26q")
 
 [node name="HSplitContainer" type="HSplitContainer" parent="."]
 layout_mode = 1
@@ -132,9 +132,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/autohide = 0
-theme_override_icons/grabber = ExtResource("1_a4lvh")
-theme_override_icons/h_grabber = ExtResource("1_a4lvh")
-theme_override_icons/v_grabber = ExtResource("1_a4lvh")
+theme_override_icons/grabber = ExtResource("2_52akj")
+theme_override_icons/h_grabber = ExtResource("2_52akj")
+theme_override_icons/v_grabber = ExtResource("2_52akj")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="HSplitContainer"]
 layout_mode = 2
@@ -148,9 +148,9 @@ size_flags_horizontal = 3
 size_flags_vertical = 0
 theme_override_constants/separation = 0
 theme_override_constants/autohide = 0
-theme_override_icons/grabber = ExtResource("3_xmu3l")
-theme_override_icons/h_grabber = ExtResource("3_xmu3l")
-theme_override_icons/v_grabber = ExtResource("3_xmu3l")
+theme_override_icons/grabber = ExtResource("3_a8irr")
+theme_override_icons/h_grabber = ExtResource("3_a8irr")
+theme_override_icons/v_grabber = ExtResource("3_a8irr")
 split_offset = -400
 
 [node name="Events" type="VBoxContainer" parent="HSplitContainer/ScrollContainer/HSplitContainer"]
@@ -164,7 +164,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 0
 
 [node name="CodeEdit" type="CodeEdit" parent="HSplitContainer"]
-visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 text = "
@@ -184,7 +183,7 @@ func __input(event: InputEvent) -> void:
 "
 editable = false
 caret_blink = true
-syntax_highlighter = SubResource("CodeHighlighter_hg8pi")
+syntax_highlighter = SubResource("CodeHighlighter_6sb7y")
 highlight_all_occurrences = true
 line_folding = true
 gutters_draw_breakpoints_gutter = true
@@ -194,7 +193,7 @@ gutters_draw_fold_gutter = true
 code_completion_enabled = true
 indent_automatic = true
 auto_brace_completion_enabled = true
-script = ExtResource("1_e35dg")
+script = ExtResource("4_241l8")
 
 [node name="PopupMenu" type="PopupMenu" parent="."]
 size = Vector2i(98, 35)
@@ -209,7 +208,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("3_8re2a")
+script = ExtResource("5_f3m08")
 window_title = "Add condition"
 
 [node name="Background" type="Panel" parent="Window"]
@@ -316,6 +315,19 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_to4dl")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_8evaa")
 theme_override_styles/normal = SubResource("StyleBoxFlat_j1hlp")
 text = "Next"
+
+[node name="Finish" type="Button" parent="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons"]
+visible = false
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 10
+size_flags_stretch_ratio = 0.0
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_styles/focus = SubResource("StyleBoxEmpty_d36lc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_to4dl")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_8evaa")
+theme_override_styles/normal = SubResource("StyleBoxFlat_j1hlp")
+text = "Finish"
 
 [connection signal="gui_input" from="HSplitContainer/ScrollContainer" to="." method="_on_scroll_container_gui_input"]
 [connection signal="text_changed" from="HSplitContainer/CodeEdit" to="HSplitContainer/CodeEdit" method="_on_text_changed"]

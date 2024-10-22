@@ -1,12 +1,12 @@
 extends Resource
 class_name VariableResource
 
-const Types = preload("res://addons/event_sheet/source/Types.gd")
+const Types = preload("res://addons/event_sheet/source/types.gd")
 
-@export var variable_is_global: bool = true
-@export var variable_name: String
 @export var variable_icon: Texture2D
 @export var variable_type: Types.VariableType = Types.VariableType.NUMBER
+@export var variable_is_global: bool = true
+@export var variable_name: String
 @export var variable_value: String
 
 func get_template() -> String:

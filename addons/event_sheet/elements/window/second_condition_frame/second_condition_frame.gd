@@ -1,7 +1,7 @@
 @tool
 extends Control
 
-const Types = preload("res://addons/event_sheet/source/Types.gd")
+const Types = preload("res://addons/event_sheet/source/types.gd")
 
 @onready var items_list: VBoxContainer = $MarginContainer/ScrollContainer/VBoxContainer
 
@@ -22,7 +22,7 @@ func update_items_list(conditions: Dictionary = {}) -> void:
 		
 			if _resources.size() > 0:
 				for category: Types.Category in _resources:
-					var category_template: VBoxContainer = load("res://addons/event_sheet/elements/Window/next_condition_frame/next_condition_item.tscn").instantiate()
+					var category_template: VBoxContainer = load("res://addons/event_sheet/elements/window/second_condition_frame/second_condition_item.tscn").instantiate()
 					
 					var category_label: Label = category_template.get_child(0).get_child(0)
 					match category:
@@ -38,7 +38,7 @@ func update_items_list(conditions: Dictionary = {}) -> void:
 					for resource in _resources[category]:
 						if resource is EventResource:
 							var res: EventResource = resource
-							var item_button_template: Button = load("res://addons/event_sheet/elements/Window/next_condition_frame/next_condition_item_button.tscn").instantiate()
+							var item_button_template: Button = load("res://addons/event_sheet/elements/window/second_condition_frame/second_condition_item_button.tscn").instantiate()
 							item_button_template.text = res.event_name
 							item_button_template.icon = res.event_icon
 							if _icon_color:
@@ -62,8 +62,8 @@ func update_items_list(conditions: Dictionary = {}) -> void:
 							item_button_template.owner = category_items.get_owner()
 						if resource is ActionResource:
 							var res: ActionResource = resource
-							var item_button_template: Button = load("res://addons/event_sheet/elements/Window/next_condition_frame/next_condition_item_button.tscn").instantiate()
-							item_button_template.name = res.action_name
+							var item_button_template: Button = load("res://addons/event_sheet/elements/window/second_condition_frame/second_condition_item_button.tscn").instantiate()
+							item_button_template.text = res.action_name
 							item_button_template.icon = res.action_icon
 							if _icon_color:
 								item_button_template.add_theme_color_override("icon_normal_color", _icon_color)

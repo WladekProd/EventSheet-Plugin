@@ -1,7 +1,7 @@
 @tool
 extends EditorInspectorPlugin
 
-const Types = preload("res://addons/event_sheet/source/Types.gd")
+const Types = preload("res://addons/event_sheet/source/types.gd")
 
 var title_template = load("res://addons/event_sheet/elements/inspector/title.tscn")
 

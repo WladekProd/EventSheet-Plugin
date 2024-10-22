@@ -1,7 +1,7 @@
 @tool
 extends Control
 
-const Types = preload("res://addons/event_sheet/source/Types.gd")
+const Types = preload("res://addons/event_sheet/source/types.gd")
 
 @onready var window_title_instance: Label = $WindowPanel/MarginContainer/VBoxContainer/WindowName
 @export var window_title: String = "":
@@ -14,13 +14,13 @@ const Types = preload("res://addons/event_sheet/source/Types.gd")
 @onready var window_frame_instance: Panel = $WindowPanel/MarginContainer/VBoxContainer/Panel
 enum WindowType {
 	NONE,
-	ADD_CONDITION,
-	NEXT_CONDITION,
+	FIRST_CONDITION,
+	SECOND_CONDITION,
 	FINISH_CONDITION,
 }
-var add_condition_frame: Node = load("res://addons/event_sheet/elements/Window/add_condition_frame/add_condition_frame.tscn").instantiate()
-var next_condition_frame: Node = load("res://addons/event_sheet/elements/Window/next_condition_frame/next_condition_frame.tscn").instantiate()
-var finish_condition_frame: Node = load("res://addons/event_sheet/elements/Window/finish_condition_frame/finish_condition_frame.tscn").instantiate()
+var first_condition_frame: Node = load("res://addons/event_sheet/elements/window/first_condition_frame/first_condition_frame.tscn").instantiate()
+var second_condition_frame: Node = load("res://addons/event_sheet/elements/window/second_condition_frame/second_condition_frame.tscn").instantiate()
+var finish_condition_frame: Node = load("res://addons/event_sheet/elements/window/finish_condition_frame/finish_condition_frame.tscn").instantiate()
 @export var window_frame: WindowType:
 	set(p_window_frame):
 		if p_window_frame != window_frame:
@@ -32,6 +32,7 @@ var finish_condition_frame: Node = load("res://addons/event_sheet/elements/Windo
 @onready var help_button_instance: Button = $WindowPanel/MarginContainer/VBoxContainer/Buttons/Help
 @onready var back_button_instance: Button = $WindowPanel/MarginContainer/VBoxContainer/Buttons/Back
 @onready var next_button_instance: Button = $WindowPanel/MarginContainer/VBoxContainer/Buttons/Next
+@onready var finish_button_instance: Button = $WindowPanel/MarginContainer/VBoxContainer/Buttons/Finish
 var cancel_button: bool = true:
 	set(p_cancel_button):
 		if p_cancel_button != cancel_button:
@@ -56,7 +57,16 @@ var next_button: bool = true:
 			next_button = p_next_button
 			update_configuration_warnings()
 			update_window()
+var finish_button: bool = true:
+	set(p_finish_button):
+		if p_finish_button != finish_button:
+			finish_button = p_finish_button
+			update_configuration_warnings()
+			update_window()
 
+var first_condition_data: Dictionary
+var second_condition_data: Dictionary
+var finish_condition_data: Dictionary
 signal finish_data
 
 func update_window():
@@ -66,54 +76,59 @@ func update_window():
 	if help_button_instance: help_button_instance.visible = help_button
 	if back_button_instance: back_button_instance.visible = back_button
 	if next_button_instance: next_button_instance.visible = next_button
+	if finish_button_instance: finish_button_instance.visible = finish_button
 	
 	if window_frame_instance:
 		for child in window_frame_instance.get_children():
 			window_frame_instance.remove_child(child)
 		match window_frame:
-			WindowType.ADD_CONDITION:
-				window_frame_instance.add_child(add_condition_frame)
-				add_condition_frame.owner = window_frame_instance.get_owner()
+			WindowType.FIRST_CONDITION:
+				window_frame_instance.add_child(first_condition_frame)
+				first_condition_frame.owner = window_frame_instance.get_owner()
 				cancel_button = true
 				help_button = true
 				back_button = false
 				next_button = true
-			WindowType.NEXT_CONDITION:
-				window_frame_instance.add_child(next_condition_frame)
-				next_condition_frame.owner = window_frame_instance.get_owner()
+				finish_button = false
+			WindowType.SECOND_CONDITION:
+				window_frame_instance.add_child(second_condition_frame)
+				second_condition_frame.owner = window_frame_instance.get_owner()
 				cancel_button = true
 				help_button = true
 				back_button = true
 				next_button = true
+				finish_button = false
 			WindowType.FINISH_CONDITION:
-				finish_condition_frame.finished_button_up = next_button_instance
+				finish_condition_frame.finished_button_up = finish_button_instance
 				window_frame_instance.add_child(finish_condition_frame)
 				finish_condition_frame.owner = window_frame_instance.get_owner()
 				cancel_button = true
 				help_button = false
 				back_button = true
-				next_button = true
+				next_button = false
+				finish_button = true
 			WindowType.NONE:
 				cancel_button = false
 				help_button = false
 				back_button = false
 				next_button = false
+				finish_button = false
 				pass
 
-func show_window(new_title: String = "", new_window_frame: WindowType = WindowType.ADD_CONDITION):
+func show_window(new_title: String = "", new_window_frame: WindowType = WindowType.FIRST_CONDITION):
 	window_title = new_title
 	window_frame = new_window_frame
 	visible = true
 	
 	match window_frame:
-		WindowType.ADD_CONDITION:
-			if !add_condition_frame.focused_condition.is_connected(_on_condition_focused):
-				add_condition_frame.focused_condition.connect(_on_condition_focused)
-			return add_condition_frame
-		WindowType.NEXT_CONDITION:
-			if !next_condition_frame.focused_condition.is_connected(_on_second_condition_focused):
-				next_condition_frame.focused_condition.connect(_on_second_condition_focused)
-			return next_condition_frame
+		WindowType.FIRST_CONDITION:
+			if !first_condition_frame.focused_condition.is_connected(_on_first_condition_focused):
+				first_condition_frame.focused_condition.connect(_on_first_condition_focused)
+			return first_condition_frame
+		WindowType.SECOND_CONDITION:
+			if !second_condition_frame.focused_condition.is_connected(_on_second_condition_focused):
+				second_condition_frame.focused_condition.connect(_on_second_condition_focused)
+			return second_condition_frame
 		WindowType.FINISH_CONDITION:
 			if !finish_condition_frame.finished_condition.is_connected(_on_finished_condition):
 				finish_condition_frame.finished_condition.connect(_on_finished_condition)
@@ -126,7 +141,7 @@ func close_window():
 	visible = false
 
 
-
+var second_conditions: Dictionary = {}
 # Parse First Conditions
 func parse_first_conditions(current_scene, conditions_type: Types.ConditionType) -> Array:
 	var conditions: Array = []
@@ -159,7 +174,7 @@ func parse_first_conditions(current_scene, conditions_type: Types.ConditionType)
 # Parse Second Conditions
 func parse_second_conditions(condition_data: Dictionary) -> Dictionary:
 	var conditions: Dictionary = {}
-	
+
 	if condition_data and condition_data["type"]:
 		var sub_dirs: Array = ["actions", "events"]
 		match condition_data["type"]:
@@ -174,14 +189,14 @@ func parse_second_conditions(condition_data: Dictionary) -> Dictionary:
 						for resource in resource_files["events"]:
 							var resource_instance: EventResource = load(resource)
 							if resource_instance.event_category == category:
-								conditions[category].append(resource_instance)
+								conditions[category].append(resource_instance.duplicate(true))
 				if condition_data["conditions_type"] == Types.ConditionType.ACTIONS:
 					for category in Types.Category.values():
 						conditions[category] = []
 						for resource in resource_files["actions"]:
 							var resource_instance: ActionResource = load(resource)
 							if resource_instance.action_category == category:
-								conditions[category].append(resource_instance)
+								conditions[category].append(resource_instance.duplicate(true))
 			"Node2D":
 				#var resource_files: Dictionary = find_tres_files_in_paths([
 					#"res://addons/event_sheet/modules/Node2D/",
@@ -190,7 +205,6 @@ func parse_second_conditions(condition_data: Dictionary) -> Dictionary:
 				pass
 	
 	condition_data["resources"] = conditions
-	print(condition_data)
 	return condition_data
 # Scan Files in Folders
 func find_tres_files_in_paths(resource_paths: Array, sub_dirs: Array) -> Dictionary:
@@ -216,61 +230,63 @@ func find_tres_files_in_paths(resource_paths: Array, sub_dirs: Array) -> Diction
 				dir.list_dir_end()
 	return tres_files
 
+
+
 # Show 'Add Condition' Window
 func add_condition(current_scene, conditions_type: Types.ConditionType = Types.ConditionType.EVENTS):
 	var conditions: Array = parse_first_conditions(current_scene, conditions_type)
 	var title: String = "Add condition"
-	var window_content = show_window(title, WindowType.ADD_CONDITION)
+	var window_content = show_window(title, WindowType.FIRST_CONDITION)
 	window_content.update_items_list(conditions)
-
-var first_condition_data: Dictionary
-var second_condition_data: Dictionary
-var finish_condition_data: Dictionary
+	first_condition_data.clear()
+	second_condition_data.clear()
+	finish_condition_data.clear()
+	finish_condition_frame.finished_data = {
+		"data": {
+			"condition": null,
+			"resource": null
+		}
+	}
 
 # First Condition Focused
-func _on_condition_focused(condition_data: Dictionary):
-	if condition_data and !condition_data["button"].gui_input.is_connected(_on_selected_condition_input):
-		condition_data["button"].gui_input.connect(_on_selected_condition_input.bind(condition_data))
+func _on_first_condition_focused(condition_data: Dictionary):
+	if condition_data and !condition_data["button"].gui_input.is_connected(_on_first_selected_condition_input):
+		condition_data["button"].gui_input.connect(_on_first_selected_condition_input.bind(condition_data))
 	first_condition_data = condition_data
-	print("first")
 # First Condition Double-click
-func _on_selected_condition_input(event: InputEvent, condition_data: Dictionary):
+func _on_first_selected_condition_input(event: InputEvent, condition_data: Dictionary):
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.double_click:
-			first_condition_data = condition_data
-			_on_next_button_up()
+			_on_next_button_up(condition_data)
 
 # Second Condition Focused
 func _on_second_condition_focused(condition_data: Dictionary):
 	if condition_data and !condition_data["button"].gui_input.is_connected(_on_second_selected_condition_input):
 		condition_data["button"].gui_input.connect(_on_second_selected_condition_input.bind(condition_data))
 	second_condition_data = condition_data
-	print("second")
 # Second Condition Double-click
 func _on_second_selected_condition_input(event: InputEvent, condition_data: Dictionary):
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.double_click:
-			second_condition_data = condition_data
-			_on_next_button_up()
+			_on_next_button_up(condition_data)
 
 # Last Condition Finished
 func _on_finished_condition(condition_data: Dictionary):
-	print("finish")
-	finish_condition_data = condition_data
+	_on_next_button_up(condition_data)
 
-func _on_next_button_up() -> void:
+func _on_next_button_up(condition_data: Dictionary = {}) -> void:
 	match window_frame:
-		WindowType.ADD_CONDITION:
+		WindowType.FIRST_CONDITION:
+			if condition_data.size() > 0: first_condition_data = condition_data
+			if first_condition_data and !second_conditions.has(first_condition_data["button"]):
+				second_conditions[first_condition_data["button"]] = parse_second_conditions(first_condition_data["data"])
 			if first_condition_data.size() > 0:
-				print("next first")
-				var data = first_condition_data["data"]
-				var conditions: Dictionary = parse_second_conditions(data)
-				var title: String = "Add '{0}' condition".format([data.name])
+				var title: String = "Add '{0}' condition".format([first_condition_data["data"].name])
 				var window_content = show_window(title, window_frame + 1)
-				window_content.update_items_list(conditions)
-		WindowType.NEXT_CONDITION:
+				window_content.update_items_list(second_conditions[first_condition_data["button"]])
+		WindowType.SECOND_CONDITION:
+			if condition_data.size() > 0: second_condition_data = condition_data
 			if second_condition_data.size() > 0:
-				print("next second")
 				var data = second_condition_data["data"]
 				var title: String
 				match data.conditions_type:
@@ -281,8 +297,8 @@ func _on_next_button_up() -> void:
 				var window_content = show_window(title, window_frame + 1)
 				window_content.update_items_list(data)
 		WindowType.FINISH_CONDITION:
+			if condition_data.size() > 0: finish_condition_data = condition_data
 			if finish_condition_data.size() > 0:
-				print("next finish")
 				var data = finish_condition_data["data"]
 				finish_data.emit(data)
 				close_window()
@@ -294,7 +310,7 @@ func _on_cancel_button_up() -> void:
 
 func _on_back_button_up() -> void:
 	match window_frame:
-		WindowType.NEXT_CONDITION:
+		WindowType.SECOND_CONDITION:
 				var title: String = "Add condition"
 				show_window(title, window_frame - 1)
 		WindowType.FINISH_CONDITION:

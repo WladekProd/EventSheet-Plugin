@@ -2,7 +2,7 @@
 static func params() -> Dictionary:
 	return {
 		"variable_a": {
-			"name": "Variable A",
+			"name": "Variable 1",
 			"value": ""
 		},
 		"comparison": {
@@ -10,7 +10,7 @@ static func params() -> Dictionary:
 			"value": ""
 		},
 		"variable_b": {
-			"name": "Variable B",
+			"name": "Variable 2",
 			"value": ""
 		}
 	}

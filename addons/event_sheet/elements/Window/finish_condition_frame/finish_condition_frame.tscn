@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bpwcya0um1ogv"]
 
-[ext_resource type="Script" path="res://addons/event_sheet/elements/Window/finish_condition_frame/parameters.gd" id="1_htiqw"]
-[ext_resource type="Script" path="res://addons/event_sheet/elements/Window/finish_condition_frame/finish_condition_frame.gd" id="1_mxs7r"]
+[ext_resource type="Script" path="res://addons/event_sheet/elements/window/finish_condition_frame/parameters.gd" id="1_htiqw"]
+[ext_resource type="Script" path="res://addons/event_sheet/elements/window/finish_condition_frame/finish_condition_frame.gd" id="1_mxs7r"]
 
 [node name="FinishConditionFrame" type="Control"]
 layout_mode = 3

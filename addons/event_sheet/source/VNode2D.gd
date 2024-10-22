@@ -2,7 +2,7 @@
 extends Node2D
 class_name VNode2D
 
-const Types = preload("res://addons/event_sheet/source/Types.gd")
+const Types = preload("res://addons/event_sheet/source/types.gd")
 const Generation = preload("res://addons/event_sheet/source/Generation.gd")
 
 signal open_event_sheet

@@ -1,16 +1,16 @@
-[gd_resource type="Resource" script_class="EventResource" load_steps=4 format=3 uid="uid://proy4w7xddq7"]
+[gd_resource type="Resource" script_class="EventResource" load_steps=4 format=3 uid="uid://ctguliycvrcq1"]
 
+[ext_resource type="Texture2D" uid="uid://d3x6evxsldkws" path="res://addons/event_sheet/resources/icons/cycle.svg" id="1_13viy"]
 [ext_resource type="Script" path="res://addons/event_sheet/modules/System/events/process.gd" id="1_c5qxa"]
-[ext_resource type="Script" path="res://addons/event_sheet/source/modules/Event.gd" id="1_n1j4i"]
-[ext_resource type="Texture2D" uid="uid://byf2yg4kua5ik" path="res://addons/event_sheet/resources/icons/system.svg" id="1_p3cwk"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/modules/event_resource.gd" id="3_5k46m"]
 
 [resource]
-script = ExtResource("1_n1j4i")
+script = ExtResource("3_5k46m")
 event_name = "Process"
-event_icon = ExtResource("1_p3cwk")
+event_icon = ExtResource("1_13viy")
 event_description = ""
 event_type = 1
 event_group = 1
 event_category = 0
 event_script = ExtResource("1_c5qxa")
-event_params = Array[String]([])
+event_params = {}

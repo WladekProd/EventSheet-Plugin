@@ -23,7 +23,7 @@ custom_minimum_size = Vector2(200, 30)
 offset_right = 200.0
 offset_bottom = 30.0
 size_flags_horizontal = 3
-size_flags_vertical = 3
+size_flags_vertical = 2
 theme_override_styles/focus = SubResource("StyleBoxFlat_abtk4")
 theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxFlat_abtk4")
 theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_abtk4")
@@ -45,22 +45,26 @@ offset_top = -11.5
 offset_bottom = 11.5
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme_override_constants/margin_left = 5
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
 layout_mode = 2
+mouse_filter = 2
 
 [node name="Icon" type="TextureRect" parent="MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(20, 20)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+mouse_filter = 2
 texture = ExtResource("1_alvq1")
 expand_mode = 1
 
 [node name="HSplitContainer" type="HSplitContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+mouse_filter = 2
 theme_override_constants/autohide = 0
 theme_override_icons/grabber = ExtResource("3_rwgyg")
 theme_override_icons/h_grabber = ExtResource("3_rwgyg")

@@ -3,7 +3,7 @@ extends EditorPlugin
 
 var inspector_elements
 
-const EventSheet = preload("res://addons/event_sheet/elements/EventSheet/event_sheet.tscn")
+const EventSheet = preload("res://addons/event_sheet/elements/event_sheet/event_sheet.tscn")
 var event_sheet_instance
 
 const PLUGIN_PATH := "plugins/event_sheet/shortcut"

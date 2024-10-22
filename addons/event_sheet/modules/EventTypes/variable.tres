@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="VariableResource" load_steps=3 format=3 uid="uid://by3o1rlsogeqx"]
 
-[ext_resource type="Script" path="res://addons/event_sheet/source/modules/Variable.gd" id="1_ddf31"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/modules/variable_resource.gd" id="1_ddf31"]
 [ext_resource type="Texture2D" uid="uid://wmhmlqpmaera" path="res://addons/event_sheet/resources/icons/global.svg" id="2_dovkf"]
 
 [resource]

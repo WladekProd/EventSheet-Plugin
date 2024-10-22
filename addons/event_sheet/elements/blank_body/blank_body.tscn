@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://addons/event_sheet/source/elements/blank_body/blank_body_event.gd" id="1_mv28o"]
 [ext_resource type="Texture2D" uid="uid://3aayah87ti8k" path="res://addons/event_sheet/resources/icons/divider.svg" id="2_ol7nf"]
-[ext_resource type="PackedScene" uid="uid://cw0pqfra31e81" path="res://addons/event_sheet/elements/Event/event.tscn" id="4_5evd7"]
+[ext_resource type="PackedScene" uid="uid://cw0pqfra31e81" path="res://addons/event_sheet/elements/conditions/event.tscn" id="4_5evd7"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uwmv1"]
 bg_color = Color(0.0943631, 0.105372, 0.138388, 1)

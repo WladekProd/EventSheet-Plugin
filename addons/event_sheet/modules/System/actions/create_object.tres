@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="ActionResource" load_steps=4 format=3 uid="uid://mjjeympi02wd"]
+[gd_resource type="Resource" script_class="ActionResource" load_steps=4 format=3 uid="uid://fy53na3drdc5"]
 
-[ext_resource type="Script" path="res://addons/event_sheet/source/modules/Action.gd" id="1_ja8vj"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/modules/action_resource.gd" id="1_ja8vj"]
 [ext_resource type="Texture2D" uid="uid://byf2yg4kua5ik" path="res://addons/event_sheet/resources/icons/system.svg" id="1_u0wqh"]
 [ext_resource type="Script" path="res://addons/event_sheet/modules/System/actions/create_object.gd" id="1_v0v5l"]
 
@@ -12,4 +12,21 @@ action_description = "Choose the object type of the new instance to create."
 action_group = 1
 action_category = 0
 action_script = ExtResource("1_v0v5l")
-action_params = Array[String](["res://demo_project/icon.tscn", "IconObject", "100", "100"])
+action_params = {
+"name": {
+"name": "Name",
+"value": ""
+},
+"object": {
+"name": "Object",
+"value": ""
+},
+"x": {
+"name": "X Position",
+"value": ""
+},
+"y": {
+"name": "Y Position",
+"value": ""
+}
+}

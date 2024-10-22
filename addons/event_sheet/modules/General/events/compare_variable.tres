@@ -1,16 +1,29 @@
 [gd_resource type="Resource" script_class="EventResource" load_steps=4 format=3 uid="uid://oni5he1n3tj3"]
 
 [ext_resource type="Script" path="res://addons/event_sheet/modules/General/events/compare_variable.gd" id="1_6q335"]
-[ext_resource type="Script" path="res://addons/event_sheet/source/modules/Event.gd" id="1_7m1cc"]
 [ext_resource type="Texture2D" uid="uid://wmhmlqpmaera" path="res://addons/event_sheet/resources/icons/global.svg" id="1_absw3"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/modules/event_resource.gd" id="3_dmtvh"]
 
 [resource]
-script = ExtResource("1_7m1cc")
-event_name = "Compare variable"
+script = ExtResource("3_dmtvh")
+event_name = "Compare Variable"
 event_icon = ExtResource("1_absw3")
-event_description = "Value to compare to the variable."
+event_description = ""
 event_type = 0
 event_group = 1
 event_category = 1
 event_script = ExtResource("1_6q335")
-event_params = Array[String]([])
+event_params = {
+"comparison": {
+"name": "Comparison",
+"value": ""
+},
+"variable_a": {
+"name": "Variable A",
+"value": ""
+},
+"variable_b": {
+"name": "Variable B",
+"value": ""
+}
+}

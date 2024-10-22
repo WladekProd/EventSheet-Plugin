@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="EventResource" load_steps=4 format=3 uid="uid://dkb3nxc14tnc6"]
+
+[ext_resource type="Texture2D" uid="uid://wmhmlqpmaera" path="res://addons/event_sheet/resources/icons/global.svg" id="1_0gwfu"]
+[ext_resource type="Script" path="res://addons/event_sheet/modules/General/events/compare_variable_2.gd" id="2_iumg0"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/modules/event_resource.gd" id="3_yn5l5"]
+
+[resource]
+script = ExtResource("3_yn5l5")
+event_name = "Compare Variable 2"
+event_icon = ExtResource("1_0gwfu")
+event_description = ""
+event_type = 0
+event_group = 1
+event_category = 1
+event_script = ExtResource("2_iumg0")
+event_params = {
+"comparison": {
+"name": "Comparison",
+"value": ""
+},
+"variable_a": {
+"name": "Variable 1",
+"value": ""
+},
+"variable_b": {
+"name": "Variable 2",
+"value": ""
+}
+}
