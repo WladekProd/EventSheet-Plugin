@@ -1,4 +1,118 @@
-[gd_scene format=3 uid="uid://bch7w7cwxwqsn"]
+[gd_scene load_steps=14 format=3 uid="uid://bch7w7cwxwqsn"]
+
+[ext_resource type="Texture2D" uid="uid://3aayah87ti8k" path="res://addons/event_sheet/resources/icons/divider.svg" id="1_a4lvh"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/elements/event_sheet/code_editor/code_edit.gd" id="1_e35dg"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/elements/event_sheet/event_sheet/event_sheet.gd" id="1_rlr1y"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/elements/window/window.gd" id="3_8re2a"]
+[ext_resource type="Texture2D" uid="uid://0uvfcu7l4d1g" path="res://addons/event_sheet/resources/icons/divider_null.png" id="3_xmu3l"]
+
+[sub_resource type="CodeHighlighter" id="CodeHighlighter_hg8pi"]
+number_color = Color(0.631373, 1, 0.878431, 1)
+symbol_color = Color(0.670588, 0.788235, 1, 1)
+function_color = Color(0.341176, 0.701961, 1, 1)
+member_variable_color = Color(0.737255, 0.878431, 1, 1)
+keyword_colors = {
+"False": Color(1, 0.439216, 0.521569, 1),
+"True": Color(1, 0.439216, 0.521569, 1),
+"and": Color(1, 0.439216, 0.521569, 1),
+"bool": Color(1, 0.439216, 0.521569, 1),
+"break": Color(1, 0.54902, 0.8, 1),
+"case": Color(1, 0.54902, 0.8, 1),
+"catch": Color(1, 0.439216, 0.521569, 1),
+"char": Color(1, 0.439216, 0.521569, 1),
+"class": Color(1, 0.439216, 0.521569, 1),
+"const": Color(1, 0.439216, 0.521569, 1),
+"continue": Color(1, 0.54902, 0.8, 1),
+"def": Color(1, 0.439216, 0.521569, 1),
+"default": Color(1, 0.54902, 0.8, 1),
+"double": Color(1, 0.439216, 0.521569, 1),
+"echo": Color(1, 0.439216, 0.521569, 1),
+"elif": Color(1, 0.54902, 0.8, 1),
+"export": Color(1, 0.439216, 0.521569, 1),
+"extends": Color(1, 0.439216, 0.521569, 1),
+"false": Color(1, 0.439216, 0.521569, 1),
+"final": Color(1, 0.439216, 0.521569, 1),
+"finally": Color(1, 0.439216, 0.521569, 1),
+"float": Color(1, 0.439216, 0.521569, 1),
+"for": Color(1, 0.54902, 0.8, 1),
+"foreach": Color(1, 0.54902, 0.8, 1),
+"func": Color(1, 0.439216, 0.521569, 1),
+"function": Color(1, 0.439216, 0.521569, 1),
+"if": Color(1, 0.54902, 0.8, 1),
+"import": Color(1, 0.439216, 0.521569, 1),
+"in": Color(1, 0.439216, 0.521569, 1),
+"int": Color(1, 0.439216, 0.521569, 1),
+"internal": Color(1, 0.439216, 0.521569, 1),
+"let": Color(1, 0.439216, 0.521569, 1),
+"method": Color(1, 0.439216, 0.521569, 1),
+"not": Color(1, 0.439216, 0.521569, 1),
+"null": Color(1, 0.439216, 0.521569, 1),
+"or": Color(1, 0.439216, 0.521569, 1),
+"pass": Color(1, 0.54902, 0.8, 1),
+"print": Color(1, 0.439216, 0.521569, 1),
+"private": Color(1, 0.439216, 0.521569, 1),
+"return": Color(1, 0.54902, 0.8, 1),
+"static": Color(1, 0.439216, 0.521569, 1),
+"string": Color(1, 0.439216, 0.521569, 1),
+"super": Color(1, 0.439216, 0.521569, 1),
+"switch": Color(1, 0.54902, 0.8, 1),
+"this": Color(1, 0.439216, 0.521569, 1),
+"throw": Color(1, 0.439216, 0.521569, 1),
+"true": Color(1, 0.439216, 0.521569, 1),
+"try": Color(1, 0.439216, 0.521569, 1),
+"undefined": Color(1, 0.439216, 0.521569, 1),
+"var": Color(1, 0.439216, 0.521569, 1),
+"void": Color(1, 0.439216, 0.521569, 1),
+"while": Color(1, 0.54902, 0.8, 1)
+}
+color_regions = {
+"\" \"": Color(1, 0.929412, 0.631373, 1),
+"#": Color(0.803922, 0.811765, 0.823529, 0.501961),
+"' '": Color(1, 0.929412, 0.631373, 1),
+"/* */": Color(0.803922, 0.811765, 0.823529, 0.501961),
+"//": Color(0.803922, 0.811765, 0.823529, 0.501961),
+"< >": Color(0.854902, 0.647059, 0.12549, 1)
+}
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xepe3"]
+bg_color = Color(0, 0, 0, 0.784314)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_csxk2"]
+bg_color = Color(0.0658284, 0.0758512, 0.0959208, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bqunu"]
+bg_color = Color(0.122347, 0.135368, 0.167908, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_d36lc"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_to4dl"]
+bg_color = Color(0.158829, 0.172988, 0.215449, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8evaa"]
+bg_color = Color(0.235441, 0.254299, 0.310777, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j1hlp"]
+bg_color = Color(0.121569, 0.133333, 0.168627, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [node name="Event Sheet" type="Panel"]
 anchors_preset = 15
@@ -8,165 +122,204 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+script = ExtResource("1_rlr1y")
 
-[node name="ScrollContainer" type="ScrollContainer" parent="."]
+[node name="HSplitContainer" type="HSplitContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/autohide = 0
+theme_override_icons/grabber = ExtResource("1_a4lvh")
+theme_override_icons/h_grabber = ExtResource("1_a4lvh")
+theme_override_icons/v_grabber = ExtResource("1_a4lvh")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
 horizontal_scroll_mode = 3
 vertical_scroll_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
-clip_contents = true
+[node name="HSplitContainer" type="HSplitContainer" parent="HSplitContainer/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_override_constants/separation = 0
+theme_override_constants/autohide = 0
+theme_override_icons/grabber = ExtResource("3_xmu3l")
+theme_override_icons/h_grabber = ExtResource("3_xmu3l")
+theme_override_icons/v_grabber = ExtResource("3_xmu3l")
+split_offset = -400
+
+[node name="Events" type="VBoxContainer" parent="HSplitContainer/ScrollContainer/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+
+[node name="Actions" type="VBoxContainer" parent="HSplitContainer/ScrollContainer/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+
+[node name="CodeEdit" type="CodeEdit" parent="HSplitContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+text = "
+extends Node
+
+func __init() -> void:
+	{init}
+
+func __ready() -> void:
+	{ready}
+
+func __process(delta: float) -> void:
+	{process}
+
+func __input(event: InputEvent) -> void:
+	{input}
+"
+editable = false
+caret_blink = true
+syntax_highlighter = SubResource("CodeHighlighter_hg8pi")
+highlight_all_occurrences = true
+line_folding = true
+gutters_draw_breakpoints_gutter = true
+gutters_draw_line_numbers = true
+gutters_zero_pad_line_numbers = true
+gutters_draw_fold_gutter = true
+code_completion_enabled = true
+indent_automatic = true
+auto_brace_completion_enabled = true
+script = ExtResource("1_e35dg")
 
 [node name="PopupMenu" type="PopupMenu" parent="."]
 size = Vector2i(98, 35)
 item_count = 1
 item_0/text = "Add Event"
 
-[node name="AddWindow" type="Window" parent="."]
-title = "Add Stipulation"
-position = Vector2i(280, 170)
-size = Vector2i(550, 300)
+[node name="Window" type="Control" parent="."]
 visible = false
-min_size = Vector2i(550, 300)
-
-[node name="Panel" type="Panel" parent="AddWindow"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="AddWindow/Panel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 30
+script = ExtResource("3_8re2a")
+window_title = "Add condition"
+
+[node name="Background" type="Panel" parent="Window"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_xepe3")
+
+[node name="WindowPanel" type="Panel" parent="Window"]
+custom_minimum_size = Vector2(620, 260)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -310.0
+offset_top = -188.0
+offset_right = 310.0
+offset_bottom = 188.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_csxk2")
+
+[node name="MarginContainer" type="MarginContainer" parent="Window/WindowPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 15
 theme_override_constants/margin_top = 15
-theme_override_constants/margin_right = 30
+theme_override_constants/margin_right = 15
 theme_override_constants/margin_bottom = 15
 
-[node name="ScrollContainer" type="ScrollContainer" parent="AddWindow/Panel/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Window/WindowPanel/MarginContainer"]
 layout_mode = 2
-horizontal_scroll_mode = 0
-vertical_scroll_mode = 3
-
-[node name="Items" type="GridContainer" parent="AddWindow/Panel/MarginContainer/ScrollContainer"]
-layout_mode = 2
-size_flags_horizontal = 0
-columns = 5
-
-[node name="AddEventOrAction" type="Window" parent="."]
-auto_translate_mode = 1
-title = "Add Stipulation"
-position = Vector2i(280, 170)
-size = Vector2i(550, 300)
-visible = false
-min_size = Vector2i(550, 300)
-
-[node name="Panel" type="Panel" parent="AddEventOrAction"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="AddEventOrAction/Panel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/margin_left = 30
-theme_override_constants/margin_top = 15
-theme_override_constants/margin_right = 30
-theme_override_constants/margin_bottom = 15
-
-[node name="ScrollContainer" type="ScrollContainer" parent="AddEventOrAction/Panel/MarginContainer"]
-layout_mode = 2
-horizontal_scroll_mode = 0
-vertical_scroll_mode = 3
-
-[node name="VBoxContainer" type="VBoxContainer" parent="AddEventOrAction/Panel/MarginContainer/ScrollContainer"]
-layout_mode = 2
-
-[node name="SetParameter" type="Window" parent="."]
-auto_translate_mode = 1
-title = "Add Stipulation"
-position = Vector2i(280, 170)
-size = Vector2i(550, 300)
-visible = false
-min_size = Vector2i(550, 300)
-
-[node name="Panel" type="Panel" parent="SetParameter"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="SetParameter/Panel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/margin_left = 30
-theme_override_constants/margin_top = 30
-theme_override_constants/margin_right = 30
-theme_override_constants/margin_bottom = 30
-
-[node name="VBoxContainer" type="VBoxContainer" parent="SetParameter/Panel/MarginContainer"]
-layout_mode = 2
-
-[node name="Description" type="Label" parent="SetParameter/Panel/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 0
-text = "Секунд: Количество секунд ожидания перед запуском следующего действия."
-vertical_alignment = 1
-autowrap_mode = 2
-
-[node name="ScrollContainer" type="ScrollContainer" parent="SetParameter/Panel/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-vertical_scroll_mode = 3
-
-[node name="Parameters" type="VBoxContainer" parent="SetParameter/Panel/MarginContainer/VBoxContainer/ScrollContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 2
 theme_override_constants/separation = 15
 
-[node name="Buttons" type="HBoxContainer" parent="SetParameter/Panel/MarginContainer/VBoxContainer"]
+[node name="WindowName" type="Label" parent="Window/WindowPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Add condition"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Panel" type="Panel" parent="Window/WindowPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_bqunu")
+
+[node name="Buttons" type="HBoxContainer" parent="Window/WindowPanel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="Cancel" type="Button" parent="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons"]
+visible = false
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_styles/focus = SubResource("StyleBoxEmpty_d36lc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_to4dl")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_8evaa")
+theme_override_styles/normal = SubResource("StyleBoxFlat_j1hlp")
+text = "Cancel"
+
+[node name="Help" type="Button" parent="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons"]
+visible = false
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_styles/focus = SubResource("StyleBoxEmpty_d36lc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_to4dl")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_8evaa")
+theme_override_styles/normal = SubResource("StyleBoxFlat_j1hlp")
+text = "Help"
+
+[node name="Back" type="Button" parent="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons"]
+visible = false
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 size_flags_horizontal = 10
-size_flags_vertical = 8
+size_flags_stretch_ratio = 20.0
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_styles/focus = SubResource("StyleBoxEmpty_d36lc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_to4dl")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_8evaa")
+theme_override_styles/normal = SubResource("StyleBoxFlat_j1hlp")
+text = "Back"
 
-[node name="Back" type="Button" parent="SetParameter/Panel/MarginContainer/VBoxContainer/Buttons"]
+[node name="Next" type="Button" parent="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons"]
+visible = false
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-text = "Назад"
-icon_alignment = 1
+size_flags_horizontal = 10
+size_flags_stretch_ratio = 0.0
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_styles/focus = SubResource("StyleBoxEmpty_d36lc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_to4dl")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_8evaa")
+theme_override_styles/normal = SubResource("StyleBoxFlat_j1hlp")
+text = "Next"
 
-[node name="Finish" type="Button" parent="SetParameter/Panel/MarginContainer/VBoxContainer/Buttons"]
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-text = "Готово"
+[connection signal="gui_input" from="HSplitContainer/ScrollContainer" to="." method="_on_scroll_container_gui_input"]
+[connection signal="text_changed" from="HSplitContainer/CodeEdit" to="HSplitContainer/CodeEdit" method="_on_text_changed"]
+[connection signal="index_pressed" from="PopupMenu" to="." method="_on_popup_menu_index_pressed"]
+[connection signal="button_up" from="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons/Cancel" to="Window" method="_on_cancel_button_up"]
+[connection signal="button_up" from="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons/Back" to="Window" method="_on_back_button_up"]
+[connection signal="button_up" from="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons/Next" to="Window" method="_on_next_button_up"]

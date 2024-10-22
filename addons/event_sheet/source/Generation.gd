@@ -66,6 +66,7 @@ static func process_block(block: BlockResource, existing_functions: Dictionary, 
 			action_lines.append(action_script_template)
 	
 	# Обрабатываем события блока
+	var event_index = 0
 	for event in block.events:
 		if event.event_script:
 			var event_script: GDScript = event.event_script
@@ -114,14 +115,27 @@ static func process_block(block: BlockResource, existing_functions: Dictionary, 
 				else:
 					if existing_functions.has(last_function):
 						var replace_action: String = ""
-						existing_functions[last_function] += "\t".repeat(indent_level) + event_script_template + "\n"
-						for action_line in action_lines:
-							if action_line: replace_action += "\t".repeat(indent_level + 1) + action_line + "\n"
 						
-						if block.sub_blocks.size() <= 0 and action_lines.size() <= 0:
-							existing_functions[last_function] += "\t".repeat(indent_level + 1) + "pass" + "\n"
+						existing_functions[last_function] += "\t".repeat(indent_level + event_index) + event_script_template + "\n"
+						
+						for action_line in action_lines:
+							if action_line:
+								replace_action += "\t".repeat(indent_level + event_index) + action_line + "\n"
+						
+						# New System
+						if block.sub_blocks.size() <= 0 and event_index >= block.events.size() - 1 and action_lines.size() <= 0:
+							existing_functions[last_function] += "\t".repeat(indent_level + event_index + 1) + "pass" + "\n"
 						else:
 							existing_functions[last_function] += replace_action
+						
+						if block.sub_blocks.size() > 0 or block.events.size() > 0:
+							event_index += 1
+						
+						# Old System
+						#if block.sub_blocks.size() <= 0 and event_index >= block.events.size() - 1 and action_lines.size() <= 0:
+							#existing_functions[last_function] += "\t".repeat(indent_level + event_index + 1) + "pass" + "\n"
+						#else:
+							#existing_functions[last_function] += replace_action
 
 	# Generate Variables
 	if block.events.size() <= 0 and block.actions.size() <= 0 and block.variables.size() > 0:

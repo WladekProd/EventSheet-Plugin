@@ -1,5 +1,6 @@
-[gd_scene load_steps=9 format=3 uid="uid://cw0pqfra31e81"]
+[gd_scene load_steps=10 format=3 uid="uid://cw0pqfra31e81"]
 
+[ext_resource type="Script" path="res://addons/event_sheet/source/elements/event_sheet/event.gd" id="1_dm4kb"]
 [ext_resource type="Texture2D" uid="uid://3aayah87ti8k" path="res://addons/event_sheet/resources/icons/divider.svg" id="2_68v1o"]
 [ext_resource type="Texture2D" uid="uid://b50jpu11ld31l" path="res://icon.svg" id="2_xyfqy"]
 
@@ -45,7 +46,7 @@ border_color = Color(0.100632, 0.109839, 0.143618, 1)
 
 [node name="Event" type="Button"]
 custom_minimum_size = Vector2(200, 30)
-offset_right = 200.0
+offset_right = 30.0
 offset_bottom = 30.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -58,6 +59,7 @@ theme_override_styles/pressed_mirrored = SubResource("StyleBoxFlat_v4qxe")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_v4qxe")
 theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_v4qxe")
 theme_override_styles/normal = SubResource("StyleBoxFlat_hnt1a")
+script = ExtResource("1_dm4kb")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1

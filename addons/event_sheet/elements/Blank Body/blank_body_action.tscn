@@ -1,0 +1,75 @@
+[gd_scene load_steps=5 format=3 uid="uid://477fm1yv8ng5"]
+
+[ext_resource type="Script" path="res://addons/event_sheet/source/elements/blank_body/blank_body_action.gd" id="1_rl1dl"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uwmv1"]
+bg_color = Color(0.0943631, 0.105372, 0.138388, 1)
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+expand_margin_left = 5.0
+expand_margin_top = 5.0
+expand_margin_right = 5.0
+expand_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_upddj"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fjnry"]
+
+[node name="Blank Body Action" type="VBoxContainer"]
+custom_minimum_size = Vector2(0, 25)
+offset_right = 393.0
+offset_bottom = 35.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_rl1dl")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+
+[node name="Panel" type="Panel" parent="MarginContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_uwmv1")
+
+[node name="Action" type="PanelContainer" parent="MarginContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_upddj")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/Action"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="AddActionItem" type="MarginContainer" parent="MarginContainer/Action/VBoxContainer"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 3
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_right = 25
+
+[node name="AddAction" type="Button" parent="MarginContainer/Action/VBoxContainer/AddActionItem"]
+layout_mode = 2
+size_flags_horizontal = 0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_hover_pressed_color = Color(0.239216, 0.258824, 0.317647, 1)
+theme_override_colors/font_hover_color = Color(0.446384, 0.474771, 0.559106, 1)
+theme_override_colors/font_pressed_color = Color(0.239216, 0.258824, 0.317647, 1)
+theme_override_colors/font_focus_color = Color(0.239216, 0.258824, 0.317647, 1)
+theme_override_colors/font_color = Color(0.239216, 0.258824, 0.317647, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/focus = SubResource("StyleBoxEmpty_fjnry")
+text = "+ Add Action"
+flat = true
+alignment = 0
+
+[connection signal="child_entered_tree" from="MarginContainer/Action/VBoxContainer" to="MarginContainer" method="_on_items_child_entered_tree"]
+[connection signal="child_exiting_tree" from="MarginContainer/Action/VBoxContainer" to="MarginContainer" method="_on_items_child_exiting_tree"]

@@ -13,6 +13,11 @@ enum BlockType {
 	CYCLE,
 }
 
+enum ConditionType {
+	EVENTS,
+	ACTIONS,
+}
+
 enum Group {
 	NONE,
 	SYSTEM,
