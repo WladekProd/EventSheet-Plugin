@@ -3,4 +3,7 @@ static func params() -> Dictionary:
 	return { }
 
 static func get_template(params: Dictionary = params()) -> String:
-	return """func __ready() -> void:""".format(params)
+	return """func _ready() -> void:""".format({ })
+
+static func get_info(params: Dictionary = params()) -> String:
+	return """Ready""".format({ })

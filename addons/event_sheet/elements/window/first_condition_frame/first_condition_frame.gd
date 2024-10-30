@@ -14,17 +14,13 @@ func update_items_list(conditions: Array = []) -> void:
 		if conditions.size() > 0:
 			for condition in conditions:
 				var _icon: Texture2D = condition["icon"]
-				var _icon_color: Color = condition["icon_color"]
+				var _disable_color: bool = condition["disable_color"]
 				var _name: String = condition["name"]
 				
 				var p_item_template: Button = item_template.instantiate()
 				p_item_template.text = _name
 				p_item_template.icon = _icon
-				if _icon_color:
-					p_item_template.add_theme_color_override("icon_normal_color", _icon_color)
-					p_item_template.add_theme_color_override("icon_focus_color", _icon_color)
-					p_item_template.add_theme_color_override("icon_pressed_color", _icon_color)
-					p_item_template.add_theme_color_override("icon_hover_color", _icon_color)
+				p_item_template.disable_color = _disable_color
 				if !p_item_template.focus_entered.is_connected(_on_select_condition_focus_entered):
 					p_item_template.focus_entered.connect(_on_select_condition_focus_entered.bind({
 						"button": p_item_template,

@@ -1,11 +1,48 @@
-[gd_scene load_steps=7 format=3 uid="uid://dyoxlt8vnfv5y"]
+[gd_scene load_steps=13 format=3 uid="uid://dyoxlt8vnfv5y"]
 
 [ext_resource type="Texture2D" uid="uid://b50jpu11ld31l" path="res://icon.svg" id="1_alvq1"]
 [ext_resource type="Script" path="res://addons/event_sheet/source/elements/event_sheet/action.gd" id="1_sg4pj"]
 [ext_resource type="Texture2D" uid="uid://3aayah87ti8k" path="res://addons/event_sheet/resources/icons/divider.svg" id="3_rwgyg"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_abtk4"]
-bg_color = Color(0.139034, 0.154246, 0.194795, 1)
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2moa3"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yilea"]
+bg_color = Color(0.27451, 0.27451, 0.27451, 0.588235)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g718g"]
+bg_color = Color(0.27451, 0.27451, 0.27451, 0.588235)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0utdj"]
+bg_color = Color(0.27451, 0.27451, 0.27451, 0.588235)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pyego"]
+bg_color = Color(1, 1, 1, 0.0392157)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5h35n"]
+bg_color = Color(1, 1, 1, 0.0588235)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wmyah"]
+bg_color = Color(1, 1, 1, 0.0196078)
 corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
@@ -24,13 +61,13 @@ offset_right = 200.0
 offset_bottom = 30.0
 size_flags_horizontal = 3
 size_flags_vertical = 2
-theme_override_styles/focus = SubResource("StyleBoxFlat_abtk4")
-theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxFlat_abtk4")
-theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_abtk4")
-theme_override_styles/hover_mirrored = SubResource("StyleBoxFlat_abtk4")
-theme_override_styles/hover = SubResource("StyleBoxFlat_abtk4")
-theme_override_styles/pressed_mirrored = SubResource("StyleBoxFlat_abtk4")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_abtk4")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_2moa3")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxFlat_yilea")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_g718g")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxFlat_0utdj")
+theme_override_styles/hover = SubResource("StyleBoxFlat_pyego")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxFlat_5h35n")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_wmyah")
 theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_2g6pv")
 theme_override_styles/normal = SubResource("StyleBoxEmpty_2g6pv")
 script = ExtResource("1_sg4pj")
@@ -88,3 +125,5 @@ visible = false
 layout_mode = 2
 theme_override_constants/separation = 2
 theme_override_styles/separator = SubResource("StyleBoxFlat_1amek")
+
+[connection signal="theme_changed" from="." to="." method="_on_theme_changed"]

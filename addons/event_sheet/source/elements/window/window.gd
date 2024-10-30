@@ -17,10 +17,13 @@ enum WindowType {
 	FIRST_CONDITION,
 	SECOND_CONDITION,
 	FINISH_CONDITION,
+	
+	ADD_GROUP,
 }
 var first_condition_frame: Node = load("res://addons/event_sheet/elements/window/first_condition_frame/first_condition_frame.tscn").instantiate()
 var second_condition_frame: Node = load("res://addons/event_sheet/elements/window/second_condition_frame/second_condition_frame.tscn").instantiate()
 var finish_condition_frame: Node = load("res://addons/event_sheet/elements/window/finish_condition_frame/finish_condition_frame.tscn").instantiate()
+var add_group_frame: Node = load("res://addons/event_sheet/elements/window/add_group_frame/add_group_frame.tscn").instantiate()
 @export var window_frame: WindowType:
 	set(p_window_frame):
 		if p_window_frame != window_frame:
@@ -64,10 +67,16 @@ var finish_button: bool = true:
 			update_configuration_warnings()
 			update_window()
 
+@onready var window_panel: Panel = $WindowPanel
+var standart_window_size: Vector2 = Vector2(620, 376)
+
+var current_block: BlockResource
 var first_condition_data: Dictionary
 var second_condition_data: Dictionary
 var finish_condition_data: Dictionary
 signal finish_data
+
+
 
 func update_window():
 	if window_title and window_title_instance: window_title_instance.text = window_title
@@ -107,6 +116,15 @@ func update_window():
 				back_button = true
 				next_button = false
 				finish_button = true
+			WindowType.ADD_GROUP:
+				add_group_frame.finish_button_up = finish_button_instance
+				window_frame_instance.add_child(add_group_frame)
+				add_group_frame.owner = window_frame_instance.get_owner()
+				cancel_button = true
+				help_button = false
+				back_button = false
+				next_button = false
+				finish_button = true
 			WindowType.NONE:
 				cancel_button = false
 				help_button = false
@@ -115,9 +133,11 @@ func update_window():
 				finish_button = false
 				pass
 
-func show_window(new_title: String = "", new_window_frame: WindowType = WindowType.FIRST_CONDITION):
+func show_window(new_title: String = "", new_window_frame: WindowType = WindowType.FIRST_CONDITION, window_size: Vector2 = standart_window_size):
 	window_title = new_title
 	window_frame = new_window_frame
+	window_panel.set_size(window_size)
+	window_panel.set_position((size / 2) - (window_size / 2))
 	visible = true
 	
 	match window_frame:
@@ -133,6 +153,11 @@ func show_window(new_title: String = "", new_window_frame: WindowType = WindowTy
 			if !finish_condition_frame.finished_condition.is_connected(_on_finished_condition):
 				finish_condition_frame.finished_condition.connect(_on_finished_condition)
 			return finish_condition_frame
+		WindowType.ADD_GROUP:
+			if !add_group_frame.finished.is_connected(_on_finished_group):
+				add_group_frame.finished.connect(_on_finished_group)
+			add_group_frame.clear_frame()
+			return add_group_frame
 	return null
 
 func close_window():
@@ -141,14 +166,25 @@ func close_window():
 	visible = false
 
 
-var second_conditions: Dictionary = {}
+
+func add_group(current_scene):
+	current_block = null
+	var title: String = "Add group"
+	var window_content = show_window(title, WindowType.ADD_GROUP, Vector2(330, 210))
+
+func _on_finished_group(data: Dictionary):
+	finish_data.emit(data, current_block)
+	current_block = null
+	close_window()
+
+
 # Parse First Conditions
 func parse_first_conditions(current_scene, conditions_type: Types.ConditionType) -> Array:
 	var conditions: Array = []
 	
 	var system_condition: Dictionary = {
 		"icon": load("res://addons/event_sheet/resources/icons/system.svg"),
-		"icon_color": EditorInterface.get_editor_theme().get_color("accent_color", "Editor"),
+		"disable_color": false,
 		"name": "System",
 		"type": "System",
 		"conditions_type": conditions_type,
@@ -161,7 +197,7 @@ func parse_first_conditions(current_scene, conditions_type: Types.ConditionType)
 			if item is Node2D:
 				var condition: Dictionary = {
 					"icon": item.texture,
-					"icon_color": Color.WHITE,
+					"disable_color": true,
 					"name": item.name,
 					"type": "Node2D",
 					"object": item,
@@ -198,11 +234,24 @@ func parse_second_conditions(condition_data: Dictionary) -> Dictionary:
 							if resource_instance.action_category == category:
 								conditions[category].append(resource_instance.duplicate(true))
 			"Node2D":
-				#var resource_files: Dictionary = find_tres_files_in_paths([
-					#"res://addons/event_sheet/modules/Node2D/",
-					#"res://addons/event_sheet/modules/General/",
-				#], sub_dirs)
-				pass
+				var resource_files: Dictionary = find_tres_files_in_paths([
+					"res://addons/event_sheet/modules/Node2D/",
+					"res://addons/event_sheet/modules/General/",
+				], sub_dirs)
+				if condition_data["conditions_type"] == Types.ConditionType.EVENTS:
+					for category in Types.Category.values():
+						conditions[category] = []
+						for resource in resource_files["events"]:
+							var resource_instance: EventResource = load(resource)
+							if resource_instance.event_category == category:
+								conditions[category].append(resource_instance.duplicate(true))
+				if condition_data["conditions_type"] == Types.ConditionType.ACTIONS:
+					for category in Types.Category.values():
+						conditions[category] = []
+						for resource in resource_files["actions"]:
+							var resource_instance: ActionResource = load(resource)
+							if resource_instance.action_category == category:
+								conditions[category].append(resource_instance.duplicate(true))
 	
 	condition_data["resources"] = conditions
 	return condition_data
@@ -233,15 +282,17 @@ func find_tres_files_in_paths(resource_paths: Array, sub_dirs: Array) -> Diction
 
 
 # Show 'Add Condition' Window
-func add_condition(current_scene, conditions_type: Types.ConditionType = Types.ConditionType.EVENTS):
+func add_condition(current_scene, cur_block: BlockResource = null, conditions_type: Types.ConditionType = Types.ConditionType.EVENTS):
 	var conditions: Array = parse_first_conditions(current_scene, conditions_type)
 	var title: String = "Add condition"
 	var window_content = show_window(title, WindowType.FIRST_CONDITION)
 	window_content.update_items_list(conditions)
+	current_block = cur_block
 	first_condition_data.clear()
 	second_condition_data.clear()
 	finish_condition_data.clear()
 	finish_condition_frame.finished_data = {
+		"type": Types.BlockType.STANDART,
 		"data": {
 			"condition": null,
 			"resource": null
@@ -278,15 +329,15 @@ func _on_next_button_up(condition_data: Dictionary = {}) -> void:
 	match window_frame:
 		WindowType.FIRST_CONDITION:
 			if condition_data.size() > 0: first_condition_data = condition_data
-			if first_condition_data and !second_conditions.has(first_condition_data["button"]):
-				second_conditions[first_condition_data["button"]] = parse_second_conditions(first_condition_data["data"])
+			if first_condition_data and !second_condition_data.has(first_condition_data["button"]):
+				second_condition_data[first_condition_data["button"]] = parse_second_conditions(first_condition_data["data"])
 			if first_condition_data.size() > 0:
 				var title: String = "Add '{0}' condition".format([first_condition_data["data"].name])
 				var window_content = show_window(title, window_frame + 1)
-				window_content.update_items_list(second_conditions[first_condition_data["button"]])
+				window_content.update_items_list(second_condition_data[first_condition_data["button"]])
 		WindowType.SECOND_CONDITION:
 			if condition_data.size() > 0: second_condition_data = condition_data
-			if second_condition_data.size() > 0:
+			if second_condition_data.size() > 0 and condition_data.has("data"):
 				var data = second_condition_data["data"]
 				var title: String
 				match data.conditions_type:
@@ -299,8 +350,9 @@ func _on_next_button_up(condition_data: Dictionary = {}) -> void:
 		WindowType.FINISH_CONDITION:
 			if condition_data.size() > 0: finish_condition_data = condition_data
 			if finish_condition_data.size() > 0:
-				var data = finish_condition_data["data"]
-				finish_data.emit(data)
+				var data = finish_condition_data
+				finish_data.emit(data, current_block)
+				current_block = null
 				close_window()
 
 func _on_cancel_button_up() -> void:
@@ -316,3 +368,13 @@ func _on_back_button_up() -> void:
 		WindowType.FINISH_CONDITION:
 				var title: String = "Add '{0}' condition".format([first_condition_data["data"].name])
 				show_window(title, window_frame - 1)
+
+func _on_theme_changed() -> void:
+	var base_color: Color = EditorInterface.get_editor_theme().get_color("base_color", "Editor")
+	
+	if window_panel:
+		var _style: StyleBoxFlat = window_panel.get_theme_stylebox("panel").duplicate() as StyleBoxFlat
+		if _style.bg_color != base_color:
+			_style.bg_color = base_color
+			_style.draw_center = true
+			window_panel.add_theme_stylebox_override("panel", _style)

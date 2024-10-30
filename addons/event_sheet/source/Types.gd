@@ -6,11 +6,22 @@ enum VariableType {
 	BOOLEAN,
 }
 
-enum BlockType {
-	EVENT,
+enum EventType {
+	STANDART,
 	SINGLE_EVENT,
 	FUNCTION,
 	CYCLE,
+}
+
+enum BlockType {
+	STANDART,
+	VARIABLE,
+	GROUP,
+}
+enum SubBlocksState {
+	NONE,
+	VISIBLE,
+	HIDDEN,
 }
 
 enum ConditionType {
@@ -36,6 +47,33 @@ const CATEGORY_NAMES = {
 	Category.MAIN: "Main",
 	Category.VARIABLE: "Variable",
 	Category.INPUT: "Input"
+}
+
+enum MoveBlock {
+	UP,
+	SUB,
+	DOWN,
+}
+
+# Parameter Types
+enum STANDART_TYPES {
+	STRING,
+	NUMBER,
+	OPEN_FILE,
+	SELECT_NODE,
+}
+
+enum STIPULATION {
+	EQUALS,
+	UNEVEN,
+	MORE,
+	LESS,
+}
+const STIPULATION_SYMBOL = {
+	STIPULATION.EQUALS: "==",
+	STIPULATION.UNEVEN: "!=",
+	STIPULATION.MORE: ">",
+	STIPULATION.LESS: "<"
 }
 
 class EventSheet:

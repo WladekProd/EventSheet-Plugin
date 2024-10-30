@@ -4,6 +4,8 @@ class_name ActionResource
 
 const Types = preload("res://addons/event_sheet/source/types.gd")
 
+var id: int = 0
+
 @export var action_name: String
 @export var action_icon: Texture2D
 @export var action_description: String
@@ -16,8 +18,6 @@ const Types = preload("res://addons/event_sheet/source/types.gd")
 		update_params()
 
 @export var action_params: Dictionary
-
-var id: int = 0
 
 func update_params():
 	if action_script == null:

@@ -1,12 +1,16 @@
-[gd_scene load_steps=14 format=3 uid="uid://bch7w7cwxwqsn"]
+[gd_scene load_steps=16 format=3 uid="uid://bch7w7cwxwqsn"]
 
 [ext_resource type="Script" path="res://addons/event_sheet/source/elements/event_sheet/event_sheet/event_sheet.gd" id="1_vq26q"]
 [ext_resource type="Texture2D" uid="uid://3aayah87ti8k" path="res://addons/event_sheet/resources/icons/divider.svg" id="2_52akj"]
 [ext_resource type="Texture2D" uid="uid://0uvfcu7l4d1g" path="res://addons/event_sheet/resources/icons/divider_null.png" id="3_a8irr"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/elements/event_sheet/event_sheet/event_list.gd" id="4_8ofs3"]
 [ext_resource type="Script" path="res://addons/event_sheet/source/elements/event_sheet/code_editor/code_edit.gd" id="4_241l8"]
 [ext_resource type="Script" path="res://addons/event_sheet/source/elements/window/window.gd" id="5_f3m08"]
 
-[sub_resource type="CodeHighlighter" id="CodeHighlighter_6sb7y"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0rnoc"]
+bg_color = Color(0.0344663, 0.0419983, 0.0545548, 1)
+
+[sub_resource type="CodeHighlighter" id="CodeHighlighter_vjwx3"]
 number_color = Color(0.631373, 1, 0.878431, 1)
 symbol_color = Color(0.670588, 0.788235, 1, 1)
 function_color = Color(0.341176, 0.701961, 1, 1)
@@ -77,15 +81,15 @@ color_regions = {
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xepe3"]
 bg_color = Color(0, 0, 0, 0.784314)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_csxk2"]
-bg_color = Color(0.0658284, 0.0758512, 0.0959208, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nfbnt"]
+bg_color = Color(0.062666, 0.0763605, 0.0991905, 1)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bqunu"]
-bg_color = Color(0.122347, 0.135368, 0.167908, 1)
+bg_color = Color(0, 0, 0, 0.392157)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
@@ -94,21 +98,21 @@ corner_radius_bottom_left = 10
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_d36lc"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_to4dl"]
-bg_color = Color(0.158829, 0.172988, 0.215449, 1)
+bg_color = Color(0, 0, 0, 0.490196)
 corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8evaa"]
-bg_color = Color(0.235441, 0.254299, 0.310777, 1)
+bg_color = Color(0, 0, 0, 0.588235)
 corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j1hlp"]
-bg_color = Color(0.121569, 0.133333, 0.168627, 1)
+bg_color = Color(0, 0, 0, 0.392157)
 corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
@@ -122,6 +126,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_0rnoc")
 script = ExtResource("1_vq26q")
 
 [node name="HSplitContainer" type="HSplitContainer" parent="."]
@@ -142,9 +147,14 @@ size_flags_horizontal = 3
 horizontal_scroll_mode = 3
 vertical_scroll_mode = 2
 
-[node name="HSplitContainer" type="HSplitContainer" parent="HSplitContainer/ScrollContainer"]
+[node name="HBoxContainer" type="VBoxContainer" parent="HSplitContainer/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="HSplitContainer" type="HSplitContainer" parent="HSplitContainer/ScrollContainer/HBoxContainer"]
+layout_mode = 2
 size_flags_vertical = 0
 theme_override_constants/separation = 0
 theme_override_constants/autohide = 0
@@ -153,38 +163,27 @@ theme_override_icons/h_grabber = ExtResource("3_a8irr")
 theme_override_icons/v_grabber = ExtResource("3_a8irr")
 split_offset = -400
 
-[node name="Events" type="VBoxContainer" parent="HSplitContainer/ScrollContainer/HSplitContainer"]
+[node name="Events" type="VBoxContainer" parent="HSplitContainer/ScrollContainer/HBoxContainer/HSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
+mouse_filter = 2
+script = ExtResource("4_8ofs3")
 
-[node name="Actions" type="VBoxContainer" parent="HSplitContainer/ScrollContainer/HSplitContainer"]
+[node name="Actions" type="VBoxContainer" parent="HSplitContainer/ScrollContainer/HBoxContainer/HSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
+mouse_filter = 2
 
 [node name="CodeEdit" type="CodeEdit" parent="HSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "
-extends Node
-
-func __init() -> void:
-	{init}
-
-func __ready() -> void:
-	{ready}
-
-func __process(delta: float) -> void:
-	{process}
-
-func __input(event: InputEvent) -> void:
-	{input}
-"
 editable = false
 caret_blink = true
-syntax_highlighter = SubResource("CodeHighlighter_6sb7y")
+syntax_highlighter = SubResource("CodeHighlighter_vjwx3")
 highlight_all_occurrences = true
+draw_tabs = true
 line_folding = true
 gutters_draw_breakpoints_gutter = true
 gutters_draw_line_numbers = true
@@ -221,7 +220,7 @@ grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_xepe3")
 
 [node name="WindowPanel" type="Panel" parent="Window"]
-custom_minimum_size = Vector2(620, 260)
+custom_minimum_size = Vector2(330, 210)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -234,7 +233,7 @@ offset_right = 310.0
 offset_bottom = 188.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_csxk2")
+theme_override_styles/panel = SubResource("StyleBoxFlat_nfbnt")
 
 [node name="MarginContainer" type="MarginContainer" parent="Window/WindowPanel"]
 layout_mode = 1
@@ -329,9 +328,11 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_8evaa")
 theme_override_styles/normal = SubResource("StyleBoxFlat_j1hlp")
 text = "Finish"
 
+[connection signal="theme_changed" from="." to="." method="_on_theme_changed"]
 [connection signal="gui_input" from="HSplitContainer/ScrollContainer" to="." method="_on_scroll_container_gui_input"]
 [connection signal="text_changed" from="HSplitContainer/CodeEdit" to="HSplitContainer/CodeEdit" method="_on_text_changed"]
 [connection signal="index_pressed" from="PopupMenu" to="." method="_on_popup_menu_index_pressed"]
+[connection signal="theme_changed" from="Window" to="Window" method="_on_theme_changed"]
 [connection signal="button_up" from="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons/Cancel" to="Window" method="_on_cancel_button_up"]
 [connection signal="button_up" from="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons/Back" to="Window" method="_on_back_button_up"]
 [connection signal="button_up" from="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons/Next" to="Window" method="_on_next_button_up"]

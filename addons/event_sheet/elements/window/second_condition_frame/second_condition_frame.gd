@@ -14,7 +14,7 @@ func update_items_list(conditions: Dictionary = {}) -> void:
 		
 		if conditions.size() > 0:
 			var _icon: Texture2D = conditions["icon"]
-			var _icon_color: Color = conditions["icon_color"]
+			var _disable_color: bool = conditions["disable_color"]
 			var _name: String = conditions["name"]
 			var _type: String = conditions["type"]
 			var _conditions_type: Types.ConditionType = conditions["conditions_type"]
@@ -41,17 +41,13 @@ func update_items_list(conditions: Dictionary = {}) -> void:
 							var item_button_template: Button = load("res://addons/event_sheet/elements/window/second_condition_frame/second_condition_item_button.tscn").instantiate()
 							item_button_template.text = res.event_name
 							item_button_template.icon = res.event_icon
-							if _icon_color:
-								item_button_template.add_theme_color_override("icon_normal_color", _icon_color)
-								item_button_template.add_theme_color_override("icon_focus_color", _icon_color)
-								item_button_template.add_theme_color_override("icon_pressed_color", _icon_color)
-								item_button_template.add_theme_color_override("icon_hover_color", _icon_color)
+							item_button_template.disable_color = _disable_color
 							if !item_button_template.focus_entered.is_connected(_on_select_condition_focus_entered):
 								item_button_template.focus_entered.connect(_on_select_condition_focus_entered.bind({
 									"button": item_button_template,
 									"data": {
 										"icon": _icon,
-										"icon_color": _icon_color,
+										"disable_color": _disable_color,
 										"name": _name,
 										"type": _type,
 										"conditions_type": _conditions_type,
@@ -65,17 +61,13 @@ func update_items_list(conditions: Dictionary = {}) -> void:
 							var item_button_template: Button = load("res://addons/event_sheet/elements/window/second_condition_frame/second_condition_item_button.tscn").instantiate()
 							item_button_template.text = res.action_name
 							item_button_template.icon = res.action_icon
-							if _icon_color:
-								item_button_template.add_theme_color_override("icon_normal_color", _icon_color)
-								item_button_template.add_theme_color_override("icon_focus_color", _icon_color)
-								item_button_template.add_theme_color_override("icon_pressed_color", _icon_color)
-								item_button_template.add_theme_color_override("icon_hover_color", _icon_color)
+							item_button_template.disable_color = _disable_color
 							if !item_button_template.focus_entered.is_connected(_on_select_condition_focus_entered):
 								item_button_template.focus_entered.connect(_on_select_condition_focus_entered.bind({
 									"button": item_button_template,
 									"data": {
 										"icon": _icon,
-										"icon_color": _icon_color,
+										"disable_color": _disable_color,
 										"name": _name,
 										"type": _type,
 										"conditions_type": _conditions_type,

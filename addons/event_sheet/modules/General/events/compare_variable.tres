@@ -16,14 +16,25 @@ event_script = ExtResource("1_6q335")
 event_params = {
 "comparison": {
 "name": "Comparison",
-"value": ""
+"order": 1,
+"type": {
+"EQUALS": 0,
+"LESS": 3,
+"MORE": 2,
+"UNEVEN": 1
+},
+"value": "!="
 },
 "variable_a": {
 "name": "Variable A",
+"order": 0,
+"type": 0,
 "value": ""
 },
 "variable_b": {
 "name": "Variable B",
+"order": 2,
+"type": 0,
 "value": ""
 }
 }

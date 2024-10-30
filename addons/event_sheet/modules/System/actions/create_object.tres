@@ -15,18 +15,26 @@ action_script = ExtResource("1_v0v5l")
 action_params = {
 "name": {
 "name": "Name",
+"order": 1,
+"type": 0,
 "value": ""
 },
 "object": {
 "name": "Object",
+"order": 0,
+"type": 2,
 "value": ""
 },
 "x": {
 "name": "X Position",
+"order": 2,
+"type": 1,
 "value": ""
 },
 "y": {
 "name": "Y Position",
+"order": 3,
+"type": 1,
 "value": ""
 }
 }

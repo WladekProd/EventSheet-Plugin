@@ -4,10 +4,19 @@ extends Panel
 const Types = preload("res://addons/event_sheet/source/types.gd")
 const WindowClass = preload("res://addons/event_sheet/source/elements/window/window.gd")
 
+var theme_colors: Dictionary = {
+	"base_color": EditorInterface.get_editor_theme().get_color("base_color", "Editor"),
+	"accent_color": EditorInterface.get_editor_theme().get_color("accent_color", "Editor"),
+}
+
 @onready var _popup_menu: PopupMenu = $PopupMenu
 @onready var _window: Control = $Window
-@onready var event_items: VBoxContainer = $HSplitContainer/ScrollContainer/HSplitContainer/Events
-@onready var action_items: VBoxContainer = $HSplitContainer/ScrollContainer/HSplitContainer/Actions
+@onready var split_container: HSplitContainer = $HSplitContainer/ScrollContainer/HBoxContainer/HSplitContainer
+@onready var code_editor: CodeEdit = $HSplitContainer/CodeEdit
+@onready var event_items: VBoxContainer = $HSplitContainer/ScrollContainer/HBoxContainer/HSplitContainer/Events
+@onready var action_items: VBoxContainer = $HSplitContainer/ScrollContainer/HBoxContainer/HSplitContainer/Actions
+
+var result_script: String = ""
 
 var event_sheet_data: Array[BlockResource]
 var current_scene:
@@ -19,162 +28,228 @@ var current_scene:
 			update_configuration_warnings()
 var current_popup_menu: String = "general"
 var popup_menus: Dictionary = {
-	"general": ["Add Event", "Add Blank Event"]
+	"general": ["Add Event", "Add Blank Event", "Add Group"]
 }
 const events: Dictionary = {}
 const actions: Dictionary = {}
 
 
 
+
+
 func _ready() -> void:
 	if !_window.finish_data.is_connected(_on_finish_data):
 		_window.finish_data.connect(_on_finish_data)
+	ESUtils.is_dragging = false
+	ESUtils.dragging_data = null
+	code_editor.text = result_script
 
 func _process(delta: float) -> void:
 	pass
 
 
 
-## Add New Blank Body
-#func add_blank_body() -> Dictionary:
-	#var blank_body_event_instance: VBoxContainer = load("res://addons/event_sheet/elements/Blank Body/blank_body_event.tscn").instantiate()
-	#var blank_body_action_instance: VBoxContainer = load("res://addons/event_sheet/elements/Blank Body/blank_body_action.tscn").instantiate()
-	#blank_body_action_instance.add_action_button_up.connect(_on_add_action_button_up)
-	#
-	#blank_body_event_instance.blank_body_action = blank_body_action_instance
-	#blank_body_action_instance.blank_body_event = blank_body_event_instance
-	#
-	#event_items.add_child(blank_body_event_instance)
-	#blank_body_event_instance.owner = event_items.get_owner()
-	#
-	#action_items.add_child(blank_body_action_instance)
-	#blank_body_action_instance.owner = action_items.get_owner()
-	#
-	#return { "event": blank_body_event_instance, "action": blank_body_action_instance}
-#
-## Add New Data Body
-#func add_data_body(data: Dictionary):
-	#var blank_body: Dictionary = add_blank_body()
-	#var condition_type: Types.ConditionType = data.condition
-	#match condition_type:
-		#Types.ConditionType.EVENTS:
-			#var resource: EventResource = data.resource
-			#
-			#var event_instance: Button = load("res://addons/event_sheet/elements/Event/event.tscn").instantiate()
-			#event_instance.resource = resource
-			#
-			#var items: VBoxContainer = blank_body["event"].event_items
-			#items.add_child(event_instance)
-		#Types.ConditionType.ACTIONS:
-			#var resource: ActionResource = data.resource
-			#
-			#var action_instance: Button = load("res://addons/event_sheet/elements/Action/action.tscn").instantiate()
-			#action_instance.resource = resource
-			#
-			#var items: VBoxContainer = blank_body["action"].action_items
-			#items.add_child(action_instance)
-			#items.move_child(action_instance, items.get_child_count() - 2)
 
-
+# Кэшированные элементы интерфейса для блоков
+var blank_body_left_scene := preload("res://addons/event_sheet/elements/blank_body/blank_body_left.tscn")
+var blank_body_right_scene := preload("res://addons/event_sheet/elements/blank_body/blank_body_right.tscn")
+var event_scene := preload("res://addons/event_sheet/elements/conditions/event.tscn")
+var action_scene := preload("res://addons/event_sheet/elements/conditions/action.tscn")
 
 var global_block_id: int = 0
-var current_block: BlockResource
 
-func add_data_to_block(data: Dictionary):
-	var condition_type: Types.ConditionType = data.condition
+func add_data(data: Dictionary, to_block: BlockResource = null):
+	var _data_type: Types.BlockType = data["type"]
+	var _data: Dictionary = data["data"]
+	var new_block: BlockResource
 	
-	match condition_type:
-		Types.ConditionType.EVENTS:
-			var resource: EventResource = data.resource
-			if !current_block:
-				var new_block: BlockResource = BlockResource.new()
-				new_block.id = global_block_id
-				new_block.events.append(resource)
-				event_sheet_data.append(new_block)
-			else:
-				current_block.events.append(resource)
-		Types.ConditionType.ACTIONS:
-			var resource: ActionResource = data.resource
-			if !current_block:
-				var new_block: BlockResource = BlockResource.new()
-				new_block.id = global_block_id
-				new_block.actions.append(resource)
-				event_sheet_data.append(new_block)
-			else:
-				current_block.actions.append(resource)
+	if !to_block:
+		new_block = BlockResource.new()
+		new_block.id = global_block_id
+		new_block.block_type = _data_type
+		if _data_type == Types.BlockType.GROUP:
+			new_block.group_name = _data.group_name
+			new_block.group_description = _data.group_description
+		event_sheet_data.append(new_block)
+	else:
+		new_block = to_block
+
+	# Добавляем ресурсы для событий и действий
+	if _data_type == Types.BlockType.STANDART:
+		if _data.condition == Types.ConditionType.EVENTS:
+			var new_event: EventResource = _data.resource
+			new_event.id = new_block.events.size()
+			new_block.events.append(new_event)
+		elif _data.condition == Types.ConditionType.ACTIONS:
+			var new_action: ActionResource = _data.resource
+			new_action.id = new_block.actions.size()
+			new_block.actions.append(new_action)
 
 	global_block_id += 1
-	current_block = null
-	update_event_sheet()
 
-func update_event_sheet():
-	for event in event_items.get_children():
-		event_items.remove_child(event)
-		event.queue_free()
-	for action in action_items.get_children():
-		action_items.remove_child(action)
-		action.queue_free()
+	# Перерисовываем только новый блок
+	update_block(new_block)
+	generate_code()
+
+func update_block(block: BlockResource, block_level: int = 0, parent_left_body: VBoxContainer = null, parent_right_body: VBoxContainer = null):
+	var left_body: VBoxContainer = ESUtils.find_block_body(event_items, block.id, "VBoxContainer")
+	var right_body: VBoxContainer = ESUtils.find_block_body(action_items, block.id, "VBoxContainer")
+
+	#print(block.id)
+	#print(left_body)
+	#print(right_body)
+
+	if !left_body and !right_body:
+		left_body = blank_body_left_scene.instantiate()
+		right_body = blank_body_right_scene.instantiate()
+	
+		if parent_left_body: parent_left_body.add_child(left_body)
+		else: event_items.add_child(left_body)
+		
+		if parent_right_body: parent_right_body.add_child(right_body)
+		else: action_items.add_child(right_body)
+		
+		# Block ID | Block Level
+		left_body.name = "{0} | {1}".format([block.id, 0])
+		left_body.blank_body_right = right_body
+		left_body.dragged_block.connect(_drop_data_block)
+		
+		# Block ID | Block Level
+		right_body.name = "{0} | {1}".format([block.id, 0])
+		right_body.blank_body_left = left_body
+		right_body.add_action_button_up.connect(_on_add_action_button_up.bind())
+	
+	left_body.block = block
+	left_body.blank_body_type = block.block_type
+	left_body.sub_blocks_state = block.sub_blocks_state
+	
+	right_body.block = block
+	right_body.blank_body_type = block.block_type
+	
+	# Добавляем события и действия
+	if block.block_type == Types.BlockType.STANDART:
+		for event in block.events:
+			var event_item: Button = ESUtils.find_block_body(left_body.content_items, event.id, "Button")
+			if !event_item:
+				event_item = event_scene.instantiate()
+				event_item.name = str(event.id)
+				left_body.content.add_child(event_item)
+				left_body.content.move_child(event_item, left_body.content.get_child_count() - 1)
+			event_item.resource = event
+		
+		for action in block.actions:
+			var action_item: Button = ESUtils.find_block_body(right_body.content_items, action.id, "Button")
+			if !action_item:
+				action_item = action_scene.instantiate()
+				action_item.name = str(action.id)
+				right_body.content.add_child(action_item)
+				right_body.content.move_child(action_item, right_body.content.get_child_count() - 2)
+			action_item.resource = action
+	
+	# Обновление групповых данных
+	if block.block_type == Types.BlockType.GROUP:
+		left_body.content.group_name.text = block.group_name
+		left_body.content.group_description.text = block.group_description
+	
+	event_items.update_lines()
+	
+	# Рекурсивная обработка подблоков
+	for sub_block in block.sub_blocks:
+		update_block(sub_block, block_level + 1, left_body, right_body)
+
+func update_block_hierarchy(root_block: BlockResource):
+	update_block(root_block)
+
+
+
+var function_contents: Dictionary = {
+	"_init": []
+}
+
+func generate_code():
+	print("generate code")
+	result_script = ""
+	function_contents = {
+		"_init": []
+	}
+	
+	if current_scene:
+		result_script += "extends {0}\n".format([str(current_scene.get_class())])
+	else:
+		result_script += "extends Node\n"
 	
 	for block in event_sheet_data:
 		process_block(block)
-
-var block_level = 0
-func process_block(block: BlockResource, index: int = 0, parent_container_event: VBoxContainer = null, parent_container_action: VBoxContainer = null):
-	var events: Array[EventResource] = block.events
-	var actions: Array[ActionResource] = block.actions
-	var sub_blocks: Array[BlockResource] = block.sub_blocks
 	
-	# Загружаем blank_body для событий и действий
-	var blank_body_event: VBoxContainer = load("res://addons/event_sheet/elements/blank_body/blank_body_event.tscn").instantiate()
-	var blank_body_action: VBoxContainer = load("res://addons/event_sheet/elements/blank_body/blank_body_action.tscn").instantiate()
+	# Добавляем содержимое всех функций в итоговый скрипт
+	for func_name in function_contents.keys():
+		var func_content = "\nfunc {0}():\n\t".format([func_name])
+		for line in function_contents[func_name]:
+			func_content += "{0}\n\t".format([line])
+		result_script += func_content
 	
-	blank_body_event.block = block
-	blank_body_event.blank_body_action = blank_body_action
-	blank_body_action.blank_body_event = blank_body_event
+	code_editor.text = result_script
 
-	# Если передан родительский контейнер, добавляем туда; если нет — в корневой event_items/action_items
-	if parent_container_event != null:
-		blank_body_event.sub_block_index = index + 1
-		parent_container_event.add_child(blank_body_event)
-	else:
-		event_items.add_child(blank_body_event)
-
-	if parent_container_action != null:
-		parent_container_action.add_child(blank_body_action)
-	else:
-		action_items.add_child(blank_body_action)
-
-	# Подключаем сигналы
-	blank_body_event.dragged_block.connect(_drop_data_block)
-	blank_body_action.add_action_button_up.connect(_on_add_action_button_up.bind(block))
+func process_block(block: BlockResource, sub_block_index: int = 1, parent_func_name: String = "_init"):
+	var func_name: String = parent_func_name
+	var is_stipulation: bool
 	
-	# Добавляем элементы событий
-	for event: EventResource in events:
-		var event_item: Button = load("res://addons/event_sheet/elements/conditions/event.tscn").instantiate()
-		event_item.resource = event
-		blank_body_event.event_items.add_child(event_item)
-		blank_body_event.event_items.move_child(event_item, blank_body_event.event_items.get_child_count() - 1)
+	var _spaces: String
+	if func_name != "_init": _spaces = "\t".repeat(sub_block_index - 2) if sub_block_index >= 2 else ""
+	else: _spaces = "\t".repeat(sub_block_index - 1) if sub_block_index >= 2 else ""
+	
+	if block.block_type == Types.BlockType.STANDART:
+		for event: EventResource in block.events:
+			var _script = event.event_script
+			var _template: String = _script.get_template(event.event_params).strip_edges()
+			
+			if _template.begins_with("func"):
+				var _split_template: PackedStringArray = _template.split(" ")
+				func_name = _split_template[1].substr(0, _split_template[1].find("("))
+				
+				# Проверка на существование функции и создание списка, если функция новая
+				if func_name == "_ready" or func_name == "_process" or func_name == "_input":
+					if !function_contents.has(func_name):
+						function_contents[func_name] = []
+					continue
+			
+			if _template.begins_with("if"):
+				var _if_template: String = _spaces + "{0}".format([_template])
+				
+				if func_name.is_empty(): func_name = "_init"
+				
+				if function_contents.has(func_name):
+					function_contents[func_name].append(_if_template)
+				
+				is_stipulation = true
 		
-	# Добавляем элементы действий
-	for action: ActionResource in actions:
-		var action_item: Button = load("res://addons/event_sheet/elements/conditions/action.tscn").instantiate()
-		action_item.resource = action
-		blank_body_action.action_items.add_child(action_item)
-		blank_body_action.action_items.move_child(action_item, blank_body_action.action_items.get_child_count() - 2)
-
-	# Рекурсивная обработка подблоков
-	if sub_blocks.size() > 0:
-		block_level += 1
-		for sub_block in sub_blocks:
-			# Для каждого подблока вызываем процесс с текущими blank_body в качестве родительских контейнеров
-			process_block(sub_block, index + 1, blank_body_event, blank_body_action)
+		for action: ActionResource in block.actions:
+			var _script = action.action_script
+			var _template: String = _script.get_template(action.action_params).strip_edges()
+			var _split_template: PackedStringArray = _template.split("\n")
+			
+			var _action_spaces: String = _spaces + "\t" if is_stipulation else ""
+			
+			if func_name.is_empty(): func_name = "_init"
+			
+			# Если функция существует, добавляем действие к её содержимому
+			if function_contents.has(func_name):
+				if _split_template.size() > 1:
+					for line in _split_template:
+						function_contents[func_name].append(_action_spaces + line)
+				else:
+					function_contents[func_name].append(_action_spaces + _template)
+				
+	
+	for sub_block in block.sub_blocks:
+		process_block(sub_block, sub_block_index + 1, func_name)
 
 # Event Sheet Inputs
 func _on_scroll_container_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		# Event Sheet - Double Click
 		if event.button_index == MOUSE_BUTTON_LEFT and event.double_click:
-			_window.add_condition(current_scene, Types.ConditionType.EVENTS)
+			_window.add_condition(current_scene, null, Types.ConditionType.EVENTS)
 		# Event Sheet - Right Click
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 			var mouse_pos = Vector2i(event.global_position) + get_window().position
@@ -192,53 +267,149 @@ func _on_scroll_container_gui_input(event: InputEvent) -> void:
 func _on_popup_menu_index_pressed(index: int) -> void:
 	if current_popup_menu == "general":
 		match index:
-			0: _window.add_condition(current_scene, Types.ConditionType.EVENTS)
+			0: _window.add_condition(current_scene, null, Types.ConditionType.EVENTS)
 			1: pass # add_blank_body()
+			2: _window.add_group(current_scene)
 
 func _on_add_action_button_up(block):
-	current_block = block
-	_window.add_condition(current_scene, Types.ConditionType.ACTIONS)
+	_window.add_condition(current_scene, block, Types.ConditionType.ACTIONS)
 
-func _on_finish_data(data: Dictionary):
-	add_data_to_block(data)
+func _on_finish_data(data: Dictionary, block: BlockResource = null):
+	add_data(data, block)
 
+# Drag and Drop
 func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 	return true
 
+# Если блок перетащить на event sheet
 func _drop_data(at_position: Vector2, data: Variant) -> void:
-	var result: Dictionary = ESUtils.find_block_and_parent(data.block.id, event_sheet_data)
-	var block: BlockResource = result["block"]
-	var parent: BlockResource = result["parent"]
-	if !parent:
-		for _block in event_sheet_data:
-			if block.id == _block.id:
-				event_sheet_data.erase(_block)
-				event_sheet_data.append(block)
-	else:
-		for _block in parent.sub_blocks:
-			if block.id == _block.id:
-				parent.sub_blocks.erase(_block)
-				event_sheet_data.append(block)
-	update_event_sheet()
-
-func _drop_data_block(from_object: Variant, to_object: Variant) -> void:
-	var result: Dictionary = ESUtils.find_block_and_parent(from_object.block.id, event_sheet_data)
-	var block: BlockResource = result["block"]
-	var parent: BlockResource = result["parent"]
+	# Получаем from объекты
+	var from_block: BlockResource = data.block
+	var from_block_root: BlockResource = ESUtils.find_root_block(event_sheet_data, from_block)
+	var from_block_parent: BlockResource = ESUtils.find_parent_block(event_sheet_data, from_block)
+	var from_left: VBoxContainer = data
+	var from_right: VBoxContainer = ESUtils.find_block_body(action_items, from_block.id, "VBoxContainer")
 	
-	# Проверка: блок не должен быть потомком или самим собой
-	if ESUtils.is_descendant_of(to_object.block, block):
+	# Удаление блока из родительского контейнера, если он не корневой
+	if from_block_parent:
+		from_block_parent.sub_blocks.erase(from_block)
+	else:
+		event_sheet_data.erase(from_block)
+	event_sheet_data.insert(event_sheet_data.size(), from_block)
+	
+	# Перемещение
+	from_left.reparent(event_items)
+	from_right.reparent(action_items)
+	event_items.move_child(from_left, event_items.get_child_count())
+	action_items.move_child(from_right, event_items.get_child_count())
+	
+	from_left.name = "{0} | {1}".format([from_block.id, 0])
+	from_right.name = "{0} | {1}".format([from_block.id, 0])
+	
+	# Обновление блоков
+	update_block_hierarchy(from_block)
+	update_block_hierarchy(from_block_root)
+	
+	event_items.update_events(from_left)
+	event_items.update_lines()
+	
+	generate_code()
+
+# Если блок перетащить на другой блок
+func _drop_data_block(from_left: Variant, to_left: Variant, move_block: Types.MoveBlock) -> void:
+
+	# Получаем from объекты
+	var from_block: BlockResource = from_left.block
+	var from_block_root: BlockResource = ESUtils.find_root_block(event_sheet_data, from_block)
+	var from_block_parent: BlockResource = ESUtils.find_parent_block(event_sheet_data, from_block)
+	var from_right: VBoxContainer = ESUtils.find_block_body(action_items, from_block.id, "VBoxContainer")
+
+	# Получаем to объекты
+	var to_block: BlockResource = to_left.block
+	var to_block_root: BlockResource = ESUtils.find_root_block(event_sheet_data, to_block)
+	var to_block_parent: BlockResource = ESUtils.find_parent_block(event_sheet_data, to_block)
+	var to_right: VBoxContainer = ESUtils.find_block_body(action_items, to_block.id, "VBoxContainer")
+	
+	# Проверяем, не является ли to_block потомком from_block
+	if ESUtils.is_descendant_of(to_block, from_block):
 		print("Нельзя перемещать блок в свои подблоки или под самого себя.")
 		return
 	
-	if !parent:
-		for _block in event_sheet_data:
-			if block.id == _block.id:
-				event_sheet_data.erase(_block)
-				to_object.block.sub_blocks.append(block)
-	if parent:
-		for _block in parent.sub_blocks:
-			if block.id == _block.id:
-				parent.sub_blocks.erase(_block)
-				to_object.block.sub_blocks.append(block)
-	update_event_sheet()
+	# Удаление блока из родительского контейнера, если он не корневой
+	if from_block_parent:
+		from_block_parent.sub_blocks.erase(from_block)
+	else:
+		event_sheet_data.erase(from_block)
+	
+	# Перемещение в зависимости от move_block
+	match move_block:
+		Types.MoveBlock.UP:
+			if to_block_parent:
+				var index = to_block_parent.sub_blocks.find(to_block)
+				if index >= 0: to_block_parent.sub_blocks.insert(index, from_block)
+				from_left.reparent(to_left.get_parent())
+				from_right.reparent(to_right.get_parent())
+				
+				var to_index = to_left.get_index()
+				to_left.get_parent().move_child(from_left, to_index)
+				to_right.get_parent().move_child(from_right, to_index)
+				from_left.name = "{0} | {1}".format([from_block.id, int(to_left.name.split(" | ")[1])])
+				from_right.name = "{0} | {1}".format([from_block.id, int(to_right.name.split(" | ")[1])])
+			else:
+				var index = event_sheet_data.find(to_block)
+				if index >= 0: event_sheet_data.insert(index, from_block)
+				from_left.reparent(event_items)
+				from_right.reparent(action_items)
+				
+				var to_index = to_left.get_index()
+				event_items.move_child(from_left, to_index)
+				action_items.move_child(from_right, to_index)
+				from_left.name = "{0} | {1}".format([from_block.id, 0])
+				from_right.name = "{0} | {1}".format([from_block.id, 0])
+		Types.MoveBlock.DOWN:
+			if to_block_parent:
+				var index = to_block_parent.sub_blocks.find(to_block)
+				if index >= 0: to_block_parent.sub_blocks.insert(index + 1, from_block)
+				from_left.reparent(to_left.get_parent())
+				from_right.reparent(to_right.get_parent())
+				
+				var to_index = to_left.get_index() + 1
+				to_left.get_parent().move_child(from_left, to_index)
+				to_right.get_parent().move_child(from_right, to_index)
+				from_left.name = "{0} | {1}".format([from_block.id, int(to_left.name.split(" | ")[1])])
+				from_right.name = "{0} | {1}".format([from_block.id, int(to_right.name.split(" | ")[1])])
+			else:
+				var index = event_sheet_data.find(to_block)
+				if index >= 0: event_sheet_data.insert(index + 1, from_block)
+				from_left.reparent(event_items)
+				from_right.reparent(action_items)
+				
+				var to_index = to_left.get_index() + 1
+				event_items.move_child(from_left, to_index)
+				action_items.move_child(from_right, to_index)
+				from_left.name = "{0} | {1}".format([from_block.id, 0])
+				from_right.name = "{0} | {1}".format([from_block.id, 0])
+		Types.MoveBlock.SUB:
+			to_block.sub_blocks.append(from_block)
+			from_left.reparent(to_left)
+			from_right.reparent(to_right)
+			from_left.name = "{0} | {1}".format([from_block.id, int(to_left.name.split(" | ")[1]) + 1])
+			from_right.name = "{0} | {1}".format([from_block.id, int(to_right.name.split(" | ")[1]) + 1])
+	
+	# Обновление блоков
+	update_block_hierarchy(to_block_root)
+	update_block_hierarchy(from_block_root)
+	
+	event_items.update_events(from_left)
+	event_items.update_lines()
+	
+	generate_code()
+
+func _on_theme_changed() -> void:
+	var background_color: Color = EditorInterface.get_editor_theme().get_color("background", "Editor")
+	
+	var _style: StyleBoxFlat = get_theme_stylebox("panel").duplicate() as StyleBoxFlat
+	if _style.bg_color != background_color:
+		_style.bg_color = background_color
+		_style.draw_center = true
+		add_theme_stylebox_override("panel", _style)

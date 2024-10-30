@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://coghkai0vc7tb"]
 
-[node name="FinishConditionStringPatameter" type="HBoxContainer"]
+[node name="StringPatameter" type="HBoxContainer"]
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 2

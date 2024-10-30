@@ -2,45 +2,77 @@
 extends Node
 class_name ESUtils
 
-static func cteate_object(scene, object_path: String, object_name: String, x: float, y: float) -> Node:
-	var object: Node = load(object_path).instantiate()
-	object.name = object_name
-	object.position = Vector2(x, y)
-	scene.add_child(object)
-	return object
+static var base_control = EditorInterface.get_base_control()
+static var scene_tree_dock = base_control.find_children("Scene", "", true, false)[0]
+static var scene_tree_editor = ESUtils.find_child_by_class(scene_tree_dock, 'SceneTreeEditor')
+static var scene_tree_editor_tree: Tree = ESUtils.find_child_by_class(scene_tree_editor, 'Tree')
 
-static func find_block_and_parent(target_id: int, event_sheet_data: Array[BlockResource]) -> Dictionary:
-	var result: Dictionary = {"block": null, "parent": null}
+static var is_dragging: bool = false
+static var dragging_data: VBoxContainer = null
 
-	for block in event_sheet_data:
-		result = find_block_and_parent_by_id(target_id, block)
-		if result["block"] != null:
-			break
 
-	if result["block"] != null:
-		print("Найден блок с ID:", result["block"].id)
-		if result["parent"] != null:
-			print("Родительский блок ID:", result["parent"].id)
-		else:
-			print("Родительский блок не найден (это верхний блок)")
-	else:
-		print("Блок с таким ID не найден")
 
-	return result
-static func find_block_and_parent_by_id(target_id: int, current_block: BlockResource, parent_block: BlockResource = null) -> Dictionary:
-	# Если текущий блок имеет нужный ID, возвращаем текущий блок и его родителя
-	if current_block.id == target_id:
-		return {"block": current_block, "parent": parent_block}
 
-	# Рекурсивный поиск в подблоках
-	for sub_block in current_block.sub_blocks:
-		var result = find_block_and_parent_by_id(target_id, sub_block, current_block)
-		if result["block"] != null:
+static func find_child_by_class(node:Node, cls:String):
+	for child in node.get_children():
+		if child.get_class() == cls:
+			return child
+
+
+static func get_all_items(tree: Tree) -> Array:
+	var items = []
+	var root = tree.get_root()
+	_collect_items(root, items)
+	return items
+
+
+static func _collect_items(item: TreeItem, items: Array) -> void:
+	while item:
+		items.append(item)
+		if item.get_child_count() > 0:
+			_collect_items(item.get_first_child(), items)
+		item = item.get_next()
+
+
+# Найти родительский блок
+static func find_parent_block(event_sheet_data: Array[BlockResource], block: BlockResource) -> BlockResource:
+	for potential_parent in event_sheet_data:
+		if potential_parent.sub_blocks.has(block):
+			return potential_parent
+		
+		# Рекурсивно проверяем суб-блоки
+		var parent = find_parent_block(potential_parent.sub_blocks, block)
+		if parent != null:
+			return parent
+	
+	return null
+
+# Найти root блок
+static func find_root_block(event_sheet_data: Array[BlockResource], block: BlockResource) -> BlockResource:
+	var current_block = block
+	var parent_block = find_parent_block(event_sheet_data, current_block)
+	
+	# Поднимаемся по иерархии до корневого блока
+	while parent_block != null:
+		current_block = parent_block
+		parent_block = find_parent_block(event_sheet_data, current_block)
+	
+	return current_block
+
+# Найти визуальное тело блока
+static func find_block_body(parent: Node, target_id: int, expected_type: String) -> Variant:
+	if parent.get_class() == expected_type and parent.name.split(" | ")[0] == str(target_id):
+		return parent
+	
+	for child in parent.get_children():
+		var result = find_block_body(child, target_id, expected_type)
+		if result != null:
 			return result
 	
-	# Если ничего не найдено, возвращаем null значения
-	return {"block": null, "parent": null}
+	return null
 
+
+# Проверить перемещён ли текущий блок в свои-же дочерние блоки
 static func is_descendant_of(block: BlockResource, potential_ancestor: BlockResource) -> bool:
 	if block == potential_ancestor:
 		return true
