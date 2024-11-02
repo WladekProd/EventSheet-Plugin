@@ -19,7 +19,7 @@ var id: int = 0
 		update_params()
 
 @export var parameters: Dictionary = {}
-@export var conditions: Dictionary = {}
+@export var pick_object: Dictionary = {}
 
 func update_params():
 	if gd_script == null:

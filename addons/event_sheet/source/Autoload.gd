@@ -13,6 +13,29 @@ static var dragging_data: VBoxContainer = null
 
 
 
+static func find_tres_files_in_paths(resource_paths: Array, sub_dirs: Array) -> Dictionary:
+	var tres_files: Dictionary = {"actions": [], "events": []}
+	for path in resource_paths:
+		for sub_dir in sub_dirs:
+			var full_sub_dir_path: String = "{0}/{1}".format([path, sub_dir])
+			var dir = DirAccess.open(full_sub_dir_path)
+			if dir:
+				dir.list_dir_begin()
+				var file_name: String = dir.get_next()
+				while file_name != "":
+					if file_name != "." and file_name != "..":
+						var full_path: String = "{0}/{1}".format([full_sub_dir_path, file_name])
+						if dir.current_is_dir():
+							# Рекурсивно обрабатываем вложенные папки
+							var sub_tres_files: Dictionary = find_tres_files_in_paths([full_path], sub_dirs)
+							for category in tres_files.keys():
+								tres_files[category].append_array(sub_tres_files[category])
+						elif file_name.ends_with(".tres"):
+							tres_files[sub_dir].append(full_path)
+					file_name = dir.get_next()
+				dir.list_dir_end()
+	return tres_files
+
 static func find_child_by_class(node:Node, cls:String):
 	for child in node.get_children():
 		if child.get_class() == cls:

@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://blx7h3kxrtspk"]
 
-[ext_resource type="Script" path="res://addons/event_sheet/elements/window/add_group_frame/add_group_frame.gd" id="1_ijfxp"]
+[ext_resource type="Script" path="res://addons/event_sheet/elements/window/edit_group_frame/edit_group_frame.gd" id="1_ijfxp"]
 [ext_resource type="Script" path="res://addons/event_sheet/elements/window/parameters.gd" id="1_l3voj"]
 
 [node name="AddGroupFrame" type="Control"]

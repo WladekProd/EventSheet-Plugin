@@ -6,62 +6,50 @@ const Types = preload("res://addons/event_sheet/source/types.gd")
 @onready var condition_description: Label = $MarginContainer/ScrollContainer/VBoxContainer/ConditionDescription
 @onready var items_list: VBoxContainer = $MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/Parameters
 
-var string_parameter := preload("res://addons/event_sheet/elements/window/finish_condition_frame/parameters/string_patameter.tscn")
-var stipulation_parameter := preload("res://addons/event_sheet/elements/window/finish_condition_frame/parameters/stipulation_patameter.tscn")
-var open_file_patameter := preload("res://addons/event_sheet/elements/window/finish_condition_frame/parameters/open_file_patameter.tscn")
-var select_node_parameter := preload("res://addons/event_sheet/elements/window/finish_condition_frame/parameters/select_node_patameter.tscn")
+var string_parameter := preload("res://addons/event_sheet/elements/window/change_parameters_frame/parameters/string.tscn")
+var stipulation_parameter := preload("res://addons/event_sheet/elements/window/change_parameters_frame/parameters/stipulation.tscn")
+var open_file_patameter := preload("res://addons/event_sheet/elements/window/change_parameters_frame/parameters/open_file.tscn")
+var select_node_parameter := preload("res://addons/event_sheet/elements/window/change_parameters_frame/parameters/select_node.tscn")
 
-signal finished_condition
-var finished_button_up: Button
-var finished_data: Dictionary = {}
+var resource
 
-func update_items_list(conditions: Dictionary = {}) -> void:
-	finished_data = {
-		"type": Types.BlockType.STANDART,
-		"data": {
-			"condition": null,
-			"resource": null
-		}
-	}
-	
+signal frame_result
+
+func update_frame(current_scene, condition_type: Types.ConditionType, finish_button_instance: Button, frame: Types.WindowFrame, frame_data: Dictionary = {}):
 	if items_list:
 		for child in items_list.get_children():
 			items_list.remove_child(child)
 		
-		if conditions.size() > 0:
-			var _icon: Texture2D = conditions["icon"]
-			#var _icon_color: Color = conditions["icon_color"]
-			var _name: String = conditions["name"]
-			var _type: String = conditions["type"]
-			var _conditions_type: Types.ConditionType = conditions["conditions_type"]
-			
-			finished_data.data.condition = _conditions_type
-			finished_data.data.resource = conditions["resource"]
-			
-			var _resource = finished_data.data.resource
-			condition_description.text = "{0}: {1}".format([_name, _resource.description])
-			
-			if _resource.parameters.size() <= 0:
-				finished_condition.emit(finished_data)
-				return
-			else:
-				var sorted_keys: Array = _resource.parameters.keys()
-				sorted_keys.sort_custom(
-					func(a: String, b: String) -> bool:
-						return _resource.parameters[a]["order"] < _resource.parameters[b]["order"]
-				)
-				for p_key in sorted_keys:
-					var p_name: String = _resource.parameters[p_key].name
-					var p_value: String = _resource.parameters[p_key].value
-					var p_type = _resource.parameters[p_key].type
-					add_parameter(p_key, p_name, p_value, p_type)
-			
-			for item in finished_button_up.button_up.get_connections():
-				finished_button_up.button_up.disconnect(item.callable)
-			
-			if !finished_button_up.button_up.is_connected(_on_finished_button_up):
-				finished_button_up.button_up.connect(_on_finished_button_up)
-	
+		var pick_object_data: Dictionary = frame_data[Types.WindowFrame.PICK_OBJECT]
+		var pick_condition_data = frame_data[Types.WindowFrame.PICK_CONDITION]
+		var parameters_data: Dictionary = {}
+		
+		resource = pick_condition_data
+		resource.pick_object = pick_object_data
+		
+		condition_description.text = "{0}: {1}".format([resource.name, resource.description])
+		
+		if resource.parameters.size() <= 0:
+			frame_result.emit(resource, frame, true)
+			return
+		else:
+			var sorted_keys: Array = resource.parameters.keys()
+			sorted_keys.sort_custom(
+				func(a: String, b: String) -> bool:
+					return resource.parameters[a]["order"] < resource.parameters[b]["order"]
+			)
+			for p_key in sorted_keys:
+				var p_name: String = resource.parameters[p_key].name
+				var p_value: String = resource.parameters[p_key].value
+				var p_type = resource.parameters[p_key].type
+				add_parameter(p_key, p_name, p_value, p_type)
+		
+		for item in finish_button_instance.button_up.get_connections():
+			finish_button_instance.button_up.disconnect(item.callable)
+		
+		if !finish_button_instance.button_up.is_connected(_on_submit):
+			finish_button_instance.button_up.connect(_on_submit.bind(resource, frame))
+		
 	items_list.fix_items_size()
 
 func add_parameter(p_key, p_name, p_value, p_type):
@@ -118,6 +106,21 @@ func add_parameter(p_key, p_name, p_value, p_type):
 			
 			items_list.add_child(string_item_template)
 
+func save_parameters():
+	for child in items_list.get_children():
+		var parameter_name: String = child.name
+		var parameter_value = child.get_child(1)
+		match parameter_value.get_class():
+			"LineEdit":
+				resource.parameters[parameter_name].value = parameter_value.text
+			"OptionButton":
+				resource.parameters[parameter_name].value = Types.STIPULATION_SYMBOL[parameter_value.selected]
+			"Button":
+				if parameter_value.has_method("get_file_path"):
+					resource.parameters[parameter_name].value = parameter_value.get_file_path()
+				elif parameter_value.has_method("get_node_path"):
+					resource.parameters[parameter_name].value = parameter_value.get_node_path()
+
 func _on_open_node_path(parameter_value: Button):
 	EditorInterface.popup_node_selector(_on_node_selected.bind(parameter_value), [])
 
@@ -137,17 +140,17 @@ func _on_open_file(parameter_value: Button):
 	add_child(dialog)
 	dialog.size = get_tree().root.size / 2
 	dialog.position = get_tree().root.size / 4
-	if dialog.file_selected.is_connected(on_file_selected):
-		dialog.file_selected.disconnect(on_file_selected)
-	dialog.file_selected.connect(on_file_selected.bind(parameter_value))
+	if dialog.file_selected.is_connected(_on_file_selected):
+		dialog.file_selected.disconnect(_on_file_selected)
+	dialog.file_selected.connect(_on_file_selected.bind(parameter_value))
 	dialog.dialog_hide_on_ok = true
 	dialog.access = EditorFileDialog.ACCESS_RESOURCES
 	dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILE
 	dialog.set_filters(PackedStringArray(["*.tscn ; Scene Files"]))
-	dialog.title = "New editor file dialog"
+	dialog.title = "Open File"
 	dialog.visible = true
 
-func on_file_selected(path: String, parameter_value: Button):
+func _on_file_selected(path: String, parameter_value: Button):
 	parameter_value.file_path = path
 	save_parameters()
 
@@ -157,18 +160,5 @@ func _on_parameter_selected(index: int):
 func _on_parameter_edited(new_text: String):
 	save_parameters()
 
-func save_parameters():
-	for child in items_list.get_children():
-		var parameter_name: String = child.name
-		var parameter_value = child.get_child(1)
-		if parameter_value is LineEdit:
-			finished_data.data.resource.parameters[parameter_name].value = parameter_value.text
-		elif parameter_value is OptionButton:
-			finished_data.data.resource.parameters[parameter_name].value = Types.STIPULATION_SYMBOL[parameter_value.selected]
-		elif parameter_value is Button and parameter_value.has_method("get_file_path"):
-			finished_data.data.resource.parameters[parameter_name].value = parameter_value.get_file_path()
-		elif parameter_value is Button and parameter_value.has_method("get_node_path"):
-			finished_data.data.resource.parameters[parameter_name].value = parameter_value.get_node_path()
-
-func _on_finished_button_up():
-	finished_condition.emit(finished_data)
+func _on_submit(data, frame: Types.WindowFrame):
+	frame_result.emit(data, frame, true)

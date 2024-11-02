@@ -76,6 +76,15 @@ const STIPULATION_SYMBOL = {
 	STIPULATION.LESS: "<"
 }
 
+enum WindowFrame {
+	PICK_OBJECT,
+	PICK_CONDITION,
+	CHANGE_PARAMETERS,
+	EDIT_GROUP,
+	EDIT_FUNCTION,
+	EDIT_VARIABLE,
+}
+
 class EventSheet:
 	@export var data: Dictionary = {}
 

@@ -77,31 +77,31 @@ var action_scene := preload("res://addons/event_sheet/elements/conditions/action
 var temp_block_id: int
 
 func add_data(data: Dictionary, to_block: BlockResource = null):
-	var _data_type: Types.BlockType = data["type"]
-	var _data: Dictionary = data["data"]
-	var new_block: BlockResource
+	var _new_block: BlockResource
+	var _data_type = data.block_type
+	var _data = data.block_data
 	
 	if !to_block:
-		new_block = BlockResource.new()
-		new_block.id = current_scene.global_block_id if current_scene else temp_block_id
-		new_block.block_type = _data_type
+		_new_block = BlockResource.new()
+		_new_block.id = current_scene.global_block_id if current_scene else temp_block_id
+		_new_block.block_type = _data_type
 		if _data_type == Types.BlockType.GROUP:
-			new_block.group_name = _data.group_name
-			new_block.group_description = _data.group_description
-		event_sheet_data.append(new_block)
+			_new_block.group_name = _data.group_name
+			_new_block.group_description = _data.group_description
+		event_sheet_data.append(_new_block)
 	else:
-		new_block = to_block
+		_new_block = to_block
 
 	# Добавляем ресурсы для событий и действий
 	if _data_type == Types.BlockType.STANDART:
-		if _data.condition == Types.ConditionType.EVENTS:
-			var new_event: EventResource = _data.resource
-			new_event.id = new_block.events.size()
-			new_block.events.append(new_event)
-		elif _data.condition == Types.ConditionType.ACTIONS:
-			var new_action: ActionResource = _data.resource
-			new_action.id = new_block.actions.size()
-			new_block.actions.append(new_action)
+		if _data is EventResource:
+			var new_event: EventResource = _data
+			new_event.id = _new_block.events.size()
+			_new_block.events.append(new_event)
+		elif _data is ActionResource:
+			var new_action: ActionResource = _data
+			new_action.id = _new_block.actions.size()
+			_new_block.actions.append(new_action)
 
 	if current_scene:
 		current_scene.global_block_id += 1
@@ -109,7 +109,7 @@ func add_data(data: Dictionary, to_block: BlockResource = null):
 		temp_block_id += 1
 
 	# Перерисовываем только новый блок
-	update_block(new_block, to_block.level if to_block else 0)
+	update_block(_new_block, to_block.level if to_block else 0)
 	generate_code()
 
 func update_block(block: BlockResource, block_level: int = 0, parent_left_body: VBoxContainer = null, parent_right_body: VBoxContainer = null):
@@ -280,7 +280,8 @@ func _on_scroll_container_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		# Event Sheet - Double Click
 		if event.button_index == MOUSE_BUTTON_LEFT and event.double_click:
-			_window.add_condition(current_scene, null, Types.ConditionType.EVENTS)
+			_window.show_add_window(Types.ConditionType.EVENTS, Types.BlockType.STANDART)
+			#_window.add_condition(current_scene, null, Types.ConditionType.EVENTS)
 		# Event Sheet - Right Click
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 			var mouse_pos = Vector2i(event.global_position) + get_window().position
@@ -298,18 +299,18 @@ func _on_scroll_container_gui_input(event: InputEvent) -> void:
 func _on_popup_menu_index_pressed(index: int) -> void:
 	if current_popup_menu == "general":
 		match index:
-			0: _window.add_condition(current_scene, null, Types.ConditionType.EVENTS)
+			0: _window.show_add_window(Types.ConditionType.EVENTS, Types.BlockType.STANDART)
 			1: pass # add_blank_body()
-			2: _window.add_group(current_scene)
+			2: _window.add_group()
 
 func _on_add_action_button_up(block):
-	_window.add_condition(current_scene, block, Types.ConditionType.ACTIONS)
+	_window.show_add_window(Types.ConditionType.ACTIONS, Types.BlockType.STANDART, block)
 
 func _on_finish_data(finish_data: Dictionary, block: BlockResource = null):
 	add_data(finish_data, block)
 
 func _on_change_content(resource, resource_button):
-	_window.change_condition(current_scene, resource, resource_button)
+	_window.show_change_window(resource, resource_button)
 
 func _on_context_menu():
 	print("event context")

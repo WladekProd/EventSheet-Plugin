@@ -7,10 +7,10 @@
 [ext_resource type="Script" path="res://addons/event_sheet/source/elements/event_sheet/code_editor/code_edit.gd" id="4_241l8"]
 [ext_resource type="Script" path="res://addons/event_sheet/source/elements/window/window.gd" id="5_f3m08"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0rnoc"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kxnoh"]
 bg_color = Color(0.0344663, 0.0419983, 0.0545548, 1)
 
-[sub_resource type="CodeHighlighter" id="CodeHighlighter_vjwx3"]
+[sub_resource type="CodeHighlighter" id="CodeHighlighter_h1kcp"]
 number_color = Color(0.631373, 1, 0.878431, 1)
 symbol_color = Color(0.670588, 0.788235, 1, 1)
 function_color = Color(0.341176, 0.701961, 1, 1)
@@ -126,7 +126,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_0rnoc")
+theme_override_styles/panel = SubResource("StyleBoxFlat_kxnoh")
 script = ExtResource("1_vq26q")
 
 [node name="HSplitContainer" type="HSplitContainer" parent="."]
@@ -181,7 +181,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 editable = false
 caret_blink = true
-syntax_highlighter = SubResource("CodeHighlighter_vjwx3")
+syntax_highlighter = SubResource("CodeHighlighter_h1kcp")
 highlight_all_occurrences = true
 draw_tabs = true
 line_folding = true
@@ -208,7 +208,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("5_f3m08")
-window_title = "Add condition"
 
 [node name="Background" type="Panel" parent="Window"]
 layout_mode = 1
@@ -334,5 +333,6 @@ text = "Finish"
 [connection signal="index_pressed" from="PopupMenu" to="." method="_on_popup_menu_index_pressed"]
 [connection signal="theme_changed" from="Window" to="Window" method="_on_theme_changed"]
 [connection signal="button_up" from="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons/Cancel" to="Window" method="_on_cancel_button_up"]
+[connection signal="button_up" from="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons/Help" to="Window" method="_on_help_button_up"]
 [connection signal="button_up" from="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons/Back" to="Window" method="_on_back_button_up"]
 [connection signal="button_up" from="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons/Next" to="Window" method="_on_next_button_up"]

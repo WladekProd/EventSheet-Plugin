@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cofnjhqxaif5t"]
 
-[ext_resource type="Script" path="res://addons/event_sheet/elements/window/first_condition_frame/first_condition_frame.gd" id="1_cixrh"]
+[ext_resource type="Script" path="res://addons/event_sheet/elements/window/pick_object_frame/pick_object_frame.gd" id="1_cixrh"]
 
 [node name="AddConditionFrame" type="Control"]
 layout_mode = 3
