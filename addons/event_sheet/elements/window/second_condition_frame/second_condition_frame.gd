@@ -39,50 +39,31 @@ func update_items_list(conditions: Dictionary = {}) -> void:
 						continue
 					
 					for resource in _resources[category]:
-						if resource is EventResource:
-							var res: EventResource = resource
-							var item_button_template: Button = second_condition_button.instantiate()
-							item_button_template.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-							item_button_template.text = res.event_name
-							item_button_template.icon = res.event_icon
-							item_button_template.disable_color = _disable_color
-							var _conditions = {
-								"button": item_button_template,
-								"data": {
-									"icon": _icon,
-									"disable_color": _disable_color,
-									"name": _name,
-									"type": _type,
-									"conditions_type": _conditions_type,
-									"resource": res
-								}
+						var res = resource
+						var item_button_template: Button = second_condition_button.instantiate()
+						item_button_template.name = res.name
+						item_button_template.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+						item_button_template.text = res.name
+						item_button_template.icon = res.icon
+						item_button_template.disable_color = _disable_color
+						var _conditions = {
+							"button": {
+								"instance": item_button_template,
+								"name": item_button_template.name
+							},
+							"data": {
+								"icon": _icon,
+								"disable_color": _disable_color,
+								"name": _name,
+								"type": _type,
+								"conditions_type": _conditions_type,
+								"resource": res
 							}
-							if !item_button_template.focus_entered.is_connected(_on_select_condition_focus_entered):
-								item_button_template.focus_entered.connect(_on_select_condition_focus_entered.bind(_conditions))
-							category_items.add_child(item_button_template)
-							item_button_template.owner = category_items.get_owner()
-						if resource is ActionResource:
-							var res: ActionResource = resource
-							var item_button_template: Button = second_condition_button.instantiate()
-							item_button_template.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-							item_button_template.text = res.action_name
-							item_button_template.icon = res.action_icon
-							item_button_template.disable_color = _disable_color
-							var _conditions = {
-								"button": item_button_template,
-								"data": {
-									"icon": _icon,
-									"disable_color": _disable_color,
-									"name": _name,
-									"type": _type,
-									"conditions_type": _conditions_type,
-									"resource": res
-								}
-							}
-							if !item_button_template.focus_entered.is_connected(_on_select_condition_focus_entered):
-								item_button_template.focus_entered.connect(_on_select_condition_focus_entered.bind(_conditions))
-							category_items.add_child(item_button_template)
-							item_button_template.owner = category_items.get_owner()
+						}
+						if !item_button_template.focus_entered.is_connected(_on_select_condition_focus_entered):
+							item_button_template.focus_entered.connect(_on_select_condition_focus_entered.bind(_conditions))
+						category_items.add_child(item_button_template)
+						item_button_template.owner = category_items.get_owner()
 					
 					items_list.add_child(category_template)
 					category_template.owner = items_list.get_owner()

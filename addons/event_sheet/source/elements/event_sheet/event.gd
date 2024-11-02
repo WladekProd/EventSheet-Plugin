@@ -13,10 +13,10 @@ signal context_menu
 var resource: EventResource:
 	set (p_resource):
 		resource = p_resource
-		_icon.texture = resource.event_icon
+		_icon.texture = resource.icon
 		_icon.modulate = EditorInterface.get_editor_theme().get_color("accent_color", "Editor")
-		_category_name.text = Types.CATEGORY_NAMES[resource.event_category]
-		var _info_string: String = resource.event_script.get_info(resource.event_params)
+		_category_name.text = Types.CATEGORY_NAMES[resource.category]
+		var _info_string: String = resource.gd_script.get_info(resource.parameters)
 		_event_string.text = _info_string
 
 func _ready() -> void:

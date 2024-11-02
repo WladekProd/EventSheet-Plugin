@@ -94,14 +94,14 @@ func update_y_size():
 		content.size.y = y_size
 
 func fix_margin_container():
-	var block_level: int
+	var block_level: int = 0
 	if block:
 		block_level = block.level
+	print(block_level)
 	var space: float = (show_hide_button.size.x + sub_block_line.size.x)
 	var fix_space: float = (space * block_level)
 	sub_block_margin.add_theme_constant_override("margin_right", fix_space)
 
-# Пофиксить видимость блока при загрузке Event Sheet
 func sub_blocks_visible(_visible: bool = true):
 	for event_child in get_children():
 		if event_child is VBoxContainer:

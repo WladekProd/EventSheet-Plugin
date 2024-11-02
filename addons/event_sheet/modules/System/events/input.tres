@@ -6,11 +6,11 @@
 
 [resource]
 script = ExtResource("3_fef6v")
-event_name = "Input"
-event_icon = ExtResource("1_vr677")
-event_description = ""
-event_type = 0
-event_group = 1
-event_category = 2
-event_script = ExtResource("2_tyitg")
-event_params = {}
+name = "Input"
+icon = ExtResource("1_vr677")
+description = ""
+type = 0
+group = 1
+category = 2
+gd_script = ExtResource("2_tyitg")
+parameters = {}

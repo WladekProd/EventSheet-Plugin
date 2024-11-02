@@ -5,10 +5,10 @@ class_name BlockResource
 const Types = preload("res://addons/event_sheet/source/types.gd")
 
 var id: int = 0
-@export var level: int = 0
-@export var sub_blocks_state: Types.SubBlocksState = Types.SubBlocksState.NONE
 var sub_blocks: Array[BlockResource]
 
+@export var level: int = 0
+@export var sub_blocks_state: Types.SubBlocksState = Types.SubBlocksState.NONE
 @export var block_type: Types.BlockType = Types.BlockType.STANDART:
 	set (p_block_type):
 		block_type = p_block_type

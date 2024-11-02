@@ -6,13 +6,13 @@
 
 [resource]
 script = ExtResource("1_tnwjs")
-action_name = "Print"
-action_icon = ExtResource("1_56hbs")
-action_description = "Output any information to the console."
-action_group = 1
-action_category = 0
-action_script = ExtResource("1_hhc12")
-action_params = {
+name = "Print"
+icon = ExtResource("1_56hbs")
+description = "Output any information to the console."
+group = 1
+category = 0
+gd_script = ExtResource("1_hhc12")
+parameters = {
 "text": {
 "name": "Text",
 "order": 0,

@@ -18,13 +18,17 @@ func update_items_list(conditions: Array = []) -> void:
 				var _name: String = condition["name"]
 				
 				var p_item_template: Button = item_template.instantiate()
+				p_item_template.name = _name
 				p_item_template.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 				p_item_template.text = _name
 				p_item_template.icon = _icon
 				p_item_template.disable_color = _disable_color
 				if !p_item_template.focus_entered.is_connected(_on_select_condition_focus_entered):
 					p_item_template.focus_entered.connect(_on_select_condition_focus_entered.bind({
-						"button": p_item_template,
+						"button": {
+							"instance": p_item_template,
+							"name": p_item_template.name
+						},
 						"data": condition
 					}))
 				items_list.add_child(p_item_template)

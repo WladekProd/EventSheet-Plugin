@@ -6,13 +6,13 @@
 
 [resource]
 script = ExtResource("1_qgr3k")
-action_name = "Set position to another object"
-action_icon = ExtResource("1_m4nva")
-action_description = "Object to position by."
-action_group = 1
-action_category = 0
-action_script = ExtResource("2_xsn43")
-action_params = {
+name = "Set position to another object"
+icon = ExtResource("1_m4nva")
+description = "Object to position by."
+group = 1
+category = 0
+gd_script = ExtResource("2_xsn43")
+parameters = {
 "object": {
 "name": "Object",
 "order": 0,

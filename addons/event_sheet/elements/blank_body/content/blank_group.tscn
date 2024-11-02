@@ -18,7 +18,7 @@ offset_bottom = 30.0
 size_flags_horizontal = 3
 mouse_filter = 2
 script = ExtResource("1_p10o5")
-color = Color(0.984314, 0, 0.313726, 1)
+color = Color(1, 0, 0.227451, 1)
 
 [node name="GroupButton" type="Button" parent="."]
 custom_minimum_size = Vector2(200, 30)
@@ -75,3 +75,4 @@ text = "Group Description"
 label_settings = SubResource("LabelSettings_3bn0q")
 
 [connection signal="theme_changed" from="." to="." method="_on_theme_changed"]
+[connection signal="gui_input" from="GroupButton" to="." method="_on_gui_input"]

@@ -48,42 +48,42 @@ static func process_block(block: BlockResource, existing_functions: Dictionary, 
 	
 	# Обрабатываем действия блока
 	for action in block.actions:
-		if action.action_script:
-			var action_script: GDScript = action.action_script
+		if action.gd_script:
+			var gd_script: GDScript = action.gd_script
 			var instance = RefCounted.new()
-			instance.set_script(action_script)
+			instance.set_script(gd_script)
 
-			var action_params: Dictionary = action.action_params
-			var action_script_params: Dictionary = instance.get("params")
+			var parameters: Dictionary = action.parameters
+			var gd_script_params: Dictionary = instance.get("params")
 			var param_index = 0
-			for key in action_script_params:
-				if action_params and action_params.size() > 0:
-					if param_index <= action_params.size() - 1:
-						action_script_params[key] = action_params[param_index]
+			for key in gd_script_params:
+				if parameters and parameters.size() > 0:
+					if param_index <= parameters.size() - 1:
+						gd_script_params[key] = parameters[param_index]
 						param_index += 1
 
-			var action_script_template: String = instance.call("get_template").format(action_script_params)
-			action_lines.append(action_script_template)
+			var gd_script_template: String = instance.call("get_template").format(gd_script_params)
+			action_lines.append(gd_script_template)
 	
 	# Обрабатываем события блока
 	var event_index = 0
 	for event in block.events:
-		if event.event_script:
-			var event_script: GDScript = event.event_script
+		if event.gd_script:
+			var gd_script: GDScript = event.gd_script
 			var instance = RefCounted.new()
-			instance.set_script(event_script)
+			instance.set_script(gd_script)
 
-			var event_params: Dictionary = event.event_params
-			var event_script_params: Dictionary = instance.get("params")
+			var parameters: Dictionary = event.parameters
+			var gd_script_params: Dictionary = instance.get("params")
 			var param_index = 0
-			for key in event_script_params:
-				if event_params and event_params.size() > 0:
-					if param_index <= event_params.size() - 1:
-						event_script_params[key] = event_params[param_index]
+			for key in gd_script_params:
+				if parameters and parameters.size() > 0:
+					if param_index <= parameters.size() - 1:
+						gd_script_params[key] = parameters[param_index]
 						param_index += 1
 
-			var event_script_template: String = instance.call("get_template").strip_edges()
-			var stripped_template: String = event_script_template.replace("\t", "")
+			var gd_script_template: String = instance.call("get_template").strip_edges()
+			var stripped_template: String = gd_script_template.replace("\t", "")
 			var func_name: String = stripped_template.get_slice("(", 0).get_slice(" ", 1)
 
 			# Проверка на наличие функции, условия и т.д.
@@ -92,7 +92,7 @@ static func process_block(block: BlockResource, existing_functions: Dictionary, 
 					for action_line in action_lines:
 						existing_functions[func_name] += "\t".repeat(indent_level + 1) + action_line + "\n"
 				else:
-					existing_functions[func_name] = "\t".repeat(indent_level) + event_script_template.format(event_script_params) + "\n"
+					existing_functions[func_name] = "\t".repeat(indent_level) + gd_script_template.format(gd_script_params) + "\n"
 					for action_line in action_lines:
 						existing_functions[func_name] += "\t".repeat(indent_level + 1) + action_line + "\n"
 				last_function = func_name
@@ -100,7 +100,7 @@ static func process_block(block: BlockResource, existing_functions: Dictionary, 
 				if last_function == "__init":
 					if existing_functions.has("__init"):
 						var replace_action: String = ""
-						existing_functions["__init"] += "\t".repeat(indent_level) + event_script_template + "\n"
+						existing_functions["__init"] += "\t".repeat(indent_level) + gd_script_template + "\n"
 						for action_line in action_lines:
 							if action_line: replace_action += "\t".repeat(indent_level + 1) + action_line + "\n"
 						
@@ -116,7 +116,7 @@ static func process_block(block: BlockResource, existing_functions: Dictionary, 
 					if existing_functions.has(last_function):
 						var replace_action: String = ""
 						
-						existing_functions[last_function] += "\t".repeat(indent_level + event_index) + event_script_template + "\n"
+						existing_functions[last_function] += "\t".repeat(indent_level + event_index) + gd_script_template + "\n"
 						
 						for action_line in action_lines:
 							if action_line:

@@ -6,11 +6,11 @@
 
 [resource]
 script = ExtResource("3_5k46m")
-event_name = "Process"
-event_icon = ExtResource("1_13viy")
-event_description = ""
-event_type = 1
-event_group = 1
-event_category = 0
-event_script = ExtResource("1_c5qxa")
-event_params = {}
+name = "Process"
+icon = ExtResource("1_13viy")
+description = ""
+type = 1
+group = 1
+category = 0
+gd_script = ExtResource("1_c5qxa")
+parameters = {}

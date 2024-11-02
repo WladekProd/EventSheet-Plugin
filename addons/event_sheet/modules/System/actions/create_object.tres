@@ -6,13 +6,13 @@
 
 [resource]
 script = ExtResource("1_ja8vj")
-action_name = "Create object"
-action_icon = ExtResource("1_u0wqh")
-action_description = "Choose the object type of the new instance to create."
-action_group = 1
-action_category = 0
-action_script = ExtResource("1_v0v5l")
-action_params = {
+name = "Create object"
+icon = ExtResource("1_u0wqh")
+description = "Choose the object type of the new instance to create."
+group = 1
+category = 0
+gd_script = ExtResource("1_v0v5l")
+parameters = {
 "name": {
 "name": "Name",
 "order": 1,

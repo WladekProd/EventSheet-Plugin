@@ -6,11 +6,11 @@
 
 [resource]
 script = ExtResource("3_qp77r")
-event_name = "Ready"
-event_icon = ExtResource("1_x0wyy")
-event_description = ""
-event_type = 1
-event_group = 1
-event_category = 0
-event_script = ExtResource("1_hqtad")
-event_params = {}
+name = "Ready"
+icon = ExtResource("1_x0wyy")
+description = ""
+type = 1
+group = 1
+category = 0
+gd_script = ExtResource("1_hqtad")
+parameters = {}

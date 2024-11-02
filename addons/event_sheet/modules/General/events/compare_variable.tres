@@ -6,14 +6,14 @@
 
 [resource]
 script = ExtResource("3_dmtvh")
-event_name = "Compare Variable"
-event_icon = ExtResource("1_absw3")
-event_description = ""
-event_type = 0
-event_group = 1
-event_category = 1
-event_script = ExtResource("1_6q335")
-event_params = {
+name = "Compare Variable"
+icon = ExtResource("1_absw3")
+description = ""
+type = 0
+group = 1
+category = 1
+gd_script = ExtResource("1_6q335")
+parameters = {
 "comparison": {
 "name": "Comparison",
 "order": 1,

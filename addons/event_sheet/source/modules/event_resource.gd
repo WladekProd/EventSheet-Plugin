@@ -6,30 +6,30 @@ const Types = preload("res://addons/event_sheet/source/types.gd")
 
 var id: int = 0
 
-@export var event_name: String
-@export var event_icon: Texture2D
-@export var event_description: String
-@export var event_type: Types.EventType = Types.EventType.STANDART
-@export var event_group: Types.Group = Types.Group.SYSTEM
-@export var event_category: Types.Category = Types.Category.MAIN
+@export var name: String
+@export var icon: Texture2D
+@export var description: String
+@export var type: Types.EventType = Types.EventType.STANDART
+@export var group: Types.Group = Types.Group.SYSTEM
+@export var category: Types.Category = Types.Category.MAIN
 
-@export var event_script: GDScript:
-	set(p_event_script):
-		event_script = p_event_script
+@export var gd_script: GDScript:
+	set(p_gd_script):
+		gd_script = p_gd_script
 		update_params()
 
-@export var event_params: Dictionary = {}
+@export var parameters: Dictionary = {}
 @export var conditions: Dictionary = {}
 
 func update_params():
-	if event_script == null:
-		event_params = {}
-	if event_script and event_script.has_method("params"):
-		var params: Dictionary = event_script.params()
-		if params.size() > 0: event_params = params
-		else: event_params = {}
+	if gd_script == null:
+		parameters = {}
+	if gd_script and gd_script.has_method("params"):
+		var params: Dictionary = gd_script.params()
+		if params.size() > 0: parameters = params
+		else: parameters = {}
 
 func get_template() -> String:
-	if event_script and event_script.has_method("get_template"):
-		return event_script.get_template(event_params)
+	if gd_script and gd_script.has_method("get_template"):
+		return gd_script.get_template(parameters)
 	return ""

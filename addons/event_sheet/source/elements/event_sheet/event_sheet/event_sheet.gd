@@ -54,8 +54,18 @@ func _process(delta: float) -> void:
 
 # Загрузить Event Sheet
 func load_event_sheet():
+	for item in event_items.get_children():
+		item.queue_free()
+	for item in action_items.get_children():
+		item.queue_free()
+	
+	# Load Blocks
 	for block in event_sheet_data:
 		update_block(block)
+	# Fix Visible
+	for block in event_sheet_data:
+		update_block(block)
+	# Generate Code
 	generate_code()
 
 # Кэшированные элементы интерфейса для блоков
@@ -99,7 +109,7 @@ func add_data(data: Dictionary, to_block: BlockResource = null):
 		temp_block_id += 1
 
 	# Перерисовываем только новый блок
-	update_block(new_block)
+	update_block(new_block, to_block.level if to_block else 0)
 	generate_code()
 
 func update_block(block: BlockResource, block_level: int = 0, parent_left_body: VBoxContainer = null, parent_right_body: VBoxContainer = null):
@@ -109,6 +119,9 @@ func update_block(block: BlockResource, block_level: int = 0, parent_left_body: 
 	#print(block.id)
 	#print(left_body)
 	#print(right_body)
+
+	block.level = block_level
+	block.sub_blocks_state = Types.SubBlocksState.NONE
 
 	if !left_body and !right_body:
 		left_body = blank_body_left_scene.instantiate()
@@ -163,8 +176,11 @@ func update_block(block: BlockResource, block_level: int = 0, parent_left_body: 
 	
 	# Обновление групповых данных
 	if block.block_type == Types.BlockType.GROUP:
-		left_body.content.group_name.text = block.group_name
-		left_body.content.group_description.text = block.group_description
+		left_body.content.resource = block
+		if !left_body.content.change_group.is_connected(_on_change_content):
+			left_body.content.change_group.connect(_on_change_content)
+		if !left_body.content.context_menu.is_connected(_on_context_menu):
+			left_body.content.context_menu.connect(_on_context_menu)
 	
 	event_items.update_lines()
 	
@@ -173,7 +189,7 @@ func update_block(block: BlockResource, block_level: int = 0, parent_left_body: 
 		update_block(sub_block, block_level + 1, left_body, right_body)
 
 func update_block_hierarchy(root_block: BlockResource):
-	update_block(root_block)
+	update_block(root_block, root_block.level)
 
 
 
@@ -215,8 +231,8 @@ func process_block(block: BlockResource, sub_block_index: int = 1, parent_func_n
 	
 	if block.block_type == Types.BlockType.STANDART:
 		for event: EventResource in block.events:
-			var _script = event.event_script
-			var _template: String = _script.get_template(event.event_params).strip_edges()
+			var _script = event.gd_script
+			var _template: String = _script.get_template(event.parameters).strip_edges()
 			
 			if _template.begins_with("func"):
 				var _split_template: PackedStringArray = _template.split(" ")
@@ -239,8 +255,8 @@ func process_block(block: BlockResource, sub_block_index: int = 1, parent_func_n
 				is_stipulation = true
 		
 		for action: ActionResource in block.actions:
-			var _script = action.action_script
-			var _template: String = _script.get_template(action.action_params).strip_edges()
+			var _script = action.gd_script
+			var _template: String = _script.get_template(action.parameters).strip_edges()
 			var _split_template: PackedStringArray = _template.split("\n")
 			
 			var _action_spaces: String = _spaces + "\t" if is_stipulation else ""
@@ -293,7 +309,7 @@ func _on_finish_data(finish_data: Dictionary, block: BlockResource = null):
 	add_data(finish_data, block)
 
 func _on_change_content(resource, resource_button):
-	_window.change_condition(resource, resource_button)
+	_window.change_condition(current_scene, resource, resource_button)
 
 func _on_context_menu():
 	print("event context")
@@ -343,13 +359,11 @@ func _drop_data_block(from_left: Variant, to_left: Variant, move_block: Types.Mo
 
 	# Получаем from объекты
 	var from_block: BlockResource = from_left.block
-	var from_block_root: BlockResource = ESUtils.find_root_block(event_sheet_data, from_block)
 	var from_block_parent: BlockResource = ESUtils.find_parent_block(event_sheet_data, from_block)
 	var from_right: VBoxContainer = ESUtils.find_block_body(action_items, from_block.id, "VBoxContainer")
 
 	# Получаем to объекты
 	var to_block: BlockResource = to_left.block
-	var to_block_root: BlockResource = ESUtils.find_root_block(event_sheet_data, to_block)
 	var to_block_parent: BlockResource = ESUtils.find_parent_block(event_sheet_data, to_block)
 	var to_right: VBoxContainer = ESUtils.find_block_body(action_items, to_block.id, "VBoxContainer")
 	
@@ -423,6 +437,9 @@ func _drop_data_block(from_left: Variant, to_left: Variant, move_block: Types.Mo
 			from_right.reparent(to_right)
 			from_left.name = "{0} | {1}".format([from_block.id, from_block.level])
 			from_right.name = "{0} | {1}".format([from_block.id, from_block.level])
+	
+	var from_block_root: BlockResource = ESUtils.find_root_block(event_sheet_data, from_block)
+	var to_block_root: BlockResource = ESUtils.find_root_block(event_sheet_data, to_block)
 	
 	# Обновление блоков
 	update_block_hierarchy(to_block_root)

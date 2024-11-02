@@ -39,41 +39,22 @@ func update_items_list(conditions: Dictionary = {}) -> void:
 			finished_data.data.resource = conditions["resource"]
 			
 			var _resource = finished_data.data.resource
-			if _resource is EventResource:
-				condition_description.text = "{0}: {1}".format([_name, _resource.event_description])
-				
-				if _resource.event_params.size() <= 0:
-					finished_condition.emit(finished_data)
-					return
-				else:
-					var sorted_keys: Array = _resource.event_params.keys()
-					sorted_keys.sort_custom(
-						func(a: String, b: String) -> bool:
-							return _resource.event_params[a]["order"] < _resource.event_params[b]["order"]
-					)
-					for p_key in sorted_keys:
-						var p_name: String = _resource.event_params[p_key].name
-						var p_value: String = _resource.event_params[p_key].value
-						var p_type = _resource.event_params[p_key].type
-						add_parameter(p_key, p_name, p_value, p_type)
+			condition_description.text = "{0}: {1}".format([_name, _resource.description])
 			
-			if _resource is ActionResource:
-				condition_description.text = "{0}: {1}".format([_name, _resource.action_description])
-				
-				if _resource.action_params.size() <= 0:
-					finished_condition.emit(finished_data)
-					return
-				else:
-					var sorted_keys: Array = _resource.action_params.keys()
-					sorted_keys.sort_custom(
-						func(a: String, b: String) -> bool:
-							return _resource.action_params[a]["order"] < _resource.action_params[b]["order"]
-					)
-					for p_key in sorted_keys:
-						var p_name: String = _resource.action_params[p_key].name
-						var p_value: String = _resource.action_params[p_key].value
-						var p_type = _resource.action_params[p_key].type
-						add_parameter(p_key, p_name, p_value, p_type)
+			if _resource.parameters.size() <= 0:
+				finished_condition.emit(finished_data)
+				return
+			else:
+				var sorted_keys: Array = _resource.parameters.keys()
+				sorted_keys.sort_custom(
+					func(a: String, b: String) -> bool:
+						return _resource.parameters[a]["order"] < _resource.parameters[b]["order"]
+				)
+				for p_key in sorted_keys:
+					var p_name: String = _resource.parameters[p_key].name
+					var p_value: String = _resource.parameters[p_key].value
+					var p_type = _resource.parameters[p_key].type
+					add_parameter(p_key, p_name, p_value, p_type)
 			
 			for item in finished_button_up.button_up.get_connections():
 				finished_button_up.button_up.disconnect(item.callable)
@@ -181,25 +162,13 @@ func save_parameters():
 		var parameter_name: String = child.name
 		var parameter_value = child.get_child(1)
 		if parameter_value is LineEdit:
-			if finished_data.data.resource is EventResource:
-				finished_data.data.resource.event_params[parameter_name].value = parameter_value.text
-			if finished_data.data.resource is ActionResource:
-				finished_data.data.resource.action_params[parameter_name].value = parameter_value.text
+			finished_data.data.resource.parameters[parameter_name].value = parameter_value.text
 		elif parameter_value is OptionButton:
-			if finished_data.data.resource is EventResource:
-				finished_data.data.resource.event_params[parameter_name].value = Types.STIPULATION_SYMBOL[parameter_value.selected]
-			if finished_data.data.resource is ActionResource:
-				finished_data.data.resource.action_params[parameter_name].value = Types.STIPULATION_SYMBOL[parameter_value.selected]
+			finished_data.data.resource.parameters[parameter_name].value = Types.STIPULATION_SYMBOL[parameter_value.selected]
 		elif parameter_value is Button and parameter_value.has_method("get_file_path"):
-			if finished_data.data.resource is EventResource:
-				finished_data.data.resource.event_params[parameter_name].value = parameter_value.get_file_path()
-			if finished_data.data.resource is ActionResource:
-				finished_data.data.resource.action_params[parameter_name].value = parameter_value.get_file_path()
+			finished_data.data.resource.parameters[parameter_name].value = parameter_value.get_file_path()
 		elif parameter_value is Button and parameter_value.has_method("get_node_path"):
-			if finished_data.data.resource is EventResource:
-				finished_data.data.resource.event_params[parameter_name].value = parameter_value.get_node_path()
-			if finished_data.data.resource is ActionResource:
-				finished_data.data.resource.action_params[parameter_name].value = parameter_value.get_node_path()
+			finished_data.data.resource.parameters[parameter_name].value = parameter_value.get_node_path()
 
 func _on_finished_button_up():
 	finished_condition.emit(finished_data)
