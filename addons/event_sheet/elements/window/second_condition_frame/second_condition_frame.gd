@@ -5,6 +5,9 @@ const Types = preload("res://addons/event_sheet/source/types.gd")
 
 @onready var items_list: VBoxContainer = $MarginContainer/ScrollContainer/VBoxContainer
 
+var second_condition_item := preload("res://addons/event_sheet/elements/window/second_condition_frame/second_condition_item.tscn")
+var second_condition_button := preload("res://addons/event_sheet/elements/window/second_condition_frame/second_condition_item_button.tscn")
+
 signal focused_condition
 
 func update_items_list(conditions: Dictionary = {}) -> void:
@@ -22,7 +25,7 @@ func update_items_list(conditions: Dictionary = {}) -> void:
 		
 			if _resources.size() > 0:
 				for category: Types.Category in _resources:
-					var category_template: VBoxContainer = load("res://addons/event_sheet/elements/window/second_condition_frame/second_condition_item.tscn").instantiate()
+					var category_template: VBoxContainer = second_condition_item.instantiate()
 					
 					var category_label: Label = category_template.get_child(0).get_child(0)
 					match category:
@@ -38,42 +41,46 @@ func update_items_list(conditions: Dictionary = {}) -> void:
 					for resource in _resources[category]:
 						if resource is EventResource:
 							var res: EventResource = resource
-							var item_button_template: Button = load("res://addons/event_sheet/elements/window/second_condition_frame/second_condition_item_button.tscn").instantiate()
+							var item_button_template: Button = second_condition_button.instantiate()
+							item_button_template.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 							item_button_template.text = res.event_name
 							item_button_template.icon = res.event_icon
 							item_button_template.disable_color = _disable_color
+							var _conditions = {
+								"button": item_button_template,
+								"data": {
+									"icon": _icon,
+									"disable_color": _disable_color,
+									"name": _name,
+									"type": _type,
+									"conditions_type": _conditions_type,
+									"resource": res
+								}
+							}
 							if !item_button_template.focus_entered.is_connected(_on_select_condition_focus_entered):
-								item_button_template.focus_entered.connect(_on_select_condition_focus_entered.bind({
-									"button": item_button_template,
-									"data": {
-										"icon": _icon,
-										"disable_color": _disable_color,
-										"name": _name,
-										"type": _type,
-										"conditions_type": _conditions_type,
-										"resource": res
-									}
-								}))
+								item_button_template.focus_entered.connect(_on_select_condition_focus_entered.bind(_conditions))
 							category_items.add_child(item_button_template)
 							item_button_template.owner = category_items.get_owner()
 						if resource is ActionResource:
 							var res: ActionResource = resource
-							var item_button_template: Button = load("res://addons/event_sheet/elements/window/second_condition_frame/second_condition_item_button.tscn").instantiate()
+							var item_button_template: Button = second_condition_button.instantiate()
+							item_button_template.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 							item_button_template.text = res.action_name
 							item_button_template.icon = res.action_icon
 							item_button_template.disable_color = _disable_color
+							var _conditions = {
+								"button": item_button_template,
+								"data": {
+									"icon": _icon,
+									"disable_color": _disable_color,
+									"name": _name,
+									"type": _type,
+									"conditions_type": _conditions_type,
+									"resource": res
+								}
+							}
 							if !item_button_template.focus_entered.is_connected(_on_select_condition_focus_entered):
-								item_button_template.focus_entered.connect(_on_select_condition_focus_entered.bind({
-									"button": item_button_template,
-									"data": {
-										"icon": _icon,
-										"disable_color": _disable_color,
-										"name": _name,
-										"type": _type,
-										"conditions_type": _conditions_type,
-										"resource": res
-									}
-								}))
+								item_button_template.focus_entered.connect(_on_select_condition_focus_entered.bind(_conditions))
 							category_items.add_child(item_button_template)
 							item_button_template.owner = category_items.get_owner()
 					

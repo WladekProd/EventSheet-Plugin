@@ -8,6 +8,7 @@ const Generation = preload("res://addons/event_sheet/source/Generation.gd")
 signal open_event_sheet
 
 @export var event_sheet_data: Array[BlockResource]
+@export var global_block_id: int = 0
 #var final_script: Node
 
 func _add_inspector_elements() -> Array:
@@ -78,6 +79,7 @@ func update_scene_tree(item: TreeItem):
 			update_scene_tree(child)
 
 func _ready() -> void:
+	global_block_id = 0
 	pass
 
 func _process(delta: float) -> void:

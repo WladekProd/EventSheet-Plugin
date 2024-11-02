@@ -69,4 +69,5 @@ func _on_scene_tree_button_clicked(item, column: int, id: int, mouse_button_inde
 func open_event_sheet_editor(data: Array[BlockResource] = [], scene = null):
 	event_sheet_instance.event_sheet_data = data
 	event_sheet_instance.current_scene = scene
+	event_sheet_instance.load_event_sheet()
 	EditorInterface.set_main_screen_editor(_get_plugin_name())

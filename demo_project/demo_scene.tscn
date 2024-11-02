@@ -6,6 +6,10 @@
 [node name="Main" type="Node2D"]
 scale = Vector2(0.998729, 1)
 script = ExtResource("1_xwkee")
+global_block_id = 7
 
 [node name="Icon" parent="." instance=ExtResource("8_4rmwc")]
 position = Vector2(388.494, 267)
+
+[node name="VNode2D" type="Node2D" parent="."]
+script = ExtResource("1_xwkee")

@@ -18,6 +18,7 @@ func update_items_list(conditions: Array = []) -> void:
 				var _name: String = condition["name"]
 				
 				var p_item_template: Button = item_template.instantiate()
+				p_item_template.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 				p_item_template.text = _name
 				p_item_template.icon = _icon
 				p_item_template.disable_color = _disable_color

@@ -13,15 +13,17 @@ var select_node_parameter := preload("res://addons/event_sheet/elements/window/f
 
 signal finished_condition
 var finished_button_up: Button
-var finished_data: Dictionary = {
-	"type": Types.BlockType.STANDART,
-	"data": {
-		"condition": null,
-		"resource": null
-	}
-}
+var finished_data: Dictionary = {}
 
 func update_items_list(conditions: Dictionary = {}) -> void:
+	finished_data = {
+		"type": Types.BlockType.STANDART,
+		"data": {
+			"condition": null,
+			"resource": null
+		}
+	}
+	
 	if items_list:
 		for child in items_list.get_children():
 			items_list.remove_child(child)
@@ -92,6 +94,7 @@ func add_parameter(p_key, p_name, p_value, p_type):
 			
 			var parameter_value: Button = select_node_item_template.get_child(1)
 			parameter_value.button_up.connect(_on_open_node_path.bind(parameter_value))
+			parameter_value.node_path = p_value
 			
 			items_list.add_child(select_node_item_template)
 		Types.STANDART_TYPES.OPEN_FILE:
@@ -103,6 +106,7 @@ func add_parameter(p_key, p_name, p_value, p_type):
 			
 			var parameter_value: Button = open_file_item_template.get_child(1)
 			parameter_value.button_up.connect(_on_open_file.bind(parameter_value))
+			parameter_value.file_path = p_value
 			
 			items_list.add_child(open_file_item_template)
 		Types.STIPULATION:

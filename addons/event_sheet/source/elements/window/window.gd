@@ -70,7 +70,9 @@ var finish_button: bool = true:
 @onready var window_panel: Panel = $WindowPanel
 var standart_window_size: Vector2 = Vector2(620, 376)
 
-var current_block: BlockResource
+var current_block: BlockResource = null
+var current_resource_button = null
+
 var first_condition_data: Dictionary
 var second_condition_data: Dictionary
 var finish_condition_data: Dictionary
@@ -169,12 +171,14 @@ func close_window():
 
 func add_group(current_scene):
 	current_block = null
+	current_resource_button = null
 	var title: String = "Add group"
 	var window_content = show_window(title, WindowType.ADD_GROUP, Vector2(330, 210))
 
 func _on_finished_group(data: Dictionary):
 	finish_data.emit(data, current_block)
 	current_block = null
+	current_resource_button = null
 	close_window()
 
 
@@ -195,8 +199,9 @@ func parse_first_conditions(current_scene, conditions_type: Types.ConditionType)
 	if current_scene:
 		for item: Node in current_scene.get_children():
 			if item is Node2D:
+				var icon: Texture2D = item.texture if "texture" in item else EditorInterface.get_editor_theme().get_icon(item.get_class(), "EditorIcons")
 				var condition: Dictionary = {
-					"icon": item.texture,
+					"icon": icon,
 					"disable_color": true,
 					"name": item.name,
 					"type": "Node2D",
@@ -225,14 +230,16 @@ func parse_second_conditions(condition_data: Dictionary) -> Dictionary:
 						for resource in resource_files["events"]:
 							var resource_instance: EventResource = load(resource)
 							if resource_instance.event_category == category:
-								conditions[category].append(resource_instance.duplicate(true))
+								var resource_copy: EventResource = resource_instance.duplicate(true)
+								conditions[category].append(resource_copy)
 				if condition_data["conditions_type"] == Types.ConditionType.ACTIONS:
 					for category in Types.Category.values():
 						conditions[category] = []
 						for resource in resource_files["actions"]:
 							var resource_instance: ActionResource = load(resource)
 							if resource_instance.action_category == category:
-								conditions[category].append(resource_instance.duplicate(true))
+								var resource_copy: ActionResource = resource_instance.duplicate(true)
+								conditions[category].append(resource_copy)
 			"Node2D":
 				var resource_files: Dictionary = find_tres_files_in_paths([
 					"res://addons/event_sheet/modules/Node2D/",
@@ -244,14 +251,16 @@ func parse_second_conditions(condition_data: Dictionary) -> Dictionary:
 						for resource in resource_files["events"]:
 							var resource_instance: EventResource = load(resource)
 							if resource_instance.event_category == category:
-								conditions[category].append(resource_instance.duplicate(true))
+								var resource_copy: EventResource = resource_instance.duplicate(true)
+								conditions[category].append(resource_copy)
 				if condition_data["conditions_type"] == Types.ConditionType.ACTIONS:
 					for category in Types.Category.values():
 						conditions[category] = []
 						for resource in resource_files["actions"]:
 							var resource_instance: ActionResource = load(resource)
 							if resource_instance.action_category == category:
-								conditions[category].append(resource_instance.duplicate(true))
+								var resource_copy: ActionResource = resource_instance.duplicate(true)
+								conditions[category].append(resource_copy)
 	
 	condition_data["resources"] = conditions
 	return condition_data
@@ -288,6 +297,7 @@ func add_condition(current_scene, cur_block: BlockResource = null, conditions_ty
 	var window_content = show_window(title, WindowType.FIRST_CONDITION)
 	window_content.update_items_list(conditions)
 	current_block = cur_block
+	current_resource_button = null
 	first_condition_data.clear()
 	second_condition_data.clear()
 	finish_condition_data.clear()
@@ -298,6 +308,27 @@ func add_condition(current_scene, cur_block: BlockResource = null, conditions_ty
 			"resource": null
 		}
 	}
+
+func change_condition(cur_resource, resource_button):
+	current_resource_button = resource_button
+	
+	first_condition_data.clear()
+	second_condition_data.clear()
+	finish_condition_data.clear()
+	
+	first_condition_data = cur_resource.conditions.first_condition_data
+	second_condition_data = cur_resource.conditions.second_condition_data
+	second_condition_data.data["resource"] = cur_resource
+	
+	var title: String
+	var data = second_condition_data.data
+	match data.conditions_type:
+		Types.ConditionType.EVENTS:
+			title = "Parameters for '{0}': {1}".format([data.name, cur_resource.event_name])
+		Types.ConditionType.ACTIONS:
+			title = "Parameters for '{0}': {1}".format([data.name, cur_resource.action_name])
+	var window_content = show_window(title, WindowType.FINISH_CONDITION)
+	window_content.update_items_list(data)
 
 # First Condition Focused
 func _on_first_condition_focused(condition_data: Dictionary):
@@ -337,7 +368,7 @@ func _on_next_button_up(condition_data: Dictionary = {}) -> void:
 				window_content.update_items_list(second_condition_data[first_condition_data["button"]])
 		WindowType.SECOND_CONDITION:
 			if condition_data.size() > 0: second_condition_data = condition_data
-			if second_condition_data.size() > 0 and condition_data.has("data"):
+			if second_condition_data.size() > 0 and second_condition_data.has("data"):
 				var data = second_condition_data["data"]
 				var title: String
 				match data.conditions_type:
@@ -350,9 +381,25 @@ func _on_next_button_up(condition_data: Dictionary = {}) -> void:
 		WindowType.FINISH_CONDITION:
 			if condition_data.size() > 0: finish_condition_data = condition_data
 			if finish_condition_data.size() > 0:
-				var data = finish_condition_data
-				finish_data.emit(data, current_block)
+				
+				var _first = first_condition_data.duplicate(true)
+				_first.data.erase("resources")
+				var _second = second_condition_data.duplicate(true)
+				_second.data.erase("resource")
+				
+				var conditions: Dictionary = {
+					"first_condition_data": _first,
+					"second_condition_data": _second
+				}
+				finish_condition_data.data.resource.conditions = conditions
+				
+				if current_resource_button:
+					current_resource_button.resource = finish_condition_data.data.resource
+				else:
+					finish_data.emit(finish_condition_data, current_block)
+				
 				current_block = null
+				current_resource_button = null
 				close_window()
 
 func _on_cancel_button_up() -> void:

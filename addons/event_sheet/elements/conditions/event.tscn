@@ -62,6 +62,7 @@ layout_mode = 2
 mouse_filter = 2
 
 [node name="Icon" type="TextureRect" parent="MarginContainer/HBoxContainer"]
+modulate = Color(1, 0, 0.227451, 1)
 custom_minimum_size = Vector2(20, 20)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -98,4 +99,5 @@ layout_mode = 2
 theme_override_constants/separation = 2
 theme_override_styles/separator = SubResource("StyleBoxFlat_egcj0")
 
+[connection signal="gui_input" from="." to="." method="_on_gui_input"]
 [connection signal="theme_changed" from="." to="." method="_on_theme_changed"]

@@ -19,6 +19,7 @@ var id: int = 0
 		update_params()
 
 @export var event_params: Dictionary = {}
+@export var conditions: Dictionary = {}
 
 func update_params():
 	if event_script == null:

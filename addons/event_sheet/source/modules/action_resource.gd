@@ -17,7 +17,8 @@ var id: int = 0
 		action_script = p_action_script
 		update_params()
 
-@export var action_params: Dictionary
+@export var action_params: Dictionary = {}
+@export var conditions: Dictionary = {}
 
 func update_params():
 	if action_script == null:

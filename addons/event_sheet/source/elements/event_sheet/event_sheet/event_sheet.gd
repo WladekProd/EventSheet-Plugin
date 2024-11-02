@@ -25,7 +25,9 @@ var current_scene:
 			if p_current_scene is VNode2D: current_scene = p_current_scene as VNode2D
 			elif p_current_scene is VNode3D: current_scene = p_current_scene as VNode3D
 			else: current_scene = null
+			print("gbid: {0}".format([current_scene.global_block_id]))
 			update_configuration_warnings()
+
 var current_popup_menu: String = "general"
 var popup_menus: Dictionary = {
 	"general": ["Add Event", "Add Blank Event", "Add Group"]
@@ -50,13 +52,19 @@ func _process(delta: float) -> void:
 
 
 
+# Загрузить Event Sheet
+func load_event_sheet():
+	for block in event_sheet_data:
+		update_block(block)
+	generate_code()
+
 # Кэшированные элементы интерфейса для блоков
 var blank_body_left_scene := preload("res://addons/event_sheet/elements/blank_body/blank_body_left.tscn")
 var blank_body_right_scene := preload("res://addons/event_sheet/elements/blank_body/blank_body_right.tscn")
 var event_scene := preload("res://addons/event_sheet/elements/conditions/event.tscn")
 var action_scene := preload("res://addons/event_sheet/elements/conditions/action.tscn")
 
-var global_block_id: int = 0
+var temp_block_id: int
 
 func add_data(data: Dictionary, to_block: BlockResource = null):
 	var _data_type: Types.BlockType = data["type"]
@@ -65,7 +73,7 @@ func add_data(data: Dictionary, to_block: BlockResource = null):
 	
 	if !to_block:
 		new_block = BlockResource.new()
-		new_block.id = global_block_id
+		new_block.id = current_scene.global_block_id if current_scene else temp_block_id
 		new_block.block_type = _data_type
 		if _data_type == Types.BlockType.GROUP:
 			new_block.group_name = _data.group_name
@@ -85,7 +93,10 @@ func add_data(data: Dictionary, to_block: BlockResource = null):
 			new_action.id = new_block.actions.size()
 			new_block.actions.append(new_action)
 
-	global_block_id += 1
+	if current_scene:
+		current_scene.global_block_id += 1
+	else:
+		temp_block_id += 1
 
 	# Перерисовываем только новый блок
 	update_block(new_block)
@@ -102,7 +113,7 @@ func update_block(block: BlockResource, block_level: int = 0, parent_left_body: 
 	if !left_body and !right_body:
 		left_body = blank_body_left_scene.instantiate()
 		right_body = blank_body_right_scene.instantiate()
-	
+		
 		if parent_left_body: parent_left_body.add_child(left_body)
 		else: event_items.add_child(left_body)
 		
@@ -110,12 +121,12 @@ func update_block(block: BlockResource, block_level: int = 0, parent_left_body: 
 		else: action_items.add_child(right_body)
 		
 		# Block ID | Block Level
-		left_body.name = "{0} | {1}".format([block.id, 0])
+		left_body.name = "{0} | {1}".format([block.id, block.level])
 		left_body.blank_body_right = right_body
 		left_body.dragged_block.connect(_drop_data_block)
 		
 		# Block ID | Block Level
-		right_body.name = "{0} | {1}".format([block.id, 0])
+		right_body.name = "{0} | {1}".format([block.id, block.level])
 		right_body.blank_body_left = left_body
 		right_body.add_action_button_up.connect(_on_add_action_button_up.bind())
 	
@@ -135,6 +146,8 @@ func update_block(block: BlockResource, block_level: int = 0, parent_left_body: 
 				event_item.name = str(event.id)
 				left_body.content.add_child(event_item)
 				left_body.content.move_child(event_item, left_body.content.get_child_count() - 1)
+				event_item.change_content.connect(_on_change_content)
+				event_item.context_menu.connect(_on_context_menu)
 			event_item.resource = event
 		
 		for action in block.actions:
@@ -144,6 +157,8 @@ func update_block(block: BlockResource, block_level: int = 0, parent_left_body: 
 				action_item.name = str(action.id)
 				right_body.content.add_child(action_item)
 				right_body.content.move_child(action_item, right_body.content.get_child_count() - 2)
+				action_item.change_content.connect(_on_change_content)
+				action_item.context_menu.connect(_on_context_menu)
 			action_item.resource = action
 	
 	# Обновление групповых данных
@@ -274,8 +289,14 @@ func _on_popup_menu_index_pressed(index: int) -> void:
 func _on_add_action_button_up(block):
 	_window.add_condition(current_scene, block, Types.ConditionType.ACTIONS)
 
-func _on_finish_data(data: Dictionary, block: BlockResource = null):
-	add_data(data, block)
+func _on_finish_data(finish_data: Dictionary, block: BlockResource = null):
+	add_data(finish_data, block)
+
+func _on_change_content(resource, resource_button):
+	_window.change_condition(resource, resource_button)
+
+func _on_context_menu():
+	print("event context")
 
 # Drag and Drop
 func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
@@ -295,6 +316,8 @@ func _drop_data(at_position: Vector2, data: Variant) -> void:
 		from_block_parent.sub_blocks.erase(from_block)
 	else:
 		event_sheet_data.erase(from_block)
+	
+	from_block.level = 0
 	event_sheet_data.insert(event_sheet_data.size(), from_block)
 	
 	# Перемещение
@@ -346,6 +369,7 @@ func _drop_data_block(from_left: Variant, to_left: Variant, move_block: Types.Mo
 		Types.MoveBlock.UP:
 			if to_block_parent:
 				var index = to_block_parent.sub_blocks.find(to_block)
+				from_block.level = to_block.level
 				if index >= 0: to_block_parent.sub_blocks.insert(index, from_block)
 				from_left.reparent(to_left.get_parent())
 				from_right.reparent(to_right.get_parent())
@@ -353,10 +377,11 @@ func _drop_data_block(from_left: Variant, to_left: Variant, move_block: Types.Mo
 				var to_index = to_left.get_index()
 				to_left.get_parent().move_child(from_left, to_index)
 				to_right.get_parent().move_child(from_right, to_index)
-				from_left.name = "{0} | {1}".format([from_block.id, int(to_left.name.split(" | ")[1])])
-				from_right.name = "{0} | {1}".format([from_block.id, int(to_right.name.split(" | ")[1])])
+				from_left.name = "{0} | {1}".format([from_block.id, from_block.level])
+				from_right.name = "{0} | {1}".format([from_block.id, from_block.level])
 			else:
 				var index = event_sheet_data.find(to_block)
+				from_block.level = 0
 				if index >= 0: event_sheet_data.insert(index, from_block)
 				from_left.reparent(event_items)
 				from_right.reparent(action_items)
@@ -369,6 +394,7 @@ func _drop_data_block(from_left: Variant, to_left: Variant, move_block: Types.Mo
 		Types.MoveBlock.DOWN:
 			if to_block_parent:
 				var index = to_block_parent.sub_blocks.find(to_block)
+				from_block.level = to_block.level
 				if index >= 0: to_block_parent.sub_blocks.insert(index + 1, from_block)
 				from_left.reparent(to_left.get_parent())
 				from_right.reparent(to_right.get_parent())
@@ -376,10 +402,11 @@ func _drop_data_block(from_left: Variant, to_left: Variant, move_block: Types.Mo
 				var to_index = to_left.get_index() + 1
 				to_left.get_parent().move_child(from_left, to_index)
 				to_right.get_parent().move_child(from_right, to_index)
-				from_left.name = "{0} | {1}".format([from_block.id, int(to_left.name.split(" | ")[1])])
-				from_right.name = "{0} | {1}".format([from_block.id, int(to_right.name.split(" | ")[1])])
+				from_left.name = "{0} | {1}".format([from_block.id, from_block.level])
+				from_right.name = "{0} | {1}".format([from_block.id, from_block.level])
 			else:
 				var index = event_sheet_data.find(to_block)
+				from_block.level = 0
 				if index >= 0: event_sheet_data.insert(index + 1, from_block)
 				from_left.reparent(event_items)
 				from_right.reparent(action_items)
@@ -390,11 +417,12 @@ func _drop_data_block(from_left: Variant, to_left: Variant, move_block: Types.Mo
 				from_left.name = "{0} | {1}".format([from_block.id, 0])
 				from_right.name = "{0} | {1}".format([from_block.id, 0])
 		Types.MoveBlock.SUB:
+			from_block.level = to_block.level + 1
 			to_block.sub_blocks.append(from_block)
 			from_left.reparent(to_left)
 			from_right.reparent(to_right)
-			from_left.name = "{0} | {1}".format([from_block.id, int(to_left.name.split(" | ")[1]) + 1])
-			from_right.name = "{0} | {1}".format([from_block.id, int(to_right.name.split(" | ")[1]) + 1])
+			from_left.name = "{0} | {1}".format([from_block.id, from_block.level])
+			from_right.name = "{0} | {1}".format([from_block.id, from_block.level])
 	
 	# Обновление блоков
 	update_block_hierarchy(to_block_root)
