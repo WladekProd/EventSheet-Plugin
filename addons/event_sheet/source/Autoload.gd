@@ -7,6 +7,7 @@ static var scene_tree_dock = base_control.find_children("Scene", "", true, false
 static var scene_tree_editor = ESUtils.find_child_by_class(scene_tree_dock, 'SceneTreeEditor')
 static var scene_tree_editor_tree: Tree = ESUtils.find_child_by_class(scene_tree_editor, 'Tree')
 
+static var is_plugin_screen: bool = false
 static var is_dragging: bool = false
 static var dragging_data: VBoxContainer = null
 

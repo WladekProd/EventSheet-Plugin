@@ -54,10 +54,14 @@ func update_frame(current_scene, condition_type: Types.ConditionType, finish_but
 			item_button.icon = _icon
 			item_button.disable_color = _disable_color
 			
-			if !item_button.button_down.is_connected(_on_select_item):
-				item_button.button_down.connect(_on_select_item.bind(item, frame))
+			if !item_button.gui_input.is_connected(_on_select_item):
+				item_button.gui_input.connect(_on_select_item.bind(item, frame))
 			
 			items_list.add_child(item_button)
 
-func _on_select_item(data, frame: Types.WindowFrame):
-	frame_result.emit(data, frame, false)
+func _on_select_item(event: InputEvent, data, frame: Types.WindowFrame):
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.double_click:
+			frame_result.emit(data, frame, false, true)
+		elif event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			frame_result.emit(data, frame, false, false)

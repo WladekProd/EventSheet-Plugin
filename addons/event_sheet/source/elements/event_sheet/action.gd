@@ -7,9 +7,11 @@ const Types = preload("res://addons/event_sheet/source/types.gd")
 @onready var _category_name: Label = $MarginContainer/HBoxContainer/HSplitContainer/Name
 @onready var _action_string: Label = $MarginContainer/HBoxContainer/HSplitContainer/Action
 
+signal select_content
 signal change_content
 signal context_menu
 
+var parent_block: BlockResource
 var resource: ActionResource:
 	set (p_resource):
 		resource = p_resource
@@ -18,6 +20,11 @@ var resource: ActionResource:
 		_category_name.text = Types.CATEGORY_NAMES[resource.category]
 		var _info_string: String = resource.gd_script.get_info(resource.parameters)
 		_action_string.text = _info_string
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.pressed:
+			focus_mode = FOCUS_NONE if !is_hovered() else FOCUS_CLICK
 
 func _ready() -> void:
 	pass
@@ -33,3 +40,9 @@ func _on_theme_changed() -> void:
 	var accent_color: Color = EditorInterface.get_editor_theme().get_color("accent_color", "Editor")
 	if _icon and _icon.modulate != accent_color:
 		_icon.modulate = accent_color
+
+func _on_focus_entered() -> void:
+	select_content.emit({ "parent_block": parent_block, "resource": resource, "resource_button": self })
+
+func _on_focus_exited() -> void:
+	select_content.emit({})

@@ -20,3 +20,11 @@ parameters = {
 "value": "\"\""
 }
 }
+pick_object = {
+"condition_type": 1,
+"disable_color": false,
+"icon": ExtResource("1_56hbs"),
+"name": "System",
+"object": null,
+"type": "System"
+}

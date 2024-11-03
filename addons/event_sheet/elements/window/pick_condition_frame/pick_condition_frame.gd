@@ -66,11 +66,17 @@ func update_frame(current_scene, condition_type: Types.ConditionType, finish_but
 					item_button.text = item.name
 					item_button.icon = item.icon
 					item_button.disable_color = _disable_color
-					if !item_button.button_down.is_connected(_on_item_selected):
-						item_button.button_down.connect(_on_item_selected.bind(item, frame))
+					if !item_button.gui_input.is_connected(_on_select_item):
+						item_button.gui_input.connect(_on_select_item.bind(item, frame))
 					category_items.add_child(item_button)
 				
 				items_list.add_child(item_category)
 
-func _on_item_selected(data, frame: Types.WindowFrame):
-	frame_result.emit(data.duplicate(true), frame, false)
+func _on_select_item(event: InputEvent, data, frame: Types.WindowFrame):
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.double_click:
+			var new_data = data.duplicate(true)
+			frame_result.emit(new_data, frame, false, true)
+		elif event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			var new_data = data.duplicate(true)
+			frame_result.emit(new_data, frame, false, false)

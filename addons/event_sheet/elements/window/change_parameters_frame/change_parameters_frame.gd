@@ -11,7 +11,8 @@ var stipulation_parameter := preload("res://addons/event_sheet/elements/window/c
 var open_file_patameter := preload("res://addons/event_sheet/elements/window/change_parameters_frame/parameters/open_file.tscn")
 var select_node_parameter := preload("res://addons/event_sheet/elements/window/change_parameters_frame/parameters/select_node.tscn")
 
-var resource
+var current_resource
+var current_frame
 
 signal frame_result
 
@@ -24,33 +25,36 @@ func update_frame(current_scene, condition_type: Types.ConditionType, finish_but
 		var pick_condition_data = frame_data[Types.WindowFrame.PICK_CONDITION]
 		var parameters_data: Dictionary = {}
 		
-		resource = pick_condition_data
-		resource.pick_object = pick_object_data
+		current_frame = frame
+		current_resource = pick_condition_data
+		current_resource.pick_object = pick_object_data
 		
-		condition_description.text = "{0}: {1}".format([resource.name, resource.description])
+		condition_description.text = "{0}: {1}".format([current_resource.name, current_resource.description])
 		
-		if resource.parameters.size() <= 0:
-			frame_result.emit(resource, frame, true)
-			return
-		else:
-			var sorted_keys: Array = resource.parameters.keys()
-			sorted_keys.sort_custom(
-				func(a: String, b: String) -> bool:
-					return resource.parameters[a]["order"] < resource.parameters[b]["order"]
-			)
-			for p_key in sorted_keys:
-				var p_name: String = resource.parameters[p_key].name
-				var p_value: String = resource.parameters[p_key].value
-				var p_type = resource.parameters[p_key].type
-				add_parameter(p_key, p_name, p_value, p_type)
+		var sorted_keys: Array = current_resource.parameters.keys()
+		sorted_keys.sort_custom(
+			func(a: String, b: String) -> bool:
+				return current_resource.parameters[a]["order"] < current_resource.parameters[b]["order"]
+		)
+		for p_key in sorted_keys:
+			var p_name: String = current_resource.parameters[p_key].name
+			var p_value: String = current_resource.parameters[p_key].value
+			var p_type = current_resource.parameters[p_key].type
+			add_parameter(p_key, p_name, p_value, p_type)
 		
 		for item in finish_button_instance.button_up.get_connections():
 			finish_button_instance.button_up.disconnect(item.callable)
 		
 		if !finish_button_instance.button_up.is_connected(_on_submit):
-			finish_button_instance.button_up.connect(_on_submit.bind(resource, frame))
+			finish_button_instance.button_up.connect(_on_submit.bind(current_resource, current_frame))
 		
 	items_list.fix_items_size()
+
+func _input(event: InputEvent) -> void:
+	if visible and ESUtils.is_plugin_screen:
+		if event is InputEventKey:
+			if event.keycode == KEY_ENTER and event.pressed:
+				frame_result.emit(current_resource, current_frame, true)
 
 func add_parameter(p_key, p_name, p_value, p_type):
 	match p_type:
@@ -112,14 +116,14 @@ func save_parameters():
 		var parameter_value = child.get_child(1)
 		match parameter_value.get_class():
 			"LineEdit":
-				resource.parameters[parameter_name].value = parameter_value.text
+				current_resource.parameters[parameter_name].value = parameter_value.text
 			"OptionButton":
-				resource.parameters[parameter_name].value = Types.STIPULATION_SYMBOL[parameter_value.selected]
+				current_resource.parameters[parameter_name].value = Types.STIPULATION_SYMBOL[parameter_value.selected]
 			"Button":
 				if parameter_value.has_method("get_file_path"):
-					resource.parameters[parameter_name].value = parameter_value.get_file_path()
+					current_resource.parameters[parameter_name].value = parameter_value.get_file_path()
 				elif parameter_value.has_method("get_node_path"):
-					resource.parameters[parameter_name].value = parameter_value.get_node_path()
+					current_resource.parameters[parameter_name].value = parameter_value.get_node_path()
 
 func _on_open_node_path(parameter_value: Button):
 	EditorInterface.popup_node_selector(_on_node_selected.bind(parameter_value), [])
@@ -161,4 +165,4 @@ func _on_parameter_edited(new_text: String):
 	save_parameters()
 
 func _on_submit(data, frame: Types.WindowFrame):
-	frame_result.emit(data, frame, true)
+	frame_result.emit(data, frame, true, false)

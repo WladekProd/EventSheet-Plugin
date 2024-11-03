@@ -4,7 +4,12 @@
 [ext_resource type="Script" path="res://addons/event_sheet/source/elements/event_sheet/action.gd" id="1_sg4pj"]
 [ext_resource type="Texture2D" uid="uid://3aayah87ti8k" path="res://addons/event_sheet/resources/icons/divider.svg" id="3_rwgyg"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2moa3"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_41qf7"]
+bg_color = Color(1, 1, 1, 0.0392157)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yilea"]
 bg_color = Color(0.27451, 0.27451, 0.27451, 0.588235)
@@ -61,7 +66,7 @@ offset_right = 200.0
 offset_bottom = 30.0
 size_flags_horizontal = 3
 size_flags_vertical = 2
-theme_override_styles/focus = SubResource("StyleBoxEmpty_2moa3")
+theme_override_styles/focus = SubResource("StyleBoxFlat_41qf7")
 theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxFlat_yilea")
 theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_g718g")
 theme_override_styles/hover_mirrored = SubResource("StyleBoxFlat_0utdj")
@@ -127,5 +132,7 @@ layout_mode = 2
 theme_override_constants/separation = 2
 theme_override_styles/separator = SubResource("StyleBoxFlat_1amek")
 
+[connection signal="focus_entered" from="." to="." method="_on_focus_entered"]
+[connection signal="focus_exited" from="." to="." method="_on_focus_exited"]
 [connection signal="gui_input" from="." to="." method="_on_gui_input"]
 [connection signal="theme_changed" from="." to="." method="_on_theme_changed"]

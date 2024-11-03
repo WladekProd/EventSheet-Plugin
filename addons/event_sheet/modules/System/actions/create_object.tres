@@ -38,4 +38,4 @@ parameters = {
 "value": ""
 }
 }
-conditions = {}
+pick_object = {}

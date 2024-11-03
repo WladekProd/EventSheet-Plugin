@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://bch7w7cwxwqsn"]
+[gd_scene load_steps=20 format=3 uid="uid://bch7w7cwxwqsn"]
 
 [ext_resource type="Script" path="res://addons/event_sheet/source/elements/event_sheet/event_sheet/event_sheet.gd" id="1_vq26q"]
 [ext_resource type="Texture2D" uid="uid://3aayah87ti8k" path="res://addons/event_sheet/resources/icons/divider.svg" id="2_52akj"]
@@ -7,10 +7,10 @@
 [ext_resource type="Script" path="res://addons/event_sheet/source/elements/event_sheet/code_editor/code_edit.gd" id="4_241l8"]
 [ext_resource type="Script" path="res://addons/event_sheet/source/elements/window/window.gd" id="5_f3m08"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kxnoh"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ey71p"]
 bg_color = Color(0.0344663, 0.0419983, 0.0545548, 1)
 
-[sub_resource type="CodeHighlighter" id="CodeHighlighter_h1kcp"]
+[sub_resource type="CodeHighlighter" id="CodeHighlighter_im26t"]
 number_color = Color(0.631373, 1, 0.878431, 1)
 symbol_color = Color(0.670588, 0.788235, 1, 1)
 function_color = Color(0.341176, 0.701961, 1, 1)
@@ -118,6 +118,168 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
+[sub_resource type="Animation" id="Animation_jf4ul"]
+resource_name = "show_window"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("WindowPanel:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(0.5, 0.5),
+"update": 0,
+"values": [Vector2(1.00136e-05, 1.00136e-05), Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("WindowPanel:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(0.5, 0.5),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Background:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(0.5, 0.5),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".:visible")
+tracks/3/interp = 2
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, true]
+}
+
+[sub_resource type="Animation" id="Animation_i8sdf"]
+resource_name = "hide_window"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("WindowPanel:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(2, 2),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1e-05, 1e-05)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("WindowPanel:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(2, 2),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Background:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(2, 2),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".:visible")
+tracks/3/interp = 2
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="Animation" id="Animation_1eopg"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("WindowPanel:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("WindowPanel:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Background:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_djwa3"]
+_data = {
+"RESET": SubResource("Animation_1eopg"),
+"hide_window": SubResource("Animation_i8sdf"),
+"show_window": SubResource("Animation_jf4ul")
+}
+
 [node name="Event Sheet" type="Panel"]
 anchors_preset = 15
 anchor_right = 1.0
@@ -126,7 +288,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_kxnoh")
+theme_override_styles/panel = SubResource("StyleBoxFlat_ey71p")
 script = ExtResource("1_vq26q")
 
 [node name="HSplitContainer" type="HSplitContainer" parent="."]
@@ -181,7 +343,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 editable = false
 caret_blink = true
-syntax_highlighter = SubResource("CodeHighlighter_h1kcp")
+syntax_highlighter = SubResource("CodeHighlighter_im26t")
 highlight_all_occurrences = true
 draw_tabs = true
 line_folding = true
@@ -327,6 +489,11 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_8evaa")
 theme_override_styles/normal = SubResource("StyleBoxFlat_j1hlp")
 text = "Finish"
 
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Window"]
+libraries = {
+"": SubResource("AnimationLibrary_djwa3")
+}
+
 [connection signal="theme_changed" from="." to="." method="_on_theme_changed"]
 [connection signal="gui_input" from="HSplitContainer/ScrollContainer" to="." method="_on_scroll_container_gui_input"]
 [connection signal="text_changed" from="HSplitContainer/CodeEdit" to="HSplitContainer/CodeEdit" method="_on_text_changed"]
@@ -336,3 +503,5 @@ text = "Finish"
 [connection signal="button_up" from="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons/Help" to="Window" method="_on_help_button_up"]
 [connection signal="button_up" from="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons/Back" to="Window" method="_on_back_button_up"]
 [connection signal="button_up" from="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons/Next" to="Window" method="_on_next_button_up"]
+[connection signal="animation_finished" from="Window/AnimationPlayer" to="Window" method="_on_animation_finished"]
+[connection signal="animation_started" from="Window/AnimationPlayer" to="Window" method="_on_animation_started"]

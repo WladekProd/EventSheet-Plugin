@@ -10,7 +10,15 @@ const PLUGIN_PATH := "plugins/event_sheet/shortcut"
 var shortcut_res: Shortcut = preload("res://addons/event_sheet/default_shortcut.tres")
 var shortcut: Shortcut
 
+
+
 func _enter_tree():
+	if !scene_changed.is_connected(_on_scene_change):
+		scene_changed.connect(_on_scene_change)
+	
+	if !main_screen_changed.is_connected(_on_screen_change):
+		main_screen_changed.connect(_on_screen_change)
+	
 	if !ESUtils.scene_tree_editor_tree.button_clicked.is_connected(_on_scene_tree_button_clicked):
 		ESUtils.scene_tree_editor_tree.button_clicked.connect(_on_scene_tree_button_clicked)
 	
@@ -27,6 +35,12 @@ func _enter_tree():
 	_make_visible(false)
 
 func _exit_tree():
+	if scene_changed.is_connected(_on_scene_change):
+		scene_changed.disconnect(_on_scene_change)
+	
+	if main_screen_changed.is_connected(_on_screen_change):
+		main_screen_changed.disconnect(_on_screen_change)
+	
 	if ESUtils.scene_tree_editor_tree.button_clicked.is_connected(_on_scene_tree_button_clicked):
 		ESUtils.scene_tree_editor_tree.button_clicked.disconnect(_on_scene_tree_button_clicked)
 	
@@ -60,6 +74,16 @@ func _get_plugin_icon():
 func set_shortcut(project_setting_path: String, resource: Shortcut) -> Shortcut:
 	EditorInterface.get_editor_settings().set_setting(PLUGIN_PATH, resource)
 	return resource
+
+func _on_scene_change(scene: Node) -> void:
+	if scene is VNode2D or scene is VNode3D:
+		#print('Changed scene to %s' % (scene.name if scene else "empty"))
+		if ESUtils.is_plugin_screen:
+			#open_event_sheet_editor(scene.event_sheet_data, scene)
+			print(scene.name)
+
+func _on_screen_change(screen_name: String) -> void:
+	ESUtils.is_plugin_screen = screen_name == _get_plugin_name()
 
 func _on_scene_tree_button_clicked(item, column: int, id: int, mouse_button_index: int):
 	if column == 0 and id == 100 and mouse_button_index == MOUSE_BUTTON_LEFT:

@@ -27,6 +27,7 @@ var current_scene:
 			else: current_scene = null
 			print("gbid: {0}".format([current_scene.global_block_id]))
 			update_configuration_warnings()
+var selected_content: Dictionary = {}
 
 var current_popup_menu: String = "general"
 var popup_menus: Dictionary = {
@@ -38,6 +39,23 @@ const actions: Dictionary = {}
 
 
 
+func _input(event: InputEvent) -> void:
+	if visible and ESUtils.is_plugin_screen and !_window.visible:
+		if event is InputEventKey:
+			if !event.ctrl_pressed:
+				if !event.shift_pressed:
+					if event.keycode == KEY_E and event.pressed:
+						_window.show_add_window(Types.ConditionType.EVENTS, Types.BlockType.STANDART)
+					if event.keycode == KEY_G and event.pressed:
+						_window.show_add_group()
+					if event.keycode == KEY_A and event.pressed and !selected_content.is_empty():
+						print(selected_content)
+						_window.show_add_window(Types.ConditionType.ACTIONS, Types.BlockType.STANDART, selected_content.parent_block)
+				else: pass
+			else:
+				if !event.shift_pressed: pass
+				else: pass
+				pass
 
 func _ready() -> void:
 	if !_window.finish_data.is_connected(_on_finish_data):
@@ -157,8 +175,10 @@ func update_block(block: BlockResource, block_level: int = 0, parent_left_body: 
 			if !event_item:
 				event_item = event_scene.instantiate()
 				event_item.name = str(event.id)
+				event_item.parent_block = block
 				left_body.content.add_child(event_item)
 				left_body.content.move_child(event_item, left_body.content.get_child_count() - 1)
+				event_item.select_content.connect(_on_select_content)
 				event_item.change_content.connect(_on_change_content)
 				event_item.context_menu.connect(_on_context_menu)
 			event_item.resource = event
@@ -168,8 +188,10 @@ func update_block(block: BlockResource, block_level: int = 0, parent_left_body: 
 			if !action_item:
 				action_item = action_scene.instantiate()
 				action_item.name = str(action.id)
+				action_item.parent_block = block
 				right_body.content.add_child(action_item)
 				right_body.content.move_child(action_item, right_body.content.get_child_count() - 2)
+				action_item.select_content.connect(_on_select_content)
 				action_item.change_content.connect(_on_change_content)
 				action_item.context_menu.connect(_on_context_menu)
 			action_item.resource = action
@@ -301,13 +323,16 @@ func _on_popup_menu_index_pressed(index: int) -> void:
 		match index:
 			0: _window.show_add_window(Types.ConditionType.EVENTS, Types.BlockType.STANDART)
 			1: pass # add_blank_body()
-			2: _window.add_group()
+			2: _window.show_add_group()
 
 func _on_add_action_button_up(block):
 	_window.show_add_window(Types.ConditionType.ACTIONS, Types.BlockType.STANDART, block)
 
 func _on_finish_data(finish_data: Dictionary, block: BlockResource = null):
 	add_data(finish_data, block)
+
+func _on_select_content(data: Dictionary):
+	selected_content = data
 
 func _on_change_content(resource, resource_button):
 	_window.show_change_window(resource, resource_button)
