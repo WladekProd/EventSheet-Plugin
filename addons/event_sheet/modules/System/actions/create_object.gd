@@ -34,7 +34,7 @@ static func get_template(_params: Dictionary = params()) -> String:
 var object: Node = load("{object}").instantiate()
 object.name = {name}
 object.position = Vector2({x}, {y})
-scene.add_child(object)
+self.add_child(object)
 """.format({
 		"object": _params["object"]["value"],
 		"name": _params["name"]["value"],

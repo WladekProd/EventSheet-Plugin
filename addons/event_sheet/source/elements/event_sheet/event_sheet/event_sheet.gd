@@ -272,14 +272,19 @@ func update_block_hierarchy(root_block: BlockResource):
 
 var function_contents: Dictionary = {
 	"globals": [],
-	"_init": { "params": [], "body": ["_ready()", "pass"] },
+	"_init": { "params": [], "body": ["pass"] },
 }
 
 func generate_code():
 	result_script = ""
 	function_contents = {
 		"globals": [],
-		"_init": { "params": [], "body": ["_ready()", "pass"] },
+		"_init": {"params": [], "body": [
+			"set_process_input(true)",
+			"set_process_unhandled_input(true)",
+			"set_physics_process(true)",
+			#"_ready()"
+		]},
 	}
 	
 	if current_scene:
@@ -324,7 +329,16 @@ func process_block(block: BlockResource, sub_block_index: int = 1, parent_func_n
 	else: 
 		_spaces = "\t".repeat(sub_block_index - 1) if sub_block_index >= 2 else ""
 	
-	if block.block_type == Types.BlockType.STANDART:
+	if block.block_type == Types.BlockType.VARIABLE:
+		if sub_block_index <= 1:
+			var _var_template = "var {0} = {1}".format([block.variable_name, str(block.variable_value)]).strip_edges()
+			if not function_contents["globals"].has(_var_template):
+				function_contents["globals"].append(_var_template)
+		else:
+			var _var_template = _spaces + "var {0} = {1}".format([block.variable_name, str(block.variable_value)]).strip_edges()
+			if not function_contents[parent_func_name]["body"].has(_var_template):
+				function_contents[parent_func_name]["body"].append(_var_template)
+	elif block.block_type == Types.BlockType.STANDART:
 		for event: EventResource in block.events:
 			var _script = event.gd_script
 			var _template: String = _script.get_template(event.parameters).strip_edges()
@@ -351,6 +365,7 @@ func process_block(block: BlockResource, sub_block_index: int = 1, parent_func_n
 				
 				if function_contents.has(func_name):
 					function_contents[func_name]["body"].append(_if_template)
+					sub_block_index += 1
 				
 				is_stipulation = true
 		
@@ -374,6 +389,9 @@ func process_block(block: BlockResource, sub_block_index: int = 1, parent_func_n
 			
 			var _action_spaces: String = _spaces + "\t" if is_stipulation else ""
 			
+			if block.events.is_empty() and sub_block_index > 1:
+				_action_spaces += "\t"
+			
 			if func_name.is_empty(): 
 				func_name = "_init"
 			
@@ -385,8 +403,11 @@ func process_block(block: BlockResource, sub_block_index: int = 1, parent_func_n
 				else:
 					function_contents[func_name]["body"].append(_action_spaces + _template.format({ "object": _object_name }))
 	
-	if function_contents.has(func_name) and function_contents[func_name]["body"].size() == 0:
-		function_contents[func_name]["body"].append("pass")
+	if function_contents.has(func_name):
+		if function_contents[func_name]["body"].size() == 0:
+			function_contents[func_name]["body"].append("pass")
+		else:
+			function_contents[func_name]["body"].erase("pass")
 	
 	for sub_block in block.sub_blocks:
 		process_block(sub_block, sub_block_index + 1, func_name)

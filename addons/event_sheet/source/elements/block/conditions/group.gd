@@ -43,7 +43,7 @@ func _on_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if event.double_click:
-				empty_block.change_block.emit(empty_block.block_resource, self)
+				empty_block.change.emit(empty_block.block_resource, self)
 			else:
 				empty_block.is_selected = true
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:

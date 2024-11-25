@@ -1,0 +1,149 @@
+[gd_scene load_steps=15 format=3 uid="uid://v0668nk7fabc"]
+
+[ext_resource type="Script" path="res://addons/event_sheet/source/nodes/VNode2D.gd" id="1_mx0i8"]
+[ext_resource type="Texture2D" uid="uid://cmwl07hf2qbwl" path="res://icon.svg" id="2_lvp20"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/resources/block_resource.gd" id="2_ye8nk"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/resources/action_resource.gd" id="3_gyesy"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/resources/event_resource.gd" id="5_5tuqw"]
+[ext_resource type="Texture2D" uid="uid://byf2yg4kua5ik" path="res://addons/event_sheet/resources/icons/system.svg" id="6_q7n8p"]
+
+[sub_resource type="GDScript" id="GDScript_k5mud"]
+script/source = "
+const Types = preload(\"res://addons/event_sheet/source/utils/event_sheet_types.gd\")
+
+static func params() -> Dictionary:
+	return {
+		\"x\": {
+			\"order\": 0,
+			\"name\": \"X\",
+			\"type\": Types.STANDART_TYPES.STRING,
+			\"value\": \"0\"
+		},
+		\"y\": {
+			\"order\": 1,
+			\"name\": \"Y\",
+			\"type\": Types.STANDART_TYPES.STRING,
+			\"value\": \"0\"
+		}
+	}
+
+static func get_template(_params: Dictionary = params()) -> String:
+	return \"\"\"
+{object}.set_position(Vector2({x}, {y}))
+\"\"\".format({
+		\"x\": _params[\"x\"][\"value\"],
+		\"y\": _params[\"y\"][\"value\"]
+	})
+
+static func get_info(_params: Dictionary = params()) -> String:
+	return \"\"\"Set position: {x}, {y}\"\"\".format({
+		\"x\": _params[\"x\"][\"value\"],
+		\"y\": _params[\"y\"][\"value\"],
+	})
+"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_4n2e0"]
+load_path = "res://.godot/imported/system.svg-1bd5c9cfe04c7942f6362c315c351e6f.ctex"
+
+[sub_resource type="Resource" id="Resource_kwj5a"]
+script = ExtResource("3_gyesy")
+id = "07b77c85-83a3-4823-b047-509773c148fd"
+name = "Set position"
+icon = SubResource("CompressedTexture2D_4n2e0")
+icon_path = ""
+description = "New X co-ordinate, in pixels."
+group = 1
+category = 1
+gd_script = SubResource("GDScript_k5mud")
+parameters = {
+"x": {
+"name": "X",
+"order": 0,
+"type": 0,
+"value": "icon.position.x + 5"
+},
+"y": {
+"name": "Y",
+"order": 1,
+"type": 0,
+"value": "icon.position.y"
+}
+}
+pick_object = {
+"condition_type": 1,
+"disable_color": true,
+"icon": ExtResource("2_lvp20"),
+"name": &"Icon",
+"object": NodePath("/root/@EditorNode@16886/@Panel@13/@VBoxContainer@14/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@25/DockVSplitCenter/@VSplitContainer@52/@VBoxContainer@53/@PanelContainer@98/MainScreen/@CanvasItemEditor@9272/@VSplitContainer@9094/@HSplitContainer@9096/@HSplitContainer@9098/@Control@9099/@SubViewportContainer@9100/@SubViewport@9101/Bullet/Icon"),
+"type": "Node"
+}
+
+[sub_resource type="GDScript" id="GDScript_mfg6w"]
+script/source = "
+static func params() -> Dictionary:
+	return { }
+
+static func get_template(params: Dictionary = params()) -> String:
+	return \"\"\"func _physics_process(delta: float) -> void:\"\"\".format({ })
+
+static func get_info(params: Dictionary = params()) -> String:
+	return \"\"\"Physics process\"\"\".format({ })
+"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_pvm2o"]
+load_path = "res://.godot/imported/cycle.svg-67ee4c8fff41487ff559885597ef781b.ctex"
+
+[sub_resource type="Resource" id="Resource_5hkvg"]
+script = ExtResource("5_5tuqw")
+id = "45b17605-fe0d-4b94-9ea4-050a13b7b055"
+name = "Physics process"
+icon = SubResource("CompressedTexture2D_pvm2o")
+icon_path = ""
+description = ""
+type = 1
+group = 1
+category = 0
+gd_script = SubResource("GDScript_mfg6w")
+parameters = {}
+pick_object = {
+"condition_type": 0,
+"disable_color": false,
+"icon": ExtResource("6_q7n8p"),
+"name": "System",
+"object": null,
+"type": "System"
+}
+
+[sub_resource type="Resource" id="Resource_gk3aw"]
+script = ExtResource("2_ye8nk")
+id = "58f8096b-f032-40b2-824f-cef3ce0f02c8"
+level = 0
+block_expand = 0
+block_type = 0
+events = Array[ExtResource("5_5tuqw")]([SubResource("Resource_5hkvg")])
+actions = Array[ExtResource("3_gyesy")]([SubResource("Resource_kwj5a")])
+sub_blocks = Array[ExtResource("2_ye8nk")]([])
+
+[sub_resource type="GDScript" id="GDScript_e7bbx"]
+script/source = "extends Node2D
+
+@onready var icon
+
+func _init():
+	icon = $\"Icon\"
+	set_process_input(true)
+	set_process_unhandled_input(true)
+	set_physics_process(true)
+
+func _physics_process(delta: float):
+	icon.set_position(Vector2(icon.position.x + 5, icon.position.y))
+"
+
+[node name="Bullet" type="Node2D"]
+script = ExtResource("1_mx0i8")
+event_sheet_data = Array[ExtResource("2_ye8nk")]([SubResource("Resource_gk3aw")])
+final_script = SubResource("GDScript_e7bbx")
+
+[node name="Icon" type="Sprite2D" parent="."]
+scale = Vector2(0.125, 0.125)
+texture = ExtResource("2_lvp20")

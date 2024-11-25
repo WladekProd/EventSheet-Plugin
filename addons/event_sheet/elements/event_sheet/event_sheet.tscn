@@ -39,7 +39,7 @@ border_color = Color(0.8, 0.8, 0.8, 0)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_p2mvr"]
 
-[sub_resource type="CodeHighlighter" id="CodeHighlighter_0qipi"]
+[sub_resource type="CodeHighlighter" id="CodeHighlighter_g0lgv"]
 number_color = Color(0.631373, 1, 0.878431, 1)
 symbol_color = Color(0.670588, 0.788235, 1, 1)
 function_color = Color(0.341176, 0.701961, 1, 1)
@@ -558,7 +558,7 @@ func __process(delta: float) -> void:
 func __input(event: InputEvent) -> void:
 	{input}
 "
-syntax_highlighter = SubResource("CodeHighlighter_0qipi")
+syntax_highlighter = SubResource("CodeHighlighter_g0lgv")
 script = ExtResource("5_8m4md")
 
 [node name="PopupMenu" type="PopupMenu" parent="."]

@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="EventResource" load_steps=4 format=3 uid="uid://cdynoaokm04r5"]
+
+[ext_resource type="Script" path="res://addons/event_sheet/modules/System/events/is_action_just_pressed.gd" id="1_4v8e3"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/resources/event_resource.gd" id="1_st62b"]
+[ext_resource type="Texture2D" uid="uid://dn2802kb4ium3" path="res://addons/event_sheet/resources/icons/start.svg" id="2_fud85"]
+
+[resource]
+script = ExtResource("1_st62b")
+id = ""
+name = "Is action just pressed"
+icon = ExtResource("2_fud85")
+icon_path = ""
+description = ""
+type = 1
+group = 1
+category = 8
+gd_script = ExtResource("1_4v8e3")
+parameters = {
+"action": {
+"name": "Action",
+"order": 0,
+"type": 0,
+"value": "\"\""
+}
+}
+pick_object = {}

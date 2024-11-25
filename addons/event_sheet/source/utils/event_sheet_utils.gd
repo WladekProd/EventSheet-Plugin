@@ -454,6 +454,7 @@ static func spawn_block_item(event_sheet_class, parent_item: Node, item: Node, r
 		if resource is BlockResource:
 			if spawn_resource: event_sheet_class.event_sheet_data.append(resource)
 			event_sheet_class.block_items.add_child(item)
+	event_sheet_class.generate_code()
 
 static func remove_block_item(event_sheet_class, parent_item: Node, item: Node, resource):
 	if parent_item:
@@ -474,6 +475,7 @@ static func remove_block_item(event_sheet_class, parent_item: Node, item: Node, 
 			var _index = event_sheet_class.event_sheet_data.find(resource)
 			event_sheet_class.event_sheet_data.remove_at(_index)
 			event_sheet_class.block_items.remove_child(item)
+	event_sheet_class.generate_code()
 
 static func create_block(event_sheet_class, block_type: Types.BlockType, block_data, parent_item: Node = null, create_new_resource: bool = true, save_resources: bool = true, fill_conditions: bool = false) -> VBoxContainer:
 	var _new_block = block_data
@@ -517,6 +519,7 @@ static func create_block(event_sheet_class, block_type: Types.BlockType, block_d
 		for action in _new_block.actions:
 			create_action(event_sheet_class, _block_item, action, save_resources)
 	
+	event_sheet_class.generate_code()
 	return _block_item
 
 static func create_event(event_sheet_class, block_item: Node, event_data, save_resources: bool = true) -> Button:
@@ -539,6 +542,7 @@ static func create_event(event_sheet_class, block_item: Node, event_data, save_r
 	_event_item.empty_block = block_item
 	_event_item.drop_data.connect(event_sheet_class._drop_data_event)
 	
+	event_sheet_class.generate_code()
 	return _event_item
 
 static func create_action(event_sheet_class, block_item: Node, action_data, save_resources: bool = true) -> Button:
@@ -599,4 +603,5 @@ static func update_block(event_sheet_class, block_item: Node, block_level: int =
 			if _action_item != null: _action_item.resource = action
 	
 	event_sheet_class.block_items.update_lines()
+	event_sheet_class.generate_code()
 	return _empty_block
