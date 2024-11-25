@@ -82,6 +82,7 @@ func _ready() -> void:
 	
 	if !Engine.is_editor_hint():
 		set_script(final_script)
+	
 	pass
 
 func _process(delta: float) -> void:

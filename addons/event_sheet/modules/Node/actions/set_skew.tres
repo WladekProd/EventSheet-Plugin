@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="ActionResource" load_steps=4 format=3 uid="uid://43uaab0cdwwp"]
+
+[ext_resource type="Texture2D" uid="uid://byf2yg4kua5ik" path="res://addons/event_sheet/resources/icons/system.svg" id="1_4ou2c"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/resources/action_resource.gd" id="1_4thux"]
+[ext_resource type="Script" path="res://addons/event_sheet/modules/Node/actions/set_skew.gd" id="1_q3kgq"]
+
+[resource]
+script = ExtResource("1_4thux")
+id = ""
+name = "Set skew"
+icon = ExtResource("1_4ou2c")
+icon_path = ""
+description = ""
+group = 1
+category = 1
+gd_script = ExtResource("1_q3kgq")
+parameters = {
+"skew": {
+"name": "Skew",
+"order": 0,
+"type": 0,
+"value": "0"
+}
+}
+pick_object = {}

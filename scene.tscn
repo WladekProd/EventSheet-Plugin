@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://1pej4df0pxlq"]
+[gd_scene load_steps=38 format=3 uid="uid://1pej4df0pxlq"]
 
 [ext_resource type="Script" path="res://addons/event_sheet/source/nodes/VNode2D.gd" id="1_yhkwf"]
 [ext_resource type="Script" path="res://addons/event_sheet/source/resources/block_resource.gd" id="2_n2qdk"]
@@ -6,6 +6,61 @@
 [ext_resource type="Texture2D" uid="uid://byf2yg4kua5ik" path="res://addons/event_sheet/resources/icons/system.svg" id="4_tv6u3"]
 [ext_resource type="Texture2D" uid="uid://b5fio4vb6m01y" path="res://icon2.svg" id="6_ijjpy"]
 [ext_resource type="Script" path="res://addons/event_sheet/source/resources/event_resource.gd" id="6_yvn5b"]
+
+[sub_resource type="GDScript" id="GDScript_majym"]
+script/source = "
+const Types = preload(\"res://addons/event_sheet/source/utils/event_sheet_types.gd\")
+
+static func params() -> Dictionary:
+	return {
+		\"text\": {
+			\"order\": 0,
+			\"name\": \"Text\",
+			\"type\": Types.STANDART_TYPES.STRING,
+			\"value\": '\"\"'
+		}
+	}
+
+static func get_template(_params: Dictionary = params()) -> String:
+	return \"\"\"print({text})\"\"\".format({
+		\"text\": _params[\"text\"][\"value\"]
+	})
+
+static func get_info(_params: Dictionary = params()) -> String:
+	return \"\"\"Print: {text}\"\"\".format({
+		\"text\": _params[\"text\"][\"value\"]
+	})
+"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_vjwgs"]
+load_path = "res://.godot/imported/system.svg-1bd5c9cfe04c7942f6362c315c351e6f.ctex"
+
+[sub_resource type="Resource" id="Resource_yk0d6"]
+script = ExtResource("3_tko1y")
+id = "7b1af1d3-3f6f-4f9b-90b1-6aa52058b297"
+name = "Print"
+icon = SubResource("CompressedTexture2D_vjwgs")
+icon_path = ""
+description = "Output any information to the console."
+group = 1
+category = 10
+gd_script = SubResource("GDScript_majym")
+parameters = {
+"text": {
+"name": "Text",
+"order": 0,
+"type": 0,
+"value": "\"start game\""
+}
+}
+pick_object = {
+"condition_type": 1,
+"disable_color": false,
+"icon": ExtResource("4_tv6u3"),
+"name": "System",
+"object": null,
+"type": "System"
+}
 
 [sub_resource type="GDScript" id="GDScript_yte6s"]
 script/source = "
@@ -24,7 +79,7 @@ load_path = "res://.godot/imported/start.svg-50b8a4b7d61a0a501ba76e919ebbc42a.ct
 
 [sub_resource type="Resource" id="Resource_qq5ge"]
 script = ExtResource("6_yvn5b")
-id = "90e7c60b-15b7-4b74-882c-c91de7054e54"
+id = "fe355257-2433-48f1-8e6f-10a5ae1b1b4a"
 name = "Ready"
 icon = SubResource("CompressedTexture2D_rywfb")
 icon_path = ""
@@ -50,7 +105,7 @@ level = 0
 block_expand = 0
 block_type = 0
 events = Array[ExtResource("6_yvn5b")]([SubResource("Resource_qq5ge")])
-actions = Array[ExtResource("3_tko1y")]([])
+actions = Array[ExtResource("3_tko1y")]([SubResource("Resource_yk0d6")])
 sub_blocks = Array[ExtResource("2_n2qdk")]([])
 
 [sub_resource type="GDScript" id="GDScript_popo3"]
@@ -93,7 +148,7 @@ load_path = "res://.godot/imported/system.svg-1bd5c9cfe04c7942f6362c315c351e6f.c
 
 [sub_resource type="Resource" id="Resource_nuq3t"]
 script = ExtResource("3_tko1y")
-id = "a545f72a-e862-4585-93cf-5992d57001d7"
+id = "ff3a0632-729a-45e5-acf8-95c9bae4368b"
 name = "Set position"
 icon = SubResource("CompressedTexture2D_6j7mg")
 icon_path = ""
@@ -156,7 +211,7 @@ load_path = "res://.godot/imported/system.svg-1bd5c9cfe04c7942f6362c315c351e6f.c
 
 [sub_resource type="Resource" id="Resource_8yj53"]
 script = ExtResource("3_tko1y")
-id = "8d30bf4c-5ff4-440a-bbc3-1915b416b220"
+id = "6c775f72-487f-41f3-9215-6bf902320cb6"
 name = "Set rotation"
 icon = SubResource("CompressedTexture2D_4o4st")
 icon_path = ""
@@ -170,6 +225,134 @@ parameters = {
 "order": 0,
 "type": 0,
 "value": "sprite_2d.rotation + 0.02"
+}
+}
+pick_object = {
+"condition_type": 1,
+"disable_color": true,
+"icon": ExtResource("6_ijjpy"),
+"name": &"Sprite2D",
+"object": NodePath("/root/@EditorNode@16886/@Panel@13/@VBoxContainer@14/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@25/DockVSplitCenter/@VSplitContainer@52/@VBoxContainer@53/@PanelContainer@98/MainScreen/@CanvasItemEditor@9272/@VSplitContainer@9094/@HSplitContainer@9096/@HSplitContainer@9098/@Control@9099/@SubViewportContainer@9100/@SubViewport@9101/VNode2D/Sprite2D"),
+"type": "Node"
+}
+
+[sub_resource type="GDScript" id="GDScript_lxrrr"]
+script/source = "
+const Types = preload(\"res://addons/event_sheet/source/utils/event_sheet_types.gd\")
+
+static func params() -> Dictionary:
+	return {
+		\"width\": {
+			\"order\": 0,
+			\"name\": \"Width\",
+			\"type\": Types.STANDART_TYPES.STRING,
+			\"value\": \"1\"
+		},
+		\"height\": {
+			\"order\": 1,
+			\"name\": \"Height\",
+			\"type\": Types.STANDART_TYPES.STRING,
+			\"value\": \"1\"
+		}
+	}
+
+static func get_template(_params: Dictionary = params()) -> String:
+	return \"\"\"
+{object}.set_scale(Vector2({width}, {height}))
+\"\"\".format({
+		\"width\": _params[\"width\"][\"value\"],
+		\"height\": _params[\"height\"][\"value\"]
+	})
+
+static func get_info(_params: Dictionary = params()) -> String:
+	return \"\"\"Set scale: {width}, {height}\"\"\".format({
+		\"width\": _params[\"width\"][\"value\"],
+		\"height\": _params[\"height\"][\"value\"],
+	})
+"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_mwnlf"]
+load_path = "res://.godot/imported/system.svg-1bd5c9cfe04c7942f6362c315c351e6f.ctex"
+
+[sub_resource type="Resource" id="Resource_k0an4"]
+script = ExtResource("3_tko1y")
+id = "626bff20-a407-4fc6-81cb-8778f479944b"
+name = "Set scale"
+icon = SubResource("CompressedTexture2D_mwnlf")
+icon_path = ""
+description = ""
+group = 1
+category = 1
+gd_script = SubResource("GDScript_lxrrr")
+parameters = {
+"height": {
+"name": "Height",
+"order": 1,
+"type": 0,
+"value": "sprite_2d.scale.y + 0.001"
+},
+"width": {
+"name": "Width",
+"order": 0,
+"type": 0,
+"value": "sprite_2d.scale.x + 0.001"
+}
+}
+pick_object = {
+"condition_type": 1,
+"disable_color": true,
+"icon": ExtResource("6_ijjpy"),
+"name": &"Sprite2D",
+"object": NodePath("/root/@EditorNode@16886/@Panel@13/@VBoxContainer@14/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@25/DockVSplitCenter/@VSplitContainer@52/@VBoxContainer@53/@PanelContainer@98/MainScreen/@CanvasItemEditor@9272/@VSplitContainer@9094/@HSplitContainer@9096/@HSplitContainer@9098/@Control@9099/@SubViewportContainer@9100/@SubViewport@9101/VNode2D/Sprite2D"),
+"type": "Node"
+}
+
+[sub_resource type="GDScript" id="GDScript_a8bmj"]
+script/source = "
+const Types = preload(\"res://addons/event_sheet/source/utils/event_sheet_types.gd\")
+
+static func params() -> Dictionary:
+	return {
+		\"skew\": {
+			\"order\": 0,
+			\"name\": \"Skew\",
+			\"type\": Types.STANDART_TYPES.STRING,
+			\"value\": \"0\"
+		}
+	}
+
+static func get_template(_params: Dictionary = params()) -> String:
+	return \"\"\"
+{object}.set_skew({skew})
+\"\"\".format({
+		\"skew\": _params[\"skew\"][\"value\"]
+	})
+
+static func get_info(_params: Dictionary = params()) -> String:
+	return \"\"\"Set skew: {skew} degrees\"\"\".format({
+		\"skew\": _params[\"skew\"][\"value\"]
+	})
+"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_k0mmh"]
+load_path = "res://.godot/imported/system.svg-1bd5c9cfe04c7942f6362c315c351e6f.ctex"
+
+[sub_resource type="Resource" id="Resource_djued"]
+script = ExtResource("3_tko1y")
+id = "1a038633-e187-45fb-a786-feb13faa562f"
+name = "Set skew"
+icon = SubResource("CompressedTexture2D_k0mmh")
+icon_path = ""
+description = ""
+group = 1
+category = 1
+gd_script = SubResource("GDScript_a8bmj")
+parameters = {
+"skew": {
+"name": "Skew",
+"order": 0,
+"type": 0,
+"value": "sprite_2d.skew + 0.001"
 }
 }
 pick_object = {
@@ -198,7 +381,7 @@ load_path = "res://.godot/imported/cycle.svg-67ee4c8fff41487ff559885597ef781b.ct
 
 [sub_resource type="Resource" id="Resource_vgw5r"]
 script = ExtResource("6_yvn5b")
-id = "fa914e94-f614-44b3-ae74-3050be8056fe"
+id = "40ad13b9-3fcd-4fbe-a997-9ef57dab8659"
 name = "Process"
 icon = SubResource("CompressedTexture2D_bulrb")
 icon_path = ""
@@ -224,30 +407,137 @@ level = 0
 block_expand = 0
 block_type = 0
 events = Array[ExtResource("6_yvn5b")]([SubResource("Resource_vgw5r")])
-actions = Array[ExtResource("3_tko1y")]([SubResource("Resource_nuq3t"), SubResource("Resource_8yj53")])
+actions = Array[ExtResource("3_tko1y")]([SubResource("Resource_nuq3t"), SubResource("Resource_8yj53"), SubResource("Resource_k0an4"), SubResource("Resource_djued")])
 sub_blocks = Array[ExtResource("2_n2qdk")]([])
 
-[sub_resource type="GDScript" id="GDScript_dma6q"]
+[sub_resource type="GDScript" id="GDScript_wbhwa"]
+script/source = "
+const Types = preload(\"res://addons/event_sheet/source/utils/event_sheet_types.gd\")
+
+static func params() -> Dictionary:
+	return {
+		\"text\": {
+			\"order\": 0,
+			\"name\": \"Text\",
+			\"type\": Types.STANDART_TYPES.STRING,
+			\"value\": '\"\"'
+		}
+	}
+
+static func get_template(_params: Dictionary = params()) -> String:
+	return \"\"\"print({text})\"\"\".format({
+		\"text\": _params[\"text\"][\"value\"]
+	})
+
+static func get_info(_params: Dictionary = params()) -> String:
+	return \"\"\"Print: {text}\"\"\".format({
+		\"text\": _params[\"text\"][\"value\"]
+	})
+"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_4xscl"]
+load_path = "res://.godot/imported/system.svg-1bd5c9cfe04c7942f6362c315c351e6f.ctex"
+
+[sub_resource type="Resource" id="Resource_k4sti"]
+script = ExtResource("3_tko1y")
+id = "76f39ff6-a3eb-4f54-820e-5a83ae759b15"
+name = "Print"
+icon = SubResource("CompressedTexture2D_4xscl")
+icon_path = ""
+description = "Output any information to the console."
+group = 1
+category = 10
+gd_script = SubResource("GDScript_wbhwa")
+parameters = {
+"text": {
+"name": "Text",
+"order": 0,
+"type": 0,
+"value": "\"11\""
+}
+}
+pick_object = {
+"condition_type": 1,
+"disable_color": false,
+"icon": ExtResource("4_tv6u3"),
+"name": "System",
+"object": null,
+"type": "System"
+}
+
+[sub_resource type="GDScript" id="GDScript_vff6v"]
+script/source = "
+static func params() -> Dictionary:
+	return { }
+
+static func get_template(params: Dictionary = params()) -> String:
+	return \"\"\"func _physics_process(delta: float) -> void:\"\"\".format({ })
+
+static func get_info(params: Dictionary = params()) -> String:
+	return \"\"\"Physics process\"\"\".format({ })
+"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_qktbi"]
+load_path = "res://.godot/imported/cycle.svg-67ee4c8fff41487ff559885597ef781b.ctex"
+
+[sub_resource type="Resource" id="Resource_04uda"]
+script = ExtResource("6_yvn5b")
+id = "f447c5c4-6fa4-4030-b1dc-496617fee3f0"
+name = "Physics process"
+icon = SubResource("CompressedTexture2D_qktbi")
+icon_path = ""
+description = ""
+type = 1
+group = 1
+category = 0
+gd_script = SubResource("GDScript_vff6v")
+parameters = {}
+pick_object = {
+"condition_type": 0,
+"disable_color": false,
+"icon": ExtResource("4_tv6u3"),
+"name": "System",
+"object": null,
+"type": "System"
+}
+
+[sub_resource type="Resource" id="Resource_y4ggl"]
+script = ExtResource("2_n2qdk")
+id = "77ec09b9-0600-445b-8bef-7aa89b743cef"
+level = 0
+block_expand = 0
+block_type = 0
+events = Array[ExtResource("6_yvn5b")]([SubResource("Resource_04uda")])
+actions = Array[ExtResource("3_tko1y")]([SubResource("Resource_k4sti")])
+sub_blocks = Array[ExtResource("2_n2qdk")]([])
+
+[sub_resource type="GDScript" id="GDScript_1yqx4"]
 script/source = "extends Node2D
 
 @onready var sprite_2d
 
 func _init():
 	sprite_2d = $\"Sprite2D\"
+	_ready()
 	pass
 
 func _ready():
-	pass
+	print(\"start game\")
 
 func _process(delta: float):
 	sprite_2d.set_position(Vector2(sprite_2d.position.x + 1, sprite_2d.position.y + 1))
 	sprite_2d.set_rotation(sprite_2d.rotation + 0.02)
+	sprite_2d.set_scale(Vector2(sprite_2d.scale.x + 0.001, sprite_2d.scale.y + 0.001))
+	sprite_2d.set_skew(sprite_2d.skew + 0.001)
+
+func _physics_process(delta: float):
+	print(\"11\")
 "
 
 [node name="VNode2D" type="Node2D"]
 script = ExtResource("1_yhkwf")
-event_sheet_data = Array[ExtResource("2_n2qdk")]([SubResource("Resource_pkbiv"), SubResource("Resource_u3ey6")])
-final_script = SubResource("GDScript_dma6q")
+event_sheet_data = Array[ExtResource("2_n2qdk")]([SubResource("Resource_pkbiv"), SubResource("Resource_u3ey6"), SubResource("Resource_y4ggl")])
+final_script = SubResource("GDScript_1yqx4")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(55, 56)

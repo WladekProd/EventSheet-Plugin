@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="EventResource" load_steps=4 format=3 uid="uid://c2pl13pa31b6j"]
+
+[ext_resource type="Script" path="res://addons/event_sheet/modules/System/events/physics_process.gd" id="1_agmke"]
+[ext_resource type="Texture2D" uid="uid://d3x6evxsldkws" path="res://addons/event_sheet/resources/icons/cycle.svg" id="1_gst1i"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/resources/event_resource.gd" id="2_ls7pp"]
+
+[resource]
+script = ExtResource("2_ls7pp")
+id = ""
+name = "Physics process"
+icon = ExtResource("1_gst1i")
+icon_path = ""
+description = ""
+type = 1
+group = 1
+category = 0
+gd_script = ExtResource("1_agmke")
+parameters = {}
+pick_object = {}

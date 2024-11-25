@@ -272,14 +272,14 @@ func update_block_hierarchy(root_block: BlockResource):
 
 var function_contents: Dictionary = {
 	"globals": [],
-	"_init": { "params": [], "body": ["pass"] },
+	"_init": { "params": [], "body": ["_ready()", "pass"] },
 }
 
 func generate_code():
 	result_script = ""
 	function_contents = {
 		"globals": [],
-		"_init": { "params": [], "body": ["pass"] },
+		"_init": { "params": [], "body": ["_ready()", "pass"] },
 	}
 	
 	if current_scene:
@@ -291,7 +291,6 @@ func generate_code():
 		process_block(block)
 	
 	# Добавляем глобальные переменные
-	print(function_contents["globals"])
 	for global_var in function_contents["globals"]:
 		result_script += "{0}\n".format([global_var])
 	
