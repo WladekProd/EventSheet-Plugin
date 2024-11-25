@@ -1,5 +1,0 @@
-[gd_scene format=3 uid="uid://dqeqyon401wm7"]
-
-[node name="Events" type="VBoxContainer"]
-size_flags_horizontal = 3
-mouse_filter = 2
