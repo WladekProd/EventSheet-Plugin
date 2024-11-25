@@ -1,0 +1,156 @@
+[gd_scene load_steps=3 format=3 uid="uid://ymg7ruwrsbqp"]
+
+[ext_resource type="Script" path="res://addons/event_sheet/elements/window/editor_settings_frame/editor_settings_frame.gd" id="1_83s5k"]
+[ext_resource type="Script" path="res://addons/event_sheet/elements/window/parameters.gd" id="2_vwed5"]
+
+[node name="EditorSettingsFrame" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_83s5k")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="Parameters" type="VBoxContainer" parent="MarginContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_vwed5")
+
+[node name="General" type="VBoxContainer" parent="MarginContainer/ScrollContainer/Parameters"]
+layout_mode = 2
+size_flags_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/ScrollContainer/Parameters/General"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+
+[node name="CategoryName" type="Label" parent="MarginContainer/ScrollContainer/Parameters/General/HBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_font_sizes/font_size = 12
+text = "General"
+vertical_alignment = 1
+uppercase = true
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/ScrollContainer/Parameters/General/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="code_editor_enable" type="HBoxContainer" parent="MarginContainer/ScrollContainer/Parameters"]
+layout_mode = 2
+
+[node name="Name" type="Label" parent="MarginContainer/ScrollContainer/Parameters/code_editor_enable"]
+custom_minimum_size = Vector2(149, 0)
+layout_mode = 2
+size_flags_vertical = 1
+text = "Code Editor: "
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Value" type="Label" parent="MarginContainer/ScrollContainer/Parameters/code_editor_enable"]
+custom_minimum_size = Vector2(149, 0)
+layout_mode = 2
+size_flags_vertical = 1
+text = "(true)"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CheckButton" type="CheckButton" parent="MarginContainer/ScrollContainer/Parameters/code_editor_enable"]
+layout_mode = 2
+
+[node name="Animations" type="VBoxContainer" parent="MarginContainer/ScrollContainer/Parameters"]
+layout_mode = 2
+size_flags_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/ScrollContainer/Parameters/Animations"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+
+[node name="CategoryName" type="Label" parent="MarginContainer/ScrollContainer/Parameters/Animations/HBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_font_sizes/font_size = 12
+text = "Animations"
+vertical_alignment = 1
+uppercase = true
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/ScrollContainer/Parameters/Animations/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="animations_enable" type="HBoxContainer" parent="MarginContainer/ScrollContainer/Parameters"]
+layout_mode = 2
+
+[node name="Name" type="Label" parent="MarginContainer/ScrollContainer/Parameters/animations_enable"]
+custom_minimum_size = Vector2(149, 0)
+layout_mode = 2
+size_flags_vertical = 1
+text = "Animations: "
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Value" type="Label" parent="MarginContainer/ScrollContainer/Parameters/animations_enable"]
+custom_minimum_size = Vector2(149, 0)
+layout_mode = 2
+size_flags_vertical = 1
+text = "(true)"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CheckButton" type="CheckButton" parent="MarginContainer/ScrollContainer/Parameters/animations_enable"]
+layout_mode = 2
+
+[node name="animations_speed" type="HBoxContainer" parent="MarginContainer/ScrollContainer/Parameters"]
+layout_mode = 2
+
+[node name="Name" type="Label" parent="MarginContainer/ScrollContainer/Parameters/animations_speed"]
+custom_minimum_size = Vector2(149, 0)
+layout_mode = 2
+size_flags_vertical = 1
+text = "Animations Speed: "
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Value" type="Label" parent="MarginContainer/ScrollContainer/Parameters/animations_speed"]
+custom_minimum_size = Vector2(149, 0)
+layout_mode = 2
+size_flags_vertical = 1
+text = "(1s)"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSlider" type="HSlider" parent="MarginContainer/ScrollContainer/Parameters/animations_speed"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+min_value = 0.5
+max_value = 1.5
+step = 0.1
+value = 1.0
+
+[connection signal="toggled" from="MarginContainer/ScrollContainer/Parameters/code_editor_enable/CheckButton" to="." method="_on_code_editor_enable_toggled"]
+[connection signal="toggled" from="MarginContainer/ScrollContainer/Parameters/animations_enable/CheckButton" to="." method="_on_animations_enable_toggled"]
+[connection signal="value_changed" from="MarginContainer/ScrollContainer/Parameters/animations_speed/HSlider" to="." method="_on_animations_speed_value_changed"]

@@ -1,0 +1,94 @@
+[gd_scene load_steps=5 format=3 uid="uid://d2a17h3yp6sxt"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w7yx7"]
+content_margin_top = 3.0
+content_margin_bottom = 3.0
+bg_color = Color(1, 1, 1, 0.156863)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gh5cn"]
+content_margin_top = 3.0
+content_margin_bottom = 3.0
+bg_color = Color(1, 1, 1, 0.0784314)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ocxkr"]
+content_margin_top = 3.0
+content_margin_bottom = 3.0
+bg_color = Color(1, 1, 1, 0.156863)
+draw_center = false
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="GDScript" id="GDScript_m5vkw"]
+resource_name = "NextConditionItem"
+script/source = "@tool
+extends Button
+
+@export var disable_color: bool = false:
+	set (p_disable_color):
+		if p_disable_color != disable_color:
+			disable_color = p_disable_color
+			color = Color.WHITE
+
+@export var color: Color:
+	set (p_color):
+		if p_color != color:
+			color = p_color
+			if !disable_color:
+				add_theme_color_override(\"icon_normal_color\", color)
+				add_theme_color_override(\"icon_disabled_color\", color)
+				add_theme_color_override(\"icon_focus_color\", color)
+				add_theme_color_override(\"icon_hover_color\", color)
+				add_theme_color_override(\"icon_hover_pressed_color\", color)
+				add_theme_color_override(\"icon_pressed_color\", color)
+			else:
+				add_theme_color_override(\"icon_normal_color\", Color.WHITE)
+				add_theme_color_override(\"icon_disabled_color\", Color.WHITE)
+				add_theme_color_override(\"icon_focus_color\", Color.WHITE)
+				add_theme_color_override(\"icon_hover_color\", Color.WHITE)
+				add_theme_color_override(\"icon_hover_pressed_color\", Color.WHITE)
+				add_theme_color_override(\"icon_pressed_color\", Color.WHITE)
+
+@export var data: Resource
+
+func _ready() -> void:
+	color = EditorInterface.get_editor_theme().get_color(\"accent_color\", \"Editor\")
+
+func _on_theme_changed() -> void:
+	var accent_color: Color = EditorInterface.get_editor_theme().get_color(\"accent_color\", \"Editor\")
+	if color != accent_color:
+		color = accent_color
+"
+
+[node name="ConditionItem" type="Button"]
+custom_minimum_size = Vector2(0, 30)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_normal_color = Color(0.892955, 0, 0.275886, 1)
+theme_override_colors/icon_focus_color = Color(0.892955, 0, 0.275886, 1)
+theme_override_colors/icon_pressed_color = Color(0.892955, 0, 0.275886, 1)
+theme_override_colors/icon_hover_color = Color(0.892955, 0, 0.275886, 1)
+theme_override_colors/icon_hover_pressed_color = Color(0.892955, 0, 0.275886, 1)
+theme_override_colors/icon_disabled_color = Color(0.892955, 0, 0.275886, 1)
+theme_override_font_sizes/font_size = 10
+theme_override_styles/focus = SubResource("StyleBoxFlat_w7yx7")
+theme_override_styles/hover = SubResource("StyleBoxFlat_gh5cn")
+theme_override_styles/normal = SubResource("StyleBoxFlat_ocxkr")
+text = "Pick by highest/lowest value"
+alignment = 0
+text_overrun_behavior = 3
+expand_icon = true
+script = SubResource("GDScript_m5vkw")
+color = Color(0.892955, 0, 0.275886, 1)
+
+[connection signal="theme_changed" from="." to="." method="_on_theme_changed"]

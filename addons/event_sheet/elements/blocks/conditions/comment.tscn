@@ -1,0 +1,81 @@
+[gd_scene load_steps=6 format=3 uid="uid://cvl5n6s2fffb5"]
+
+[ext_resource type="Script" path="res://addons/event_sheet/source/elements/block/conditions/comment.gd" id="1_ty3ml"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_477a1"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_waf5y"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_f7gu7"]
+font_size = 13
+font_color = Color(1, 1, 1, 0.392157)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gjrdl"]
+
+[node name="Comment" type="VBoxContainer"]
+custom_minimum_size = Vector2(200, 23)
+offset_right = 200.0
+offset_bottom = 23.0
+size_flags_horizontal = 3
+mouse_filter = 2
+script = ExtResource("1_ty3ml")
+color = Color(0.892955, 0, 0.275886, 1)
+
+[node name="CommentButton" type="Button" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 1
+theme_override_styles/focus = SubResource("StyleBoxEmpty_477a1")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_waf5y")
+flat = true
+
+[node name="MarginContainer" type="MarginContainer" parent="CommentButton"]
+custom_minimum_size = Vector2(0, 23)
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -12.5
+offset_right = 409.0
+offset_bottom = 12.5
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CommentButton/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="Prefix" type="Label" parent="CommentButton/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "#"
+label_settings = SubResource("LabelSettings_f7gu7")
+
+[node name="Comment" type="LineEdit" parent="CommentButton/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_colors/font_placeholder_color = Color(1, 1, 1, 0.392157)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 0.392157)
+theme_override_colors/font_selected_color = Color(1, 1, 1, 0.392157)
+theme_override_colors/font_uneditable_color = Color(1, 1, 1, 0.392157)
+theme_override_colors/font_color = Color(1, 1, 1, 0.392157)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/focus = SubResource("StyleBoxEmpty_gjrdl")
+text = "comment"
+editable = false
+expand_to_text_length = true
+flat = true
+
+[connection signal="theme_changed" from="." to="." method="_on_theme_changed"]
+[connection signal="focus_entered" from="CommentButton" to="." method="_on_focus_entered"]
+[connection signal="focus_exited" from="CommentButton" to="." method="_on_focus_exited"]
+[connection signal="gui_input" from="CommentButton" to="." method="_on_gui_input"]
+[connection signal="mouse_entered" from="CommentButton/MarginContainer/HBoxContainer/Comment" to="." method="_on_comment_mouse_entered"]
+[connection signal="mouse_exited" from="CommentButton/MarginContainer/HBoxContainer/Comment" to="." method="_on_comment_mouse_exited"]

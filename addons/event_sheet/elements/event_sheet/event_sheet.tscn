@@ -1,0 +1,769 @@
+[gd_scene load_steps=32 format=3 uid="uid://bch7w7cwxwqsn"]
+
+[ext_resource type="Script" path="res://addons/event_sheet/source/elements/event_sheet/event_sheet/event_sheet.gd" id="1_6chai"]
+[ext_resource type="Texture2D" uid="uid://3aayah87ti8k" path="res://addons/event_sheet/resources/icons/divider.svg" id="2_52akj"]
+[ext_resource type="Texture2D" uid="uid://bv7lhrm7hi6go" path="res://addons/event_sheet/resources/icons/heart.svg" id="2_me60f"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/elements/event_sheet/blocks_list.gd" id="4_ny70r"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/elements/event_sheet/code_editor/code_edit.gd" id="5_8m4md"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/elements/window/window.gd" id="5_f3m08"]
+[ext_resource type="Texture2D" uid="uid://cuidy515rojg7" path="res://addons/event_sheet/resources/icons/search.svg" id="7_gwuau"]
+[ext_resource type="Texture2D" uid="uid://cmopsroosmhhr" path="res://addons/event_sheet/resources/icons/event_sheet_big.svg" id="7_lnuo6"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gk4r7"]
+bg_color = Color(0.0579914, 0.0685685, 0.0968231, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1ud8s"]
+bg_color = Color(0, 0, 0, 0.235294)
+border_width_left = 5
+border_width_right = 5
+border_color = Color(0, 0, 0, 0.235294)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1ubgr"]
+content_margin_top = 6.0
+content_margin_bottom = 6.0
+bg_color = Color(1, 1, 1, 0.0588235)
+border_width_left = 5
+border_width_right = 5
+border_color = Color(0.8, 0.8, 0.8, 0)
+expand_margin_left = 6.0
+expand_margin_right = 6.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wmukb"]
+content_margin_top = 6.0
+content_margin_bottom = 6.0
+bg_color = Color(1, 1, 1, 1)
+draw_center = false
+border_width_left = 5
+border_width_right = 5
+border_color = Color(0.8, 0.8, 0.8, 0)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_p2mvr"]
+
+[sub_resource type="CodeHighlighter" id="CodeHighlighter_arqio"]
+number_color = Color(0.631373, 1, 0.878431, 1)
+symbol_color = Color(0.670588, 0.788235, 1, 1)
+function_color = Color(0.341176, 0.701961, 1, 1)
+member_variable_color = Color(0.737255, 0.878431, 1, 1)
+keyword_colors = {
+"False": Color(1, 0.439216, 0.521569, 1),
+"True": Color(1, 0.439216, 0.521569, 1),
+"and": Color(1, 0.439216, 0.521569, 1),
+"bool": Color(1, 0.439216, 0.521569, 1),
+"break": Color(1, 0.54902, 0.8, 1),
+"case": Color(1, 0.54902, 0.8, 1),
+"catch": Color(1, 0.439216, 0.521569, 1),
+"char": Color(1, 0.439216, 0.521569, 1),
+"class": Color(1, 0.439216, 0.521569, 1),
+"const": Color(1, 0.439216, 0.521569, 1),
+"continue": Color(1, 0.54902, 0.8, 1),
+"def": Color(1, 0.439216, 0.521569, 1),
+"default": Color(1, 0.54902, 0.8, 1),
+"double": Color(1, 0.439216, 0.521569, 1),
+"echo": Color(1, 0.439216, 0.521569, 1),
+"elif": Color(1, 0.54902, 0.8, 1),
+"export": Color(1, 0.439216, 0.521569, 1),
+"extends": Color(1, 0.439216, 0.521569, 1),
+"false": Color(1, 0.439216, 0.521569, 1),
+"final": Color(1, 0.439216, 0.521569, 1),
+"finally": Color(1, 0.439216, 0.521569, 1),
+"float": Color(1, 0.439216, 0.521569, 1),
+"for": Color(1, 0.54902, 0.8, 1),
+"foreach": Color(1, 0.54902, 0.8, 1),
+"func": Color(1, 0.439216, 0.521569, 1),
+"function": Color(1, 0.439216, 0.521569, 1),
+"if": Color(1, 0.54902, 0.8, 1),
+"import": Color(1, 0.439216, 0.521569, 1),
+"in": Color(1, 0.439216, 0.521569, 1),
+"int": Color(1, 0.439216, 0.521569, 1),
+"internal": Color(1, 0.439216, 0.521569, 1),
+"let": Color(1, 0.439216, 0.521569, 1),
+"method": Color(1, 0.439216, 0.521569, 1),
+"not": Color(1, 0.439216, 0.521569, 1),
+"null": Color(1, 0.439216, 0.521569, 1),
+"or": Color(1, 0.439216, 0.521569, 1),
+"pass": Color(1, 0.54902, 0.8, 1),
+"print": Color(1, 0.439216, 0.521569, 1),
+"private": Color(1, 0.439216, 0.521569, 1),
+"return": Color(1, 0.54902, 0.8, 1),
+"static": Color(1, 0.439216, 0.521569, 1),
+"string": Color(1, 0.439216, 0.521569, 1),
+"super": Color(1, 0.439216, 0.521569, 1),
+"switch": Color(1, 0.54902, 0.8, 1),
+"this": Color(1, 0.439216, 0.521569, 1),
+"throw": Color(1, 0.439216, 0.521569, 1),
+"true": Color(1, 0.439216, 0.521569, 1),
+"try": Color(1, 0.439216, 0.521569, 1),
+"undefined": Color(1, 0.439216, 0.521569, 1),
+"var": Color(1, 0.439216, 0.521569, 1),
+"void": Color(1, 0.439216, 0.521569, 1),
+"while": Color(1, 0.54902, 0.8, 1)
+}
+color_regions = {
+"\" \"": Color(1, 0.929412, 0.631373, 1),
+"#": Color(0.803922, 0.811765, 0.823529, 0.501961),
+"' '": Color(1, 0.929412, 0.631373, 1),
+"/* */": Color(0.803922, 0.811765, 0.823529, 0.501961),
+"//": Color(0.803922, 0.811765, 0.823529, 0.501961),
+"< >": Color(0.854902, 0.647059, 0.12549, 1)
+}
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xepe3"]
+bg_color = Color(0, 0, 0, 0.784314)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_evgra"]
+bg_color = Color(0.114071, 0.134313, 0.18838, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ocv3p"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ny3ss"]
+bg_color = Color(0, 0, 0, 0.392157)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="Animation" id="Animation_focyw"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Search/Search:custom_minimum_size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(0.5),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Search/SearchButton:custom_minimum_size")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(0.5),
+"update": 0,
+"values": [Vector2(12, 12)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Search/Search:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(0.5),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_ify80"]
+resource_name = "hide_search"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Search/Search:custom_minimum_size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(0.5, 0.5),
+"update": 0,
+"values": [Vector2(150, 0), Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Search/SearchButton:custom_minimum_size")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(0.5, 0.5),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(12, 12)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Search/Search:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(0.5, 0.5),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_ydkd3"]
+resource_name = "show_search"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Search/Search:custom_minimum_size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(2, 2),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(150, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Search/SearchButton:custom_minimum_size")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(2, 2),
+"update": 0,
+"values": [Vector2(12, 12), Vector2(0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Search/Search:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(2, 2),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ryrch"]
+_data = {
+"RESET": SubResource("Animation_focyw"),
+"hide_search": SubResource("Animation_ify80"),
+"show_search": SubResource("Animation_ydkd3")
+}
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bqunu"]
+bg_color = Color(0, 0, 0, 0.392157)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_d36lc"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_to4dl"]
+bg_color = Color(0, 0, 0, 0.490196)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8evaa"]
+bg_color = Color(0, 0, 0, 0.588235)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j1hlp"]
+bg_color = Color(0, 0, 0, 0.392157)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="Animation" id="Animation_1eopg"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("WindowPanel:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("WindowPanel:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Background:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_i8sdf"]
+resource_name = "hide_window"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("WindowPanel:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(2, 2),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1e-05, 1e-05)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("WindowPanel:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(2, 2),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Background:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(2, 2),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".:visible")
+tracks/3/interp = 2
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="Animation" id="Animation_jf4ul"]
+resource_name = "show_window"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("WindowPanel:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(0.5, 0.5),
+"update": 0,
+"values": [Vector2(1.00136e-05, 1.00136e-05), Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("WindowPanel:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(0.5, 0.5),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Background:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(0.5, 0.5),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".:visible")
+tracks/3/interp = 2
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_djwa3"]
+_data = {
+"RESET": SubResource("Animation_1eopg"),
+"hide_window": SubResource("Animation_i8sdf"),
+"show_window": SubResource("Animation_jf4ul")
+}
+
+[node name="Event Sheet" type="Panel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_gk4r7")
+script = ExtResource("1_6chai")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MenuBar" type="PanelContainer" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1ud8s")
+
+[node name="LeftMenuBar" type="MenuBar" parent="VBoxContainer/MenuBar"]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_font_sizes/font_size = 11
+theme_override_styles/hover = SubResource("StyleBoxFlat_1ubgr")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_1ubgr")
+theme_override_styles/normal = SubResource("StyleBoxFlat_wmukb")
+switch_on_hover = false
+
+[node name="Scene" type="PopupMenu" parent="VBoxContainer/MenuBar/LeftMenuBar"]
+item_count = 4
+item_0/text = "Add Event"
+item_1/text = "Add Group"
+item_1/id = 1
+item_2/text = "Add Variable"
+item_2/id = 2
+item_3/text = "Add Comment"
+item_3/id = 3
+
+[node name="Editor" type="PopupMenu" parent="VBoxContainer/MenuBar/LeftMenuBar"]
+auto_translate_mode = 1
+item_count = 1
+item_0/text = "Editor Settings"
+
+[node name="Donate" type="Button" parent="VBoxContainer/MenuBar"]
+visible = false
+custom_minimum_size = Vector2(72, 28)
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_font_sizes/font_size = 11
+theme_override_styles/focus = SubResource("StyleBoxEmpty_p2mvr")
+theme_override_styles/hover = SubResource("StyleBoxFlat_1ubgr")
+theme_override_styles/normal = SubResource("StyleBoxFlat_wmukb")
+text = "Donate"
+icon = ExtResource("2_me60f")
+alignment = 2
+icon_alignment = 2
+expand_icon = true
+
+[node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/autohide = 0
+theme_override_icons/grabber = ExtResource("2_52akj")
+theme_override_icons/h_grabber = ExtResource("2_52akj")
+theme_override_icons/v_grabber = ExtResource("2_52akj")
+split_offset = -500
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 2
+
+[node name="Control" type="VBoxContainer" parent="VBoxContainer/HSplitContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+
+[node name="Blocks" type="VBoxContainer" parent="VBoxContainer/HSplitContainer/ScrollContainer/Control"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+mouse_filter = 2
+script = ExtResource("4_ny70r")
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HSplitContainer/ScrollContainer/Control"]
+custom_minimum_size = Vector2(0, 300)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="CodeEdit" type="CodeEdit" parent="VBoxContainer/HSplitContainer"]
+layout_mode = 2
+text = "
+extends Node
+
+func __init() -> void:
+	{init}
+
+func __ready() -> void:
+	{ready}
+
+func __process(delta: float) -> void:
+	{process}
+
+func __input(event: InputEvent) -> void:
+	{input}
+"
+syntax_highlighter = SubResource("CodeHighlighter_arqio")
+script = ExtResource("5_8m4md")
+
+[node name="PopupMenu" type="PopupMenu" parent="."]
+size = Vector2i(98, 35)
+item_count = 1
+item_0/text = "Add Event"
+
+[node name="Window" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("5_f3m08")
+
+[node name="Background" type="Panel" parent="Window"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_xepe3")
+
+[node name="WindowPanel" type="Panel" parent="Window"]
+custom_minimum_size = Vector2(330, 210)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -310.0
+offset_top = -188.0
+offset_right = 310.0
+offset_bottom = 188.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_evgra")
+
+[node name="MarginContainer" type="MarginContainer" parent="Window/WindowPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Window/WindowPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Window/WindowPanel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="Expressions" type="HBoxContainer" parent="Window/WindowPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Expressions" type="TextureRect" parent="Window/WindowPanel/MarginContainer/VBoxContainer/HBoxContainer/Expressions"]
+custom_minimum_size = Vector2(12, 12)
+layout_mode = 2
+size_flags_horizontal = 2
+texture = ExtResource("7_lnuo6")
+expand_mode = 1
+stretch_mode = 5
+flip_h = true
+
+[node name="Title" type="HBoxContainer" parent="Window/WindowPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="WindowName" type="Label" parent="Window/WindowPanel/MarginContainer/VBoxContainer/HBoxContainer/Title"]
+layout_mode = 2
+size_flags_horizontal = 6
+theme_override_font_sizes/font_size = 12
+text = "Add condition"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Search" type="HBoxContainer" parent="Window/WindowPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 2
+
+[node name="SearchButton" type="TextureRect" parent="Window/WindowPanel/MarginContainer/VBoxContainer/HBoxContainer/Search"]
+custom_minimum_size = Vector2(12, 12)
+layout_mode = 2
+size_flags_horizontal = 10
+texture = ExtResource("7_gwuau")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Search" type="LineEdit" parent="Window/WindowPanel/MarginContainer/VBoxContainer/HBoxContainer/Search"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_constants/minimum_character_width = -1
+theme_override_font_sizes/font_size = 10
+theme_override_styles/focus = SubResource("StyleBoxEmpty_ocv3p")
+theme_override_styles/normal = SubResource("StyleBoxFlat_ny3ss")
+placeholder_text = "Search"
+alignment = 1
+
+[node name="SearchAnimator" type="AnimationPlayer" parent="Window/WindowPanel/MarginContainer/VBoxContainer/HBoxContainer/Search"]
+root_node = NodePath("../..")
+libraries = {
+"": SubResource("AnimationLibrary_ryrch")
+}
+
+[node name="Panel" type="Panel" parent="Window/WindowPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_bqunu")
+
+[node name="Buttons" type="HBoxContainer" parent="Window/WindowPanel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="Cancel" type="Button" parent="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons"]
+visible = false
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_styles/focus = SubResource("StyleBoxEmpty_d36lc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_to4dl")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_8evaa")
+theme_override_styles/normal = SubResource("StyleBoxFlat_j1hlp")
+text = "Cancel"
+
+[node name="Help" type="Button" parent="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons"]
+visible = false
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_styles/focus = SubResource("StyleBoxEmpty_d36lc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_to4dl")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_8evaa")
+theme_override_styles/normal = SubResource("StyleBoxFlat_j1hlp")
+text = "Help"
+
+[node name="Back" type="Button" parent="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons"]
+visible = false
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 10
+size_flags_stretch_ratio = 20.0
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_styles/focus = SubResource("StyleBoxEmpty_d36lc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_to4dl")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_8evaa")
+theme_override_styles/normal = SubResource("StyleBoxFlat_j1hlp")
+text = "Back"
+
+[node name="Next" type="Button" parent="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons"]
+visible = false
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 10
+size_flags_stretch_ratio = 0.0
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_styles/focus = SubResource("StyleBoxEmpty_d36lc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_to4dl")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_8evaa")
+theme_override_styles/normal = SubResource("StyleBoxFlat_j1hlp")
+text = "Next"
+
+[node name="Finish" type="Button" parent="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons"]
+visible = false
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 10
+size_flags_stretch_ratio = 0.0
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_styles/focus = SubResource("StyleBoxEmpty_d36lc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_to4dl")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_8evaa")
+theme_override_styles/normal = SubResource("StyleBoxFlat_j1hlp")
+text = "Finish"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Window"]
+libraries = {
+"": SubResource("AnimationLibrary_djwa3")
+}
+
+[connection signal="id_pressed" from="VBoxContainer/MenuBar/LeftMenuBar/Scene" to="." method="_on_scene_bar_pressed"]
+[connection signal="id_pressed" from="VBoxContainer/MenuBar/LeftMenuBar/Editor" to="." method="_on_editor_bar_pressed"]
+[connection signal="index_pressed" from="PopupMenu" to="." method="_on_popup_menu_index_pressed"]
+[connection signal="theme_changed" from="Window" to="Window" method="_on_theme_changed"]
+[connection signal="gui_input" from="Window/WindowPanel/MarginContainer/VBoxContainer/HBoxContainer/Search/SearchButton" to="Window" method="_on_search_button_gui_input"]
+[connection signal="mouse_entered" from="Window/WindowPanel/MarginContainer/VBoxContainer/HBoxContainer/Search/Search" to="Window" method="_on_search_mouse_entered"]
+[connection signal="mouse_exited" from="Window/WindowPanel/MarginContainer/VBoxContainer/HBoxContainer/Search/Search" to="Window" method="_on_search_mouse_exited"]
+[connection signal="button_up" from="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons/Cancel" to="Window" method="_on_cancel_button_up"]
+[connection signal="button_up" from="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons/Help" to="Window" method="_on_help_button_up"]
+[connection signal="button_up" from="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons/Back" to="Window" method="_on_back_button_up"]
+[connection signal="button_up" from="Window/WindowPanel/MarginContainer/VBoxContainer/Buttons/Next" to="Window" method="_on_next_button_up"]
+[connection signal="animation_finished" from="Window/AnimationPlayer" to="Window" method="_on_animation_finished"]
+[connection signal="animation_started" from="Window/AnimationPlayer" to="Window" method="_on_animation_started"]

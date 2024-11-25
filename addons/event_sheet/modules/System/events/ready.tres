@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="EventResource" load_steps=5 format=3 uid="uid://exyy3r8qx6ux"]
+
+[ext_resource type="Script" path="res://addons/event_sheet/modules/System/events/ready.gd" id="1_hqtad"]
+[ext_resource type="Texture2D" uid="uid://dn2802kb4ium3" path="res://addons/event_sheet/resources/icons/start.svg" id="1_x0wyy"]
+[ext_resource type="Texture2D" uid="uid://byf2yg4kua5ik" path="res://addons/event_sheet/resources/icons/system.svg" id="3_d5bjh"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/resources/event_resource.gd" id="3_qp77r"]
+
+[resource]
+script = ExtResource("3_qp77r")
+name = "Ready"
+icon = ExtResource("1_x0wyy")
+description = ""
+type = 1
+group = 1
+category = 0
+gd_script = ExtResource("1_hqtad")
+parameters = {}
+pick_object = {
+"condition_type": 0,
+"disable_color": false,
+"icon": ExtResource("3_d5bjh"),
+"name": "System",
+"object": null,
+"type": "System"
+}

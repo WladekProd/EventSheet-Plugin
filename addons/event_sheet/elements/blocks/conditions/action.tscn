@@ -1,0 +1,115 @@
+[gd_scene load_steps=9 format=3 uid="uid://dtnl5ay20kksn"]
+
+[ext_resource type="Script" path="res://addons/event_sheet/source/elements/block/conditions/action.gd" id="1_gol5q"]
+[ext_resource type="Texture2D" uid="uid://3aayah87ti8k" path="res://addons/event_sheet/resources/icons/divider.svg" id="2_l76kl"]
+[ext_resource type="PackedScene" uid="uid://dq24op1sckji2" path="res://addons/event_sheet/elements/blocks/drop_container.tscn" id="3_4gh47"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kcgx6"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_saqhm"]
+bg_color = Color(1, 1, 1, 0.0392157)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2g6pv"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_h4pqg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gyer1"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+draw_center = false
+
+[node name="Action" type="Button"]
+custom_minimum_size = Vector2(200, 30)
+offset_right = 200.0
+offset_bottom = 30.0
+size_flags_horizontal = 3
+size_flags_vertical = 2
+focus_mode = 0
+theme_override_styles/focus = SubResource("StyleBoxEmpty_kcgx6")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxFlat_saqhm")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_saqhm")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxFlat_saqhm")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_2g6pv")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxFlat_saqhm")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_saqhm")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_2g6pv")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_h4pqg")
+toggle_mode = true
+button_mask = 0
+script = ExtResource("1_gol5q")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -11.5
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(23, 23)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 2
+expand_mode = 1
+
+[node name="HSplitContainer" type="HSplitContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/autohide = 0
+theme_override_icons/grabber = ExtResource("2_l76kl")
+theme_override_icons/h_grabber = ExtResource("2_l76kl")
+theme_override_icons/v_grabber = ExtResource("2_l76kl")
+
+[node name="Name" type="Label" parent="MarginContainer/HBoxContainer/HSplitContainer"]
+layout_mode = 2
+text = "Group Name"
+vertical_alignment = 1
+
+[node name="Action" type="Label" parent="MarginContainer/HBoxContainer/HSplitContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Action"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="ActionRich" type="RichTextLabel" parent="MarginContainer/HBoxContainer/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_gyer1")
+bbcode_enabled = true
+text = "Action"
+scroll_active = false
+autowrap_mode = 0
+
+[node name="Drag&Drop" parent="MarginContainer" node_paths=PackedStringArray("drop_object") instance=ExtResource("3_4gh47")]
+layout_mode = 2
+drop_object = NodePath("../..")
+drop_class = "Action"
+drop_types = 14
+
+[connection signal="gui_input" from="." to="." method="_on_gui_input"]
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
+[connection signal="theme_changed" from="." to="." method="_on_theme_changed"]
+[connection signal="toggled" from="." to="." method="_on_toggled"]

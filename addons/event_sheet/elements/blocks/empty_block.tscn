@@ -1,0 +1,339 @@
+[gd_scene load_steps=20 format=3 uid="uid://cvhea8gjhymtm"]
+
+[ext_resource type="Script" path="res://addons/event_sheet/source/elements/block/empty_block.gd" id="1_6cp41"]
+[ext_resource type="Texture2D" uid="uid://d0l8uh2crn4pi" path="res://addons/event_sheet/resources/icons/hide.svg" id="1_qxnko"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/elements/block/block_container.gd" id="3_lnvb0"]
+[ext_resource type="Texture2D" uid="uid://dsrhuduloqdqr" path="res://addons/event_sheet/resources/icons/move.svg" id="3_ranlr"]
+[ext_resource type="Shader" path="res://addons/event_sheet/source/elements/shaders/select_shader.gdshader" id="4_b60y0"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/elements/block/drag_and_drop/drag_trigger.gd" id="5_a2xpm"]
+[ext_resource type="PackedScene" uid="uid://dq24op1sckji2" path="res://addons/event_sheet/elements/blocks/drop_container.tscn" id="5_o3q4r"]
+[ext_resource type="Texture2D" uid="uid://3aayah87ti8k" path="res://addons/event_sheet/resources/icons/divider.svg" id="7_olnno"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/elements/block/drag_and_drop/drops/drop_content.gd" id="9_s4tw7"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_q4ek3"]
+font_size = 11
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7wfum"]
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_l8j8a"]
+resource_local_to_scene = true
+color = Color(1, 1, 1, 0.215686)
+grow_begin = -40.0
+grow_end = 30.0
+vertical = true
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wv672"]
+resource_local_to_scene = true
+bg_color = Color(0.6, 0.6, 0.6, 0.137255)
+draw_center = false
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+expand_margin_top = 5.0
+expand_margin_bottom = 5.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_54yh3"]
+resource_local_to_scene = true
+shader = ExtResource("4_b60y0")
+shader_parameter/is_active = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4k2nw"]
+bg_color = Color(0.0798497, 0.0940191, 0.131866, 1)
+corner_radius_top_left = 5
+corner_radius_bottom_left = 5
+expand_margin_left = 5.0
+expand_margin_top = 5.0
+expand_margin_right = 8.0
+expand_margin_bottom = 5.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_toqgt"]
+resource_local_to_scene = true
+shader = ExtResource("4_b60y0")
+shader_parameter/is_active = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l5kxy"]
+bg_color = Color(0.0456284, 0.0537252, 0.075352, 1)
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+expand_margin_left = 3.0
+expand_margin_top = 5.0
+expand_margin_right = 5.0
+expand_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fjnry"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5nbic"]
+resource_local_to_scene = true
+bg_color = Color(0.892955, 0, 0.275886, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+expand_margin_left = 5.0
+expand_margin_top = 5.0
+expand_margin_right = 8.0
+expand_margin_bottom = 5.0
+
+[node name="EmptyBlock" type="VBoxContainer"]
+offset_right = 1152.0
+offset_bottom = 40.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+script = ExtResource("1_6cp41")
+events_color = Color(0.0798497, 0.0940191, 0.131866, 1)
+actions_color = Color(0.0456284, 0.0537252, 0.075352, 1)
+other_color = Color(0.892955, 0, 0.275886, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+
+[node name="Block" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/Block"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_right = 0
+
+[node name="Number" type="Label" parent="MarginContainer/Block/MarginContainer"]
+custom_minimum_size = Vector2(46, 0)
+layout_mode = 2
+label_settings = SubResource("LabelSettings_q4ek3")
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Expand" type="Button" parent="MarginContainer/Block"]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_styles/focus = SubResource("StyleBoxEmpty_7wfum")
+disabled = true
+toggle_mode = true
+icon = ExtResource("1_qxnko")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="Line" type="VSeparator" parent="MarginContainer/Block"]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+size_flags_vertical = 0
+mouse_filter = 2
+theme_override_constants/separation = 0
+theme_override_styles/separator = SubResource("StyleBoxLine_l8j8a")
+
+[node name="BlockSelect" type="PanelContainer" parent="MarginContainer/Block"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_wv672")
+
+[node name="HSplitContainer" type="Container" parent="MarginContainer/Block/BlockSelect"]
+layout_mode = 2
+mouse_filter = 0
+script = ExtResource("3_lnvb0")
+columns = 2
+
+[node name="Events" type="MarginContainer" parent="MarginContainer/Block/BlockSelect/HSplitContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_right = 5
+
+[node name="Content" type="PanelContainer" parent="MarginContainer/Block/BlockSelect/HSplitContainer/Events"]
+material = SubResource("ShaderMaterial_54yh3")
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_4k2nw")
+
+[node name="DropContent" type="Control" parent="MarginContainer/Block/BlockSelect/HSplitContainer/Events/Content" node_paths=PackedStringArray("drop_object")]
+layout_mode = 2
+script = ExtResource("9_s4tw7")
+drop_object = NodePath("../../../../../../..")
+drop_class = "Event"
+
+[node name="Events" type="HBoxContainer" parent="MarginContainer/Block/BlockSelect/HSplitContainer/Events/Content"]
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="DragTrigger" type="TextureRect" parent="MarginContainer/Block/BlockSelect/HSplitContainer/Events/Content/Events" node_paths=PackedStringArray("block")]
+modulate = Color(1, 1, 1, 0.137255)
+custom_minimum_size = Vector2(14, 14)
+layout_mode = 2
+size_flags_horizontal = 4
+focus_mode = 1
+mouse_filter = 0
+mouse_default_cursor_shape = 13
+texture = ExtResource("3_ranlr")
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("5_a2xpm")
+block = NodePath("../../../../../../../..")
+
+[node name="Items" type="VBoxContainer" parent="MarginContainer/Block/BlockSelect/HSplitContainer/Events/Content/Events"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="DropContainer" parent="MarginContainer/Block/BlockSelect/HSplitContainer/Events" node_paths=PackedStringArray("drop_object") instance=ExtResource("5_o3q4r")]
+layout_mode = 2
+drop_object = NodePath("../../../../../..")
+drop_class = "Block"
+drop_types = 28
+
+[node name="Actions" type="MarginContainer" parent="MarginContainer/Block/BlockSelect/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_right = 5
+
+[node name="Content" type="PanelContainer" parent="MarginContainer/Block/BlockSelect/HSplitContainer/Actions"]
+material = SubResource("ShaderMaterial_toqgt")
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_l5kxy")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/Block/BlockSelect/HSplitContainer/Actions/Content"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="VSplit" type="TextureButton" parent="MarginContainer/Block/BlockSelect/HSplitContainer/Actions/Content/HBoxContainer"]
+custom_minimum_size = Vector2(3, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 3
+mouse_default_cursor_shape = 15
+texture_normal = ExtResource("7_olnno")
+ignore_texture_size = true
+stretch_mode = 3
+
+[node name="Actions" type="VBoxContainer" parent="MarginContainer/Block/BlockSelect/HSplitContainer/Actions/Content/HBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="Items" type="VBoxContainer" parent="MarginContainer/Block/BlockSelect/HSplitContainer/Actions/Content/HBoxContainer/Actions"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/Block/BlockSelect/HSplitContainer/Actions/Content/HBoxContainer/Actions"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_right = 25
+
+[node name="AddAction" type="Button" parent="MarginContainer/Block/BlockSelect/HSplitContainer/Actions/Content/HBoxContainer/Actions/MarginContainer" node_paths=PackedStringArray("drop_object")]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 0.235294)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 0.235294)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 0.235294)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 0.235294)
+theme_override_colors/font_color = Color(1, 1, 1, 0.235294)
+theme_override_font_sizes/font_size = 10
+theme_override_styles/focus = SubResource("StyleBoxEmpty_fjnry")
+text = "+ Add Action"
+flat = true
+alignment = 0
+script = ExtResource("9_s4tw7")
+drop_object = NodePath("../../../../../../../../../..")
+drop_class = "Action"
+
+[node name="DropContent" type="Control" parent="MarginContainer/Block/BlockSelect/HSplitContainer/Actions/Content/HBoxContainer/Actions" node_paths=PackedStringArray("drop_object")]
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("9_s4tw7")
+drop_object = NodePath("../../../../../../../../..")
+drop_class = "Action"
+
+[node name="Other" type="MarginContainer" parent="MarginContainer/Block/BlockSelect"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_right = 5
+
+[node name="Content" type="PanelContainer" parent="MarginContainer/Block/BlockSelect/Other"]
+material = SubResource("ShaderMaterial_toqgt")
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_5nbic")
+
+[node name="Other" type="HBoxContainer" parent="MarginContainer/Block/BlockSelect/Other/Content"]
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="DragTrigger" type="TextureRect" parent="MarginContainer/Block/BlockSelect/Other/Content/Other" node_paths=PackedStringArray("block")]
+modulate = Color(1, 1, 1, 0.137255)
+custom_minimum_size = Vector2(14, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+focus_mode = 1
+mouse_filter = 0
+mouse_default_cursor_shape = 13
+texture = ExtResource("3_ranlr")
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("5_a2xpm")
+block = NodePath("../../../../../../..")
+
+[node name="Items" type="VBoxContainer" parent="MarginContainer/Block/BlockSelect/Other/Content/Other"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="DropContainer" parent="MarginContainer/Block/BlockSelect/Other" node_paths=PackedStringArray("drop_object") instance=ExtResource("5_o3q4r")]
+layout_mode = 2
+drop_object = NodePath("../../../../..")
+drop_class = "Block"
+drop_types = 28
+
+[connection signal="child_entered_tree" from="." to="." method="_on_child_entered_tree"]
+[connection signal="resized" from="." to="." method="_on_block_resized"]
+[connection signal="theme_changed" from="." to="." method="_on_theme_changed"]
+[connection signal="pressed" from="MarginContainer/Block/Expand" to="." method="_on_expand_pressed"]
+[connection signal="gui_input" from="MarginContainer/Block/BlockSelect/HSplitContainer/Events/Content" to="." method="_on_select_gui_input"]
+[connection signal="mouse_entered" from="MarginContainer/Block/BlockSelect/HSplitContainer/Events/Content" to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="MarginContainer/Block/BlockSelect/HSplitContainer/Events/Content" to="." method="_on_mouse_exited"]
+[connection signal="resized" from="MarginContainer/Block/BlockSelect/HSplitContainer/Events/Content" to="." method="_on_block_resized"]
+[connection signal="gui_input" from="MarginContainer/Block/BlockSelect/HSplitContainer/Events/Content/Events/DragTrigger" to="." method="_on_select_gui_input"]
+[connection signal="mouse_entered" from="MarginContainer/Block/BlockSelect/HSplitContainer/Events/Content/Events/DragTrigger" to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="MarginContainer/Block/BlockSelect/HSplitContainer/Events/Content/Events/DragTrigger" to="." method="_on_mouse_exited"]
+[connection signal="resized" from="MarginContainer/Block/BlockSelect/HSplitContainer/Actions/Content" to="." method="_on_block_resized"]
+[connection signal="mouse_entered" from="MarginContainer/Block/BlockSelect/HSplitContainer/Actions/Content/HBoxContainer/VSplit" to="." method="_on_v_split_mouse_entered"]
+[connection signal="mouse_exited" from="MarginContainer/Block/BlockSelect/HSplitContainer/Actions/Content/HBoxContainer/VSplit" to="." method="_on_v_split_mouse_exited"]
+[connection signal="button_up" from="MarginContainer/Block/BlockSelect/HSplitContainer/Actions/Content/HBoxContainer/Actions/MarginContainer/AddAction" to="." method="_on_add_action_button_up"]
+[connection signal="gui_input" from="MarginContainer/Block/BlockSelect/Other/Content/Other/DragTrigger" to="." method="_on_select_gui_input"]
+[connection signal="mouse_entered" from="MarginContainer/Block/BlockSelect/Other/Content/Other/DragTrigger" to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="MarginContainer/Block/BlockSelect/Other/Content/Other/DragTrigger" to="." method="_on_mouse_exited"]
