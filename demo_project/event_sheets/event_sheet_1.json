@@ -1,0 +1,216 @@
+{
+	"blocks": [
+		{
+			"actions": [
+				{
+					"class": "action",
+					"name": "Set position",
+					"object": {
+						"condition_type": "action",
+						"disable_color": true,
+						"icon": "res://icon2.svg",
+						"is_current": true,
+						"name": "Sprite2D",
+						"path": ".",
+						"type": "Sprite2D"
+					},
+					"parameters": {
+						"x": {
+							"name": "X",
+							"order": 0,
+							"type": "String",
+							"value": "5"
+						},
+						"y": {
+							"name": "Y",
+							"order": 1,
+							"type": "String",
+							"value": "5"
+						}
+					},
+					"script": "res://addons/event_sheet/modules//SystemModule/actions/Node2D.set_position.gd",
+					"type": "standart",
+					"uuid": "b3ee76fe-dde0-4ccb-b67c-05face32b183"
+				}
+			],
+			"childrens": [
+				{
+					"actions": [],
+					"childrens": [],
+					"class": "block",
+					"events": [
+						{
+							"class": "event",
+							"name": "Ready",
+							"object": {
+								"condition_type": "event",
+								"disable_color": false,
+								"icon": "res://addons/event_sheet/resources/icons/system.svg",
+								"name": "System",
+								"path": "",
+								"type": "System"
+							},
+							"parameters": {
+
+							},
+							"script": "res://addons/event_sheet/modules//SystemModule/events/System.ready.gd",
+							"type": "standart",
+							"uuid": "2660f9f2-a1dc-4651-ae2e-d9c18f3dfa9d"
+						}
+					],
+					"expand": true,
+					"level": 1,
+					"type": "standart",
+					"uuid": "5e9a8870-4eb3-4e2a-949a-b206cc5b5792"
+				}
+			],
+			"class": "block",
+			"events": [
+				{
+					"class": "event",
+					"name": "Compare position",
+					"object": {
+						"condition_type": "event",
+						"disable_color": true,
+						"icon": "res://addons/event_sheet/~cache/icons/Marker2D.tres",
+						"is_current": false,
+						"name": "Marker2D",
+						"path": "Marker2D",
+						"type": "Marker2D"
+					},
+					"parameters": {
+						"comparison": {
+							"name": "Comparison",
+							"order": 1,
+							"type": {
+								"EQUALS": 0,
+								"LESS": 3,
+								"MORE": 2,
+								"UNEVEN": 1
+							},
+							"value": "=="
+						},
+						"pos_a": {
+							"name": "Position A",
+							"order": 0,
+							"type": 0,
+							"value": "3"
+						},
+						"pos_b": {
+							"name": "Position B",
+							"order": 2,
+							"type": 0,
+							"value": "3"
+						}
+					},
+					"script": "res://addons/event_sheet/modules//SystemModule/events/Object.compare_position.gd",
+					"type": "standart",
+					"uuid": "9393871c-cee5-4f59-9746-30d8a3d11772"
+				}
+			],
+			"expand": true,
+			"level": 0,
+			"type": "standart",
+			"uuid": "f77dcbb1-c301-4710-a1fb-393c46bac930"
+		},
+		{
+			"actions": [],
+			"childrens": [],
+			"class": "block",
+			"events": [
+				{
+					"class": "event",
+					"name": "Compare position",
+					"object": {
+						"condition_type": "event",
+						"disable_color": true,
+						"icon": "res://addons/event_sheet/~cache/icons/Marker2D.tres",
+						"is_current": false,
+						"name": "Marker2D",
+						"path": "Marker2D",
+						"type": "Marker2D"
+					},
+					"parameters": {
+						"comparison": {
+							"name": "Comparison",
+							"order": 1,
+							"type": {
+								"EQUALS": 0,
+								"LESS": 3,
+								"MORE": 2,
+								"UNEVEN": 1
+							},
+							"value": "=="
+						},
+						"pos_a": {
+							"name": "Position A",
+							"order": 0,
+							"type": 0,
+							"value": "s"
+						},
+						"pos_b": {
+							"name": "Position B",
+							"order": 2,
+							"type": 0,
+							"value": "s"
+						}
+					},
+					"script": "res://addons/event_sheet/modules//SystemModule/events/Object.compare_position.gd",
+					"type": "standart",
+					"uuid": "279ed68b-89d3-4d54-aa32-8f957e009a4e"
+				}
+			],
+			"expand": true,
+			"level": 0,
+			"type": "standart",
+			"uuid": "73bbf23e-88a3-4a52-9866-4ddb9cafaca3"
+		},
+		{
+			"childrens": [],
+			"class": "block",
+			"expand": true,
+			"level": 0,
+			"parameters": {
+				"group_description": "dsa",
+				"group_name": "asd"
+			},
+			"type": "group",
+			"uuid": "f033e9d4-8da3-421c-b5a9-d93e0b25e02a"
+		},
+		{
+			"childrens": [],
+			"class": "block",
+			"expand": true,
+			"level": 0,
+			"parameters": {
+				"group_description": "test",
+				"group_name": "new group"
+			},
+			"type": "group",
+			"uuid": "4608e56b-8ecd-412d-833f-2a186b892c9c"
+		},
+		{
+			"class": "block",
+			"level": 0,
+			"parameters": {
+				"comment_text": "Comment"
+			},
+			"type": "comment",
+			"uuid": "c5be2b6a-542a-4f2a-bbe5-38e2a96d0d34"
+		},
+		{
+			"class": "block",
+			"level": 0,
+			"parameters": {
+				"variable_is_global": true,
+				"variable_name": "test_var",
+				"variable_type": 0,
+				"variable_value": "86"
+			},
+			"type": "variable",
+			"uuid": "0af21332-2e3f-44f6-93f2-bd962d89d6f1"
+		}
+	],
+	"name": "EventSheet 1",
+	"uuid": "0"
+}

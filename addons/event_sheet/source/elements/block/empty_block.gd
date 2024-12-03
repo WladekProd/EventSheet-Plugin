@@ -29,12 +29,45 @@ var variable_item := preload("res://addons/event_sheet/elements/blocks/condition
 @onready var other_panel: PanelContainer = $MarginContainer/Block/BlockSelect/Other/Content
 
 # Block variables
-@export var block_type: Types.BlockType = Types.BlockType.STANDART:
-	set (p_block_type):
-		block_type = p_block_type
+var uuid: String
+
+var block_number: int = 0:
+	set (p_block_number):
+		block_number = p_block_number
+		block_number_text.text = str(block_number)
+
+var is_hovered: bool = false
+
+@export var data: Dictionary:
+	set (p_data):
+		data = p_data
+		if !data.is_empty():
+			
+			uuid = data.uuid
+			type = data.type
+			level = data.level
+			
+			match type:
+				"standart":
+					expand = data.expand
+				"variable":
+					expand = false
+				"comment":
+					expand = false
+				"group":
+					expand = data.expand
+			
+			if other_items != null and other_items.get_child_count() > 0:
+				if other_items.get_child(0) != null:
+					other_items.get_child(0).data = data
+			_on_theme_changed()
+
+@export var type: String = "standart":
+	set (p_type):
+		type = p_type
 		if block_body != null and other_body != null:
-			match block_type:
-				Types.BlockType.STANDART:
+			match type:
+				"standart":
 					block_body.visible = true
 					other_body.queue_free()
 					if other_items.get_child_count() >= 1: other_items.get_child(0).queue_free()
@@ -45,65 +78,57 @@ var variable_item := preload("res://addons/event_sheet/elements/blocks/condition
 					if other_items.get_child_count() >= 1: other_items.get_child(0).queue_free()
 					other_drop_container.drop_types = 28
 
-					if block_type == Types.BlockType.GROUP:
+					if type == "group":
 						var _group = group_item.instantiate()
 						other_items.add_child(_group)
-						_group.empty_block = self
-						_group.resource = block_resource
+						_group.block_body = self
+						_group.data = data
 						other_drop_container.drop_types = 28
-					elif block_type == Types.BlockType.COMMENT:
+					elif type == "comment":
 						var _comment = comment_item.instantiate()
 						other_items.add_child(_comment)
-						_comment.empty_block = self
-						_comment.resource = block_resource
+						_comment.block_body = self
+						_comment.data = data
 						other_drop_container.drop_types = 12
-					elif block_type == Types.BlockType.VARIABLE:
+					elif type == "variable":
 						var _variable = variable_item.instantiate()
 						other_items.add_child(_variable)
-						_variable.empty_block = self
-						_variable.resource = block_resource
+						_variable.block_body = self
+						_variable.data = data
 						other_drop_container.drop_types = 12
 		_on_theme_changed()
 
-@export var block_expand: Types.SubBlocksState = Types.SubBlocksState.NONE:
-	set (p_block_expand):
-		block_expand = p_block_expand
-		if block_expand_button != null and block_resource != null:
-			block_expand_button.disabled = block_resource.sub_blocks.is_empty()
-			
-			if block_expand == Types.SubBlocksState.NONE:
-				block_expand_button.modulate = Color.TRANSPARENT if block_resource.sub_blocks.is_empty() else Color.WHITE
-				block_line.modulate = Color.TRANSPARENT if block_resource.sub_blocks.is_empty() else Color.WHITE
-			elif block_expand == Types.SubBlocksState.VISIBLE:
-				block_expand_button.icon = load("res://addons/event_sheet/resources/icons/hide.svg")
-				block_line.modulate = Color.WHITE
-			elif block_expand == Types.SubBlocksState.HIDDEN:
-				block_expand_button.icon = load("res://addons/event_sheet/resources/icons/show.svg")
-				block_line.modulate = Color.TRANSPARENT
-			
-			for _child_block in get_children():
-				if _child_block is VBoxContainer:
-					_child_block.visible = false if block_expand == Types.SubBlocksState.HIDDEN else true
-
-@export var block_level: int = 0:
-	set (p_block_level):
-		block_level = p_block_level
+@export var level: int = 0:
+	set (p_level):
+		level = p_level
 		if block_margin != null:
-			block_margin.add_theme_constant_override("margin_right", (block_expand_button.size.x + block_line.size.x) * block_level)
-		if block_resource != null:
-			block_resource.level = block_level
+			block_margin.add_theme_constant_override("margin_right", (block_expand_button.size.x + block_line.size.x) * level)
+		if !data.is_empty():
+			data.level = level
 		update_split_container()
 
-@export var block_resource: BlockResource:
-	set (p_block_resource):
-		block_resource = p_block_resource
-		if block_resource != null:
-			block_level = block_resource.level
-			block_expand = block_resource.block_expand
-			if other_items != null and other_items.get_child_count() > 0:
-				if other_items.get_child(0) != null:
-					other_items.get_child(0).resource = block_resource
-			_on_theme_changed()
+@export var expand: bool:
+	set (p_expand):
+		expand = p_expand
+		if block_expand_button != null and !data.is_empty():
+			if !data.has("childrens") or data.childrens.is_empty():
+				block_expand_button.disabled = true
+				block_expand_button.modulate = Color.TRANSPARENT
+				block_line.modulate = Color.TRANSPARENT
+			else:
+				block_expand_button.disabled = false
+				if expand:
+					block_expand_button.icon = load("res://addons/event_sheet/resources/icons/hide.svg")
+					block_expand_button.modulate = Color.WHITE
+					block_line.modulate = Color.WHITE
+				else:
+					block_expand_button.icon = load("res://addons/event_sheet/resources/icons/show.svg")
+					block_expand_button.modulate = Color.WHITE
+					block_line.modulate = Color.TRANSPARENT
+			
+			for _child in get_children():
+				if _child is VBoxContainer:
+					_child.visible = expand
 
 @export var event_items: Array[EventResource]
 @export var action_items: Array[ActionResource]
@@ -137,14 +162,6 @@ var variable_item := preload("res://addons/event_sheet/elements/blocks/condition
 		if other_body != null and other_panel:
 			other_panel.material.set("shader_parameter/is_active", is_selected)
 
-var id: String
-
-var block_number: int = 0:
-	set (p_block_number):
-		block_number = p_block_number
-		block_number_text.text = str(block_number)
-var is_hovered: bool = false
-
 signal select
 signal change
 signal add_action
@@ -164,7 +181,7 @@ func update_split_container():
 
 func _select():
 	if ESUtils.is_ctrl_pressed:
-		if ESUtils.selection_is_equal_to_type(block_resource): ESUtils.unselect_all()
+		if ESUtils.selection_is_equal_to_type(data): ESUtils.unselect_all()
 		if is_selected: return
 	
 	if !ESUtils.has_item_in_select(self) and !is_selected:
@@ -185,7 +202,7 @@ func select_all_childs(parent: VBoxContainer = self):
 	for child_empty_block in parent.get_children():
 		if "is_selected" in child_empty_block:
 			if child_empty_block.is_selected:
-				ESUtils.unselect_item(child_empty_block.id)
+				ESUtils.unselect_item(child_empty_block.uuid)
 			child_empty_block.is_selected = is_selected
 			select_all_childs(child_empty_block)
 
@@ -197,7 +214,7 @@ func _on_select_gui_input(event: InputEvent) -> void:
 		elif event.is_released():
 			ESUtils.is_dragging_finished = true
 			
-			#select.emit({ "block": self, "block_type": block_type, "block_resource": block_resource })
+			select.emit({ "body": self, "type": type, "data": data })
 
 func _on_block_resized() -> void:
 	if block_line != null and !ESUtils.is_split_pressed:
@@ -206,11 +223,11 @@ func _on_block_resized() -> void:
 		_stylebox_line.grow_end = (size.y - $MarginContainer.get_theme_constant("margin_top"))
 
 func _on_expand_pressed() -> void:
-	block_expand = Types.SubBlocksState.HIDDEN if block_expand == Types.SubBlocksState.NONE or block_expand == Types.SubBlocksState.VISIBLE else Types.SubBlocksState.VISIBLE
-	block_resource.block_expand = block_expand
+	expand = !expand
+	data.expand = expand
 
 func _on_add_action_button_up() -> void:
-	add_action.emit(block_resource)
+	add_action.emit(data)
 
 func _on_theme_changed() -> void:
 	var _events_color: Color = EditorInterface.get_editor_theme().get_color("dark_color_1", "Editor")
@@ -225,11 +242,11 @@ func _on_theme_changed() -> void:
 	actions_color = _actions_color
 	other_color = _other_color
 	
-	if block_type == Types.BlockType.GROUP:
+	if type == "group":
 		other_color.a = 0.2
-	elif block_type == Types.BlockType.COMMENT:
+	elif type == "comment":
 		other_color.a = 0.1
-	elif block_type == Types.BlockType.VARIABLE:
+	elif type == "variable":
 		other_color.a = 0.0
 
 func _on_v_split_mouse_entered() -> void:
@@ -250,4 +267,4 @@ func _on_mouse_exited() -> void:
 
 func _on_child_entered_tree(node: Node) -> void:
 	if "block_type" in node:
-		node.visible = false if block_expand == Types.SubBlocksState.HIDDEN else true
+		node.visible = true if expand else false

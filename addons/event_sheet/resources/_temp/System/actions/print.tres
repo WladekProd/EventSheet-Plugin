@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="ActionResource" load_steps=4 format=3 uid="uid://dcsxblx8jx5uj"]
 
 [ext_resource type="Texture2D" uid="uid://byf2yg4kua5ik" path="res://addons/event_sheet/resources/icons/system.svg" id="1_56hbs"]
-[ext_resource type="Script" path="res://addons/event_sheet/modules/System/actions/print.gd" id="1_hhc12"]
+[ext_resource type="Script" path="res://addons/event_sheet/resources/_temp/System/actions/print.gd" id="1_hhc12"]
 [ext_resource type="Script" path="res://addons/event_sheet/source/resources/action_resource.gd" id="1_tnwjs"]
 
 [resource]

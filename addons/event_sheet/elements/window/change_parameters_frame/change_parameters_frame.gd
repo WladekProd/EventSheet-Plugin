@@ -13,12 +13,12 @@ var select_node_parameter := preload("res://addons/event_sheet/elements/window/c
 
 var focus_items: Array[Control]
 
-var current_resource
+var current_data
 var current_frame
 
 signal frame_result
 
-func update_frame(current_scene, condition_type: Types.ConditionType, finish_button_instance: Button, frame: Types.WindowFrame, frame_data: Dictionary = {}, window_search: LineEdit = null):
+func update_frame(current_scene, condition_type: String, finish_button_instance: Button, frame: Types.WindowFrame, frame_data: Dictionary = {}, window_search: LineEdit = null):
 	if items_list:
 		for child in items_list.get_children():
 			items_list.remove_child(child)
@@ -28,22 +28,28 @@ func update_frame(current_scene, condition_type: Types.ConditionType, finish_but
 		var parameters_data: Dictionary = {}
 		
 		current_frame = frame
-		current_resource = pick_condition_data
-		current_resource.pick_object = pick_object_data
+		current_data = pick_condition_data
 		
-		condition_description.text = "{0}: {1}".format([current_resource.name, current_resource.description])
+		var object_path_or_type = pick_object_data.path if pick_object_data.path else pick_object_data.type
+		var _script_instance = load(current_data.script)
+		var _metadata = _script_instance.get_condition_metadata(object_path_or_type if object_path_or_type is NodePath else "")
 		
-		var sorted_keys: Array = current_resource.parameters.keys()
+		condition_description.text = "{0}: {1}".format([_metadata.name, _metadata.description])
+		
+		var sorted_keys: Array = current_data.parameters.keys()
 		sorted_keys.sort_custom(
 			func(a: String, b: String) -> bool:
-				return current_resource.parameters[a]["order"] < current_resource.parameters[b]["order"]
+				return current_data.parameters[a]["order"] < current_data.parameters[b]["order"]
 		)
 		
 		var previous_node: Control = null
 		for p_key in sorted_keys:
-			var p_name: String = current_resource.parameters[p_key].name
-			var p_value: String = current_resource.parameters[p_key].value
-			var p_type = current_resource.parameters[p_key].type
+			
+			print(current_data.parameters[p_key])
+			
+			var p_name: String = current_data.parameters[p_key].name
+			var p_value: String = current_data.parameters[p_key].value
+			var p_type = current_data.parameters[p_key].type
 			var p_node: Control = add_parameter(p_key, p_name, p_value, p_type)
 			
 			if p_node:
@@ -59,7 +65,7 @@ func update_frame(current_scene, condition_type: Types.ConditionType, finish_but
 			finish_button_instance.button_up.disconnect(item.callable)
 		
 		if !finish_button_instance.button_up.is_connected(_on_submit):
-			finish_button_instance.button_up.connect(_on_submit.bind(current_resource, current_frame))
+			finish_button_instance.button_up.connect(_on_submit.bind(current_data, current_frame))
 		
 	items_list.fix_items_size()
 
@@ -83,7 +89,7 @@ func set_next_focus():
 			else: item.set_caret_column(item.text.length())
 	if focus_index >= focus_items.size():
 		focus_index = 0
-		frame_result.emit(current_resource, current_frame, true)
+		frame_result.emit(current_data, current_frame, true)
 	else: focus_index += 1
 
 func add_parameter(p_key, p_name, p_value, p_type):
@@ -154,14 +160,14 @@ func save_parameters():
 		var parameter_value = child.get_child(1)
 		match parameter_value.get_class():
 			"LineEdit":
-				current_resource.parameters[parameter_name].value = parameter_value.text
+				current_data.parameters[parameter_name].value = parameter_value.text
 			"OptionButton":
-				current_resource.parameters[parameter_name].value = Types.STIPULATION_SYMBOL[parameter_value.selected]
+				current_data.parameters[parameter_name].value = Types.STIPULATION_SYMBOL[parameter_value.selected]
 			"Button":
 				if parameter_value.has_method("get_file_path"):
-					current_resource.parameters[parameter_name].value = parameter_value.get_file_path()
+					current_data.parameters[parameter_name].value = parameter_value.get_file_path()
 				elif parameter_value.has_method("get_node_path"):
-					current_resource.parameters[parameter_name].value = parameter_value.get_node_path()
+					current_data.parameters[parameter_name].value = parameter_value.get_node_path()
 
 func _on_open_node_path(parameter_value: Button):
 	EditorInterface.popup_node_selector(_on_node_selected.bind(parameter_value), [])

@@ -26,11 +26,10 @@ var edit_group_frame := preload("res://addons/event_sheet/elements/window/edit_g
 var edit_variable_frame := preload("res://addons/event_sheet/elements/window/edit_variable_frame/edit_variable_frame.tscn")
 var editor_settings_frame := preload("res://addons/event_sheet/elements/window/editor_settings_frame/editor_settings_frame.tscn")
 
-var current_scene
-var current_resource_button
-var current_condition_type: Types.ConditionType
-var current_block_type: Types.BlockType
-var current_block: BlockResource
+var current_data_body
+var current_condition_type: String
+var current_block_type: String
+var current_block: Dictionary
 var current_frame: Types.WindowFrame
 var frame_data: Dictionary = {
 	Types.WindowFrame.PICK_OBJECT: null,
@@ -96,11 +95,10 @@ func update_buttons():
 		next_button_instance.disabled = !frame_data[current_frame] and current_frame < Types.WindowFrame.CHANGE_PARAMETERS
 
 # Показать окно добавления
-func show_add_window(condition_type: Types.ConditionType, block_type: Types.BlockType = Types.BlockType.STANDART, \
-	block: BlockResource = null, frame: Types.WindowFrame = Types.WindowFrame.PICK_OBJECT, window_size: Vector2 = Vector2(620, 376)):
+func show_add_window(condition_type: String, block_type: String = "standart", \
+	block: Dictionary = {}, frame: Types.WindowFrame = Types.WindowFrame.PICK_OBJECT, window_size: Vector2 = Vector2(620, 376)):
 	clear_window()
 	
-	current_scene = event_sheet.current_scene
 	current_condition_type = condition_type
 	current_block_type = block_type
 	current_block = block
@@ -158,13 +156,12 @@ func show_add_window(condition_type: Types.ConditionType, block_type: Types.Bloc
 	if frame_instance.frame_result.is_connected(_on_frame_result):
 		frame_instance.frame_result.disconnect(_on_frame_result)
 	frame_instance.frame_result.connect(_on_frame_result)
-	frame_instance.update_frame(current_scene, condition_type, finish_button_instance, current_frame, frame_data, search_line)
+	frame_instance.update_frame(event_sheet.current_node, condition_type, finish_button_instance, current_frame, frame_data, search_line)
 
-func show_add_group(block: BlockResource = null, window_size: Vector2 = Vector2(330, 210)):
+func show_add_group(block: Dictionary = {}, window_size: Vector2 = Vector2(330, 210)):
 	clear_window()
 	
-	current_scene = event_sheet.current_scene
-	current_block_type = Types.BlockType.GROUP
+	current_block_type = "group"
 	current_block = block
 	current_frame = Types.WindowFrame.EDIT_GROUP
 	window_panel.set_size(window_size)
@@ -195,13 +192,12 @@ func show_add_group(block: BlockResource = null, window_size: Vector2 = Vector2(
 		frame_instance.frame_result.disconnect(_on_frame_result)
 	
 	frame_instance.frame_result.connect(_on_frame_result)
-	frame_instance.update_frame(current_scene, Types.ConditionType.EVENTS, finish_button_instance, current_frame, frame_data)
+	frame_instance.update_frame(event_sheet.current_node, "group", finish_button_instance, current_frame, frame_data)
 
-func show_add_variable(block: BlockResource = null, window_size: Vector2 = Vector2(330, 230)):
+func show_add_variable(block: Dictionary = {}, window_size: Vector2 = Vector2(330, 230)):
 	clear_window()
 	
-	current_scene = event_sheet.current_scene
-	current_block_type = Types.BlockType.VARIABLE
+	current_block_type = "variable"
 	current_block = block
 	current_frame = Types.WindowFrame.EDIT_VARIABLE
 	window_panel.set_size(window_size)
@@ -232,42 +228,41 @@ func show_add_variable(block: BlockResource = null, window_size: Vector2 = Vecto
 		frame_instance.frame_result.disconnect(_on_frame_result)
 	
 	frame_instance.frame_result.connect(_on_frame_result)
-	frame_instance.update_frame(current_scene, Types.ConditionType.EVENTS, finish_button_instance, current_frame, frame_data)
+	frame_instance.update_frame(event_sheet.current_node, "variable", finish_button_instance, current_frame, frame_data)
 
-func show_change_window(resource, resource_button):
+func show_change_window(data: Dictionary = {}, data_body: Variant = null):
 	clear_window()
 	
-	current_scene = event_sheet.current_scene
-	current_resource_button = resource_button
+	current_data_body = data_body
 	
-	if resource is BlockResource and resource.block_type != Types.BlockType.STANDART:
-		current_block = resource
-		if resource.block_type == Types.BlockType.GROUP:
+	if data.class == "block" and data.type != "standart":
+		current_block = data
+		if data.type == "group":
 			frame_data = {
-				Types.WindowFrame.EDIT_GROUP: resource,
+				Types.WindowFrame.EDIT_GROUP: data,
 			}
 			current_frame = Types.WindowFrame.EDIT_GROUP
 			show_add_group(current_block)
-		elif resource.block_type == Types.BlockType.VARIABLE:
+		elif data.type == "variable":
 			frame_data = {
-				Types.WindowFrame.EDIT_VARIABLE: resource,
+				Types.WindowFrame.EDIT_VARIABLE: data,
 			}
 			current_frame = Types.WindowFrame.EDIT_VARIABLE
 			show_add_variable(current_block)
 		return
 	else:
 		frame_data = {
-			Types.WindowFrame.PICK_OBJECT: resource.pick_object,
-			Types.WindowFrame.PICK_CONDITION: resource,
-			Types.WindowFrame.CHANGE_PARAMETERS: resource,
+			Types.WindowFrame.PICK_OBJECT: data.object,
+			Types.WindowFrame.PICK_CONDITION: data,
+			Types.WindowFrame.CHANGE_PARAMETERS: data,
 		}
-		current_block = resource_button.empty_block.block_resource
+		current_block = data_body.block_body.data
 		current_frame = Types.WindowFrame.CHANGE_PARAMETERS
-		if resource is EventResource: current_condition_type = Types.ConditionType.EVENTS
-		elif resource is ActionResource: current_condition_type = Types.ConditionType.ACTIONS
-		current_block_type = Types.BlockType.STANDART
+		if data.class == "event": current_condition_type = "event"
+		elif data.class == "action": current_condition_type = "action"
+		current_block_type = "standart"
 		
-		if !resource.parameters.is_empty():
+		if !data.parameters.is_empty():
 			show_add_window(current_condition_type, current_block_type, current_block, Types.WindowFrame.CHANGE_PARAMETERS)
 		else:
 			show_add_window(current_condition_type, current_block_type, current_block, Types.WindowFrame.PICK_CONDITION)
@@ -275,8 +270,6 @@ func show_change_window(resource, resource_button):
 func show_editor_settings(window_size: Vector2 = Vector2(725, 475)):
 	clear_window()
 	
-	current_scene = null
-	current_block = null
 	current_frame = Types.WindowFrame.EDITOR_SETTINGS
 	window_panel.set_size(window_size)
 	window_panel.set_position((size / 2) - (window_size / 2))
@@ -328,22 +321,23 @@ func hide_window():
 
 func _on_frame_result(data, frame: Types.WindowFrame, finish: bool = false, next_frame: bool = false) -> void:
 	if finish:
-		if current_resource_button:
-			#current_resource_button.resource = data
+		if current_data_body:
 			finish_data.emit({
 				"block_type": current_block_type,
+				"block_condition_type": current_condition_type,
 				"block_data": data,
-				"button": current_resource_button
+				"current_data_body": current_data_body
 			}, current_block)
 		else:
 			finish_data.emit({
 				"block_type": current_block_type,
+				"block_condition_type": current_condition_type,
 				"block_data": data
 			}, current_block)
 		_on_cancel_button_up()
 	else:
 		if frame_data[frame] != null:
-			if frame_data[frame].name != data.name:
+			if frame_data[frame].has("name") and frame_data[frame].name != data.name:
 				frame_data[frame] = data
 			if next_frame: _on_next_button_up()
 			update_buttons()
@@ -353,9 +347,7 @@ func _on_frame_result(data, frame: Types.WindowFrame, finish: bool = false, next
 		update_buttons()
 
 func _on_cancel_button_up() -> void:
-	current_scene = null
-	current_block = null
-	current_resource_button = null
+	current_data_body = null
 	frame_data = {
 		Types.WindowFrame.PICK_OBJECT: null,
 		Types.WindowFrame.PICK_CONDITION: null,
@@ -377,10 +369,11 @@ func _on_next_button_up() -> void:
 	if !next_button_instance.disabled:
 		if current_frame < Types.WindowFrame.CHANGE_PARAMETERS:
 			if current_frame == Types.WindowFrame.PICK_CONDITION:
-				if frame_data[Types.WindowFrame.PICK_CONDITION] and frame_data[Types.WindowFrame.PICK_CONDITION].parameters.is_empty():
-					frame_data[Types.WindowFrame.PICK_CONDITION].pick_object = frame_data[Types.WindowFrame.PICK_OBJECT]
-					_on_frame_result(frame_data[Types.WindowFrame.PICK_CONDITION], current_frame, true, false)
-					return
+				if frame_data[Types.WindowFrame.PICK_CONDITION]:
+					frame_data[Types.WindowFrame.PICK_CONDITION].object = frame_data[Types.WindowFrame.PICK_OBJECT]
+					if frame_data[Types.WindowFrame.PICK_CONDITION].parameters.is_empty():
+						_on_frame_result(frame_data[Types.WindowFrame.PICK_CONDITION], current_frame, true, false)
+						return
 			show_add_window(current_condition_type, current_block_type, current_block, current_frame + 1)
 			if search_opened and search_line.visible or search_button.visible: search_line.grab_focus()
 	update_buttons()

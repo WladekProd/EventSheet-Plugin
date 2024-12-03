@@ -9,29 +9,50 @@ const Types = preload("res://addons/event_sheet/source/utils/event_sheet_types.g
 @onready var _parameters_string_rich: RichTextLabel = $MarginContainer/HBoxContainer/HSplitContainer/EventRich
 @onready var _drag_and_drop: Control = $"MarginContainer/Drag&Drop"
 
-var id: String
-var empty_block
+var uuid: String
+var block_body
 
 var is_dragged: bool = false
 var is_hovered: bool = false
 
 signal drop_data
 
-var resource: EventResource:
-	set (p_resource):
-		resource = p_resource
+var data: Dictionary:
+	set (p_data):
+		if !p_data.is_empty():
+			data = p_data
+			
+			uuid = data.uuid
+			type = data.type
+			
+			match type:
+				"standart":
+					var _script = load(data.script)
+					var _object = data.object.path
+					var _parameters = data.parameters
+					
+					var _info_string: String = _script.get_info(data.parameters)
+					_parameters_string.text = _info_string
+					_parameters_string_rich.text = _info_string
+					
+					var _object_metadata: Dictionary = _script.get_object_metadata(_object)
+					var _condition_metadata: Dictionary = _script.get_condition_metadata()
+					if _object_metadata.icon:
+						change_icon_color = _object_metadata.change_icon_color
+						_icon.texture = _object_metadata.icon
+					elif _condition_metadata.icon:
+						change_icon_color = _condition_metadata.change_icon_color
+						_icon.texture = _condition_metadata.icon
+					else:
+						_icon.texture = null
+					
+					_object_name.text = _object_metadata.name
 		
-		if resource.pick_object.has("object") and resource.pick_object.object != null:
-			if resource.pick_object.has("icon"): _icon.texture = resource.pick_object.icon
-			if resource.pick_object.has("name"): _object_name.text = resource.pick_object.name
-		else:
-			_icon.texture = resource.icon
-			_object_name.text = resource.pick_object.name
-		
-		var _info_string: String = resource.gd_script.get_info(resource.parameters)
-		_parameters_string.text = _info_string
-		_parameters_string_rich.text = _info_string
 		if is_instance_valid(self): _on_theme_changed()
+
+var change_icon_color: bool = false
+
+var type: String
 
 func _ready() -> void:
 	pass
@@ -50,21 +71,17 @@ func _on_gui_input(event: InputEvent) -> void:
 				ESUtils.unselect_all()
 			ESUtils.is_dragging_finished = true
 		if event.button_index == MOUSE_BUTTON_LEFT and event.double_click:
-			empty_block.change.emit(resource, self)
+			block_body.change.emit(data, self)
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-			empty_block.context_menu.emit()
+			block_body.context_menu.emit()
 
 func _on_theme_changed() -> void:
-	if resource and resource.pick_object and !resource.pick_object.object:
-		var accent_color: Color = EditorInterface.get_editor_theme().get_color("accent_color", "Editor")
-		if _icon and _icon.modulate != accent_color:
-			_icon.modulate = accent_color
-	else:
-		if _icon and _icon.modulate != Color.WHITE:
-			_icon.modulate = Color.WHITE
+	var accent_color: Color = EditorInterface.get_editor_theme().get_color("accent_color", "Editor")
+	if change_icon_color: if _icon: _icon.modulate = accent_color
+	else: if _icon: _icon.modulate = Color.WHITE
 
 func _select() -> void:
-	if ESUtils.is_ctrl_pressed and ESUtils.selection_is_equal_to_type(resource):
+	if ESUtils.is_ctrl_pressed and ESUtils.selection_is_equal_to_type(data):
 		ESUtils.unselect_all()
 	
 	if button_pressed:

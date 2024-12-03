@@ -16,6 +16,9 @@ var shortcut: Shortcut
 func _enter_tree():
 	add_autoload_singleton("EventSheetUtils", "res://addons/event_sheet/source/utils/event_sheet_utils.gd")
 	
+	
+	
+	
 	ESUtils.undo_redo = get_undo_redo()
 	
 	if !scene_changed.is_connected(_on_scene_change):
@@ -92,11 +95,12 @@ func _on_screen_change(screen_name: String) -> void:
 func _on_scene_tree_button_clicked(item, column: int, id: int, mouse_button_index: int):
 	if column == 0 and id == 100 and mouse_button_index == MOUSE_BUTTON_LEFT:
 		var node = get_node(item.get_metadata(0))
-		open_event_sheet_editor(node.event_sheet_data, node)
+		open_event_sheet_editor(node.event_sheet_file, node)
 
-func open_event_sheet_editor(data: Array[BlockResource] = [], scene = null):
-	if event_sheet_instance.current_scene != scene:
-		event_sheet_instance.event_sheet_data = data
-		event_sheet_instance.current_scene = scene
+func open_event_sheet_editor(event_sheet_file: JSON = null, node = null):
+	if event_sheet_instance.current_node != node:
+		event_sheet_instance.event_sheet_file = event_sheet_file
+		event_sheet_instance.event_sheet_data = event_sheet_file.data
+		event_sheet_instance.current_node = node
 		event_sheet_instance.load_event_sheet()
 	EditorInterface.set_main_screen_editor(_get_plugin_name())

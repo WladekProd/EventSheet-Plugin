@@ -12,7 +12,7 @@ var current_frame: Types.WindowFrame
 
 signal frame_result
 
-func update_frame(current_scene, condition_type: Types.ConditionType, finish_button_instance: Button, frame: Types.WindowFrame, frame_data: Dictionary = {}, window_search: LineEdit = null):
+func update_frame(current_scene, condition_type: String, finish_button_instance: Button, frame: Types.WindowFrame, frame_data: Dictionary = {}, window_search: LineEdit = null):
 	if items_list:
 		for child in items_list.get_children():
 			items_list.remove_child(child)
@@ -21,30 +21,30 @@ func update_frame(current_scene, condition_type: Types.ConditionType, finish_but
 		var pick_condition_data: Dictionary = {}
 		current_frame = frame
 		
-		var sub_dirs: Array = ["actions", "events"]
-		var resource_files: Dictionary = ESUtils.find_tres_files_in_paths([
-			"res://addons/event_sheet/modules/{0}".format([pick_object_data.type]),
-			"res://addons/event_sheet/modules/General",
-		], sub_dirs)
-		
-		var files_data
-		if pick_object_data.condition_type == Types.ConditionType.EVENTS:
-			files_data = resource_files["events"]
-		if pick_object_data.condition_type == Types.ConditionType.ACTIONS:
-			files_data = resource_files["actions"]
-		
-		for category in Types.Category.values():
-			pick_condition_data[category] = []
-			for resource in files_data:
-				var resource_instance = load(resource)
-				if resource_instance.category == category:
-					pick_condition_data[category].append(resource_instance)
-
-		var _icon: Texture2D = pick_object_data.icon
+		var _icon: Texture2D = load(pick_object_data.icon)
 		var _disable_color: bool = pick_object_data.disable_color
 		var _name: String = pick_object_data.name
 		var _type: String = pick_object_data.type
-		var _condition_type: Types.ConditionType = pick_object_data.condition_type
+		var _condition_type: String = pick_object_data.condition_type
+		
+		var object_path_or_type = pick_object_data.path if pick_object_data.path else pick_object_data.type
+		var script_files: Dictionary = ESUtils.find_gd_files_in_paths([
+			"res://addons/event_sheet/modules/",
+		], object_path_or_type)
+		
+		var files_data
+		if pick_object_data.condition_type == "event":
+			files_data = script_files["events"]
+		if pick_object_data.condition_type == "action":
+			files_data = script_files["actions"]
+		
+		for category in Types.Category.values():
+			pick_condition_data[category] = []
+			for script in files_data:
+				var script_instance = load(script)
+				var script_metadata: Dictionary = script_instance.get_condition_metadata()
+				if script_metadata.category == category:
+					pick_condition_data[category].append(script)
 		
 		if pick_condition_data.size() > 0:
 			for category: Types.Category in pick_condition_data:
@@ -53,27 +53,30 @@ func update_frame(current_scene, condition_type: Types.ConditionType, finish_but
 				var category_label: Label = item_category.get_child(0).get_child(0)
 				
 				category_label.text = str(Types.CATEGORY_NAMES[category])
-				#match category:
-					#Types.Category.MAIN: category_label.text = "Main"
-					#Types.Category.VARIABLE: category_label.text = "Variable"
-					#Types.Category.INPUT: category_label.text = "Input"
-					#_: category_label.text = "Other"
 				
 				var category_items: GridContainer = item_category.get_child(1)
 				
 				if pick_condition_data[category].size() <= 0:
 					continue
 				
-				for item in pick_condition_data[category]:
+				for script in pick_condition_data[category]:
+					var script_instance = load(script)
+					var item = script_instance.get_condition_metadata(object_path_or_type if object_path_or_type is NodePath else "")
+					
 					var item_button: Button = item_template.instantiate()
-					item_button.data = item
+					if pick_object_data.condition_type == "event":
+						var _object = str(object_path_or_type) if object_path_or_type is NodePath else ""
+						item_button.data = ESUtils.Data.create_event(item.name, "standart", script, _object, script_instance.params())
+					if pick_object_data.condition_type == "action":
+						var _object = str(object_path_or_type) if object_path_or_type is NodePath else ""
+						item_button.data = ESUtils.Data.create_action(item.name, "standart", script, _object, script_instance.params())
 					item_button.name = item.name
 					item_button.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 					item_button.text = item.name
 					item_button.icon = item.icon
-					item_button.disable_color = _disable_color
+					item_button.disable_color = !item.change_icon_color
 					if !item_button.gui_input.is_connected(_on_select_item):
-						item_button.gui_input.connect(_on_select_item.bind(item, frame))
+						item_button.gui_input.connect(_on_select_item.bind(item_button.data, frame))
 					category_items.add_child(item_button)
 				
 				items_list.add_child(item_category)

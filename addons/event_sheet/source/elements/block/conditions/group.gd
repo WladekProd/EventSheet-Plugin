@@ -16,13 +16,13 @@ const Types = preload("res://addons/event_sheet/source/utils/event_sheet_types.g
 			if group_icon:
 				group_icon.modulate = color
 
-var resource: BlockResource:
-	set (p_resource):
-		resource = p_resource
-		group_name.text = empty_block.block_resource.group_name
-		group_description.text = empty_block.block_resource.group_description
+var block_body
 
-var empty_block
+var data: Dictionary:
+	set (p_data):
+		data = p_data
+		group_name.text = block_body.data.parameters.group_name
+		group_description.text = block_body.data.parameters.group_description
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
@@ -41,16 +41,12 @@ func _on_theme_changed() -> void:
 
 func _on_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			if event.double_click:
-				empty_block.change.emit(empty_block.block_resource, self)
+				block_body.change.emit(block_body.data, block_body)
 			else:
-				empty_block.is_selected = true
+				block_body._select()
+				block_body.is_hovered = false
+				ESUtils.hovered_select = null
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-			empty_block.context_menu.emit()
-
-#func _on_focus_entered() -> void:
-	#left_body.panel.focus_entered.emit()
-#
-#func _on_focus_exited() -> void:
-	#left_body.panel.focus_exited.emit()
+			block_body.context_menu.emit()

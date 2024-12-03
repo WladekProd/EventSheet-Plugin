@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="EventResource" load_steps=4 format=3 uid="uid://cabi6y01p1pkf"]
 
 [ext_resource type="Texture2D" uid="uid://dn2802kb4ium3" path="res://addons/event_sheet/resources/icons/start.svg" id="1_vr677"]
-[ext_resource type="Script" path="res://addons/event_sheet/modules/System/events/input.gd" id="2_tyitg"]
+[ext_resource type="Script" path="res://addons/event_sheet/resources/_temp/System/events/input.gd" id="2_tyitg"]
 [ext_resource type="Script" path="res://addons/event_sheet/source/resources/event_resource.gd" id="3_fef6v"]
 
 [resource]

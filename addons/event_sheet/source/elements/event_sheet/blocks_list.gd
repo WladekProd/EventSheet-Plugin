@@ -8,18 +8,19 @@ var line_number: int = 0
 
 func update_events(root_event: VBoxContainer = self):
 	var parent: VBoxContainer
-	if "block_expand" in root_event.get_parent():
+	if "expand" in root_event.get_parent():
 		parent = root_event.get_parent()
-		sub_level = parent.block_level
+		sub_level = parent.level
 	else:
 		parent = root_event
 		sub_level = 0
 	update_child_events(parent)
 
 func update_child_events(node: Node, index: int = 0) -> void:
-	node.block_level = sub_level + index
+	node.level = sub_level + index
+	if "expand" in node: node.expand = node.expand
 	for child in node.get_children():
-		if child is VBoxContainer and "block_expand" in child:
+		if child is VBoxContainer and "expand" in child:
 			update_child_events(child, index + 1)
 
 
@@ -29,12 +30,12 @@ func update_lines():
 	update_line()
 
 func update_line(node: Node = self):
-	if node is VBoxContainer and "block_type" in node:
-		if node.block_type != Types.BlockType.COMMENT or node.block_type != Types.BlockType.VARIABLE:
+	if node is VBoxContainer and "type" in node:
+		if node.type != "comment" or node.type != "variable":
 			node.block_number = line_number
 	for child in node.get_children():
-		if child is VBoxContainer and "block_type" in child:
-			if child.block_type == Types.BlockType.COMMENT or child.block_type == Types.BlockType.VARIABLE:
+		if child is VBoxContainer and "type" in child:
+			if child.type == "comment" or child.type == "variable":
 				continue
 			line_number += 1
 			update_line(child)

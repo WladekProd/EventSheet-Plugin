@@ -93,7 +93,7 @@ size_flags_horizontal = 3
 mouse_filter = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_arigl")
 bbcode_enabled = true
-text = "Eventssssssssssssssssssss"
+text = "Event Info"
 scroll_active = false
 autowrap_mode = 0
 

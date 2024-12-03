@@ -11,7 +11,7 @@ var current_frame: Types.WindowFrame
 
 signal frame_result
 
-func update_frame(current_scene, condition_type: Types.ConditionType, finish_button_instance: Button, frame: Types.WindowFrame, frame_data: Dictionary = {}, window_search: LineEdit = null):
+func update_frame(current_scene, condition_type: String, finish_button_instance: Button, frame: Types.WindowFrame, frame_data: Dictionary = {}, window_search: LineEdit = null):
 	if items_list:
 		for child in items_list.get_children():
 			items_list.remove_child(child)
@@ -20,36 +20,22 @@ func update_frame(current_scene, condition_type: Types.ConditionType, finish_but
 		current_frame = frame
 		
 		var system_item: Dictionary = {
-			"icon": load("res://addons/event_sheet/resources/icons/system.svg"),
+			"icon": "res://addons/event_sheet/resources/icons/system.svg",
 			"disable_color": false,
 			"name": "System",
 			"type": "System",
-			"object": null,
+			"path": "",
 			"condition_type": condition_type,
 		}
 		pick_object_data.append(system_item)
 		
-		if current_scene:
-			for item: Node in current_scene.get_children():
-				var icon: Texture2D
-				
-				if item is Node2D:
-					icon = item.texture if "texture" in item else EditorInterface.get_editor_theme().get_icon(item.get_class(), "EditorIcons")
-				
-				var node_item: Dictionary = {
-					"icon": icon,
-					"disable_color": true,
-					"name": item.name,
-					"type": "Node",
-					"object": item.get_path(),
-					"condition_type": condition_type,
-				}
-				pick_object_data.append(node_item)
+		if current_scene: get_all_child_nodes(current_scene, condition_type, pick_object_data)
 		
 		for item in pick_object_data:
-			var _icon: Texture2D = item["icon"]
+			var _icon: Texture2D = load(item["icon"])
 			var _disable_color: bool = item["disable_color"]
 			var _name: String = item["name"]
+			var _is_current: bool = item["is_current"] if item.has("is_current") else false
 			
 			var item_button: Button = item_template.instantiate()
 			item_button.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
@@ -62,12 +48,33 @@ func update_frame(current_scene, condition_type: Types.ConditionType, finish_but
 				item_button.gui_input.connect(_on_select_item.bind(item, frame))
 			
 			items_list.add_child(item_button)
+			item_button.get_node("Current").visible = _is_current
 		
 		if window_search.text_changed.is_connected(_on_search):
 			window_search.text_changed.disconnect(_on_search)
 		window_search.text_changed.connect(_on_search)
 		
 		select_item(frame_data, false, true)
+
+func get_all_child_nodes(child: Node, condition_type: String, pick_object_data):
+	var icon_path = ESUtils.get_node_icon(child.get_path())
+	print(icon_path)
+	#if child is Node2D:
+		#icon = child.texture if "texture" in child else EditorInterface.get_editor_theme().get_icon(child.get_class(), "EditorIcons")
+	
+	
+	var node_item: Dictionary = {
+		"icon": icon_path,
+		"disable_color": true,
+		"name": child.name,
+		"type": child.get_class(),
+		"path": ESUtils.current_scene.get_path_to(child),
+		"condition_type": condition_type,
+		"is_current": (child == ESUtils.current_scene)
+	}
+	pick_object_data.append(node_item)
+	for _child in child.get_children():
+		get_all_child_nodes(_child, condition_type, pick_object_data)
 
 func select_item(frame_data: Dictionary = {}, is_new_data: bool = false, grab: bool = false):
 	if items_list.get_child_count() > 0:

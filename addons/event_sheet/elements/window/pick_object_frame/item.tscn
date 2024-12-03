@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://bhlxbgx0nuarn"]
+[gd_scene load_steps=7 format=3 uid="uid://bhlxbgx0nuarn"]
 
 [ext_resource type="Texture2D" uid="uid://byf2yg4kua5ik" path="res://addons/event_sheet/resources/icons/system.svg" id="1_hgfkr"]
+[ext_resource type="Texture2D" uid="uid://cmopsroosmhhr" path="res://addons/event_sheet/resources/icons/event_sheet_big.svg" id="2_g5yvd"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_27lqi"]
 content_margin_top = 3.0
@@ -35,11 +36,14 @@ resource_name = "AddConditionItem"
 script/source = "@tool
 extends Button
 
+@onready var current_icon: TextureRect = $Current
+
 @export var disable_color: bool = false:
 	set (p_disable_color):
 		if p_disable_color != disable_color:
 			disable_color = p_disable_color
 			color = Color.WHITE
+			if current_icon: current_icon.modulate = color
 
 @export var color: Color:
 	set (p_color):
@@ -59,6 +63,7 @@ extends Button
 				add_theme_color_override(\"icon_hover_color\", Color.WHITE)
 				add_theme_color_override(\"icon_hover_pressed_color\", Color.WHITE)
 				add_theme_color_override(\"icon_pressed_color\", Color.WHITE)
+			if current_icon: current_icon.modulate = color
 
 @export var data: Dictionary
 
@@ -76,22 +81,41 @@ custom_minimum_size = Vector2(70, 70)
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_normal_color = Color(1, 0, 0.227451, 1)
-theme_override_colors/icon_focus_color = Color(1, 0, 0.227451, 1)
-theme_override_colors/icon_pressed_color = Color(1, 0, 0.227451, 1)
-theme_override_colors/icon_hover_color = Color(1, 0, 0.227451, 1)
-theme_override_colors/icon_hover_pressed_color = Color(1, 0, 0.227451, 1)
-theme_override_colors/icon_disabled_color = Color(1, 0, 0.227451, 1)
+theme_override_colors/icon_normal_color = Color(0.892955, 0, 0.275886, 1)
+theme_override_colors/icon_focus_color = Color(0.892955, 0, 0.275886, 1)
+theme_override_colors/icon_pressed_color = Color(0.892955, 0, 0.275886, 1)
+theme_override_colors/icon_hover_color = Color(0.892955, 0, 0.275886, 1)
+theme_override_colors/icon_hover_pressed_color = Color(0.892955, 0, 0.275886, 1)
+theme_override_colors/icon_disabled_color = Color(0.892955, 0, 0.275886, 1)
 theme_override_font_sizes/font_size = 10
 theme_override_styles/focus = SubResource("StyleBoxFlat_27lqi")
 theme_override_styles/hover = SubResource("StyleBoxFlat_l3e75")
 theme_override_styles/normal = SubResource("StyleBoxFlat_fpoiy")
 text = "System"
 icon = ExtResource("1_hgfkr")
+text_overrun_behavior = 3
+clip_text = true
 icon_alignment = 1
 vertical_icon_alignment = 0
 expand_icon = true
 script = SubResource("GDScript_rbt3x")
-color = Color(1, 0, 0.227451, 1)
+color = Color(0.892955, 0, 0.275886, 1)
+
+[node name="Current" type="TextureRect" parent="."]
+visible = false
+modulate = Color(0.892955, 0, 0.275886, 1)
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -15.0
+offset_top = 3.0
+offset_right = -3.0
+offset_bottom = 15.0
+grow_horizontal = 0
+tooltip_text = "Root object in current EventSheet."
+texture = ExtResource("2_g5yvd")
+expand_mode = 1
 
 [connection signal="theme_changed" from="." to="." method="_on_theme_changed"]

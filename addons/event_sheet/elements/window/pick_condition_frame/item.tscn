@@ -58,7 +58,7 @@ extends Button
 				add_theme_color_override(\"icon_hover_pressed_color\", Color.WHITE)
 				add_theme_color_override(\"icon_pressed_color\", Color.WHITE)
 
-@export var data: Resource
+@export var data: Dictionary
 
 func _ready() -> void:
 	color = EditorInterface.get_editor_theme().get_color(\"accent_color\", \"Editor\")
@@ -71,6 +71,7 @@ func _on_theme_changed() -> void:
 
 [node name="ConditionItem" type="Button"]
 custom_minimum_size = Vector2(0, 30)
+offset_bottom = 30.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)

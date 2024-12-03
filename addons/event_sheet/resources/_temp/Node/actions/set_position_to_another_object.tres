@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://byf2yg4kua5ik" path="res://addons/event_sheet/resources/icons/system.svg" id="1_m4nva"]
 [ext_resource type="Script" path="res://addons/event_sheet/source/resources/action_resource.gd" id="1_qgr3k"]
-[ext_resource type="Script" path="res://addons/event_sheet/modules/Node/actions/set_position_to_another_object.gd" id="2_xsn43"]
+[ext_resource type="Script" path="res://addons/event_sheet/resources/_temp/Node/actions/set_position_to_another_object.gd" id="2_xsn43"]
 
 [resource]
 script = ExtResource("1_qgr3k")

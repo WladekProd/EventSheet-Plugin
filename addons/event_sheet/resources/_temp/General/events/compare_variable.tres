@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="EventResource" load_steps=5 format=3 uid="uid://oni5he1n3tj3"]
 
-[ext_resource type="Script" path="res://addons/event_sheet/modules/General/events/compare_variable.gd" id="1_6q335"]
+[ext_resource type="Script" path="res://addons/event_sheet/resources/_temp/General/events/compare_variable.gd" id="1_6q335"]
 [ext_resource type="Texture2D" uid="uid://wmhmlqpmaera" path="res://addons/event_sheet/resources/icons/global.svg" id="1_absw3"]
 [ext_resource type="Texture2D" uid="uid://byf2yg4kua5ik" path="res://addons/event_sheet/resources/icons/system.svg" id="3_aphgk"]
 [ext_resource type="Script" path="res://addons/event_sheet/source/resources/event_resource.gd" id="3_dmtvh"]

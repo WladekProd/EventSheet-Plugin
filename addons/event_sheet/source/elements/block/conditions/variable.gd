@@ -20,18 +20,18 @@ var local_icon := load("res://addons/event_sheet/resources/icons/local.svg")
 			if variable_text:
 				variable_text.label_settings.font_color = color
 
-var resource: BlockResource:
-	set (p_resource):
-		resource = p_resource
-		variable_icon.texture = global_icon if empty_block.block_resource.variable_is_global else local_icon
-		variable_text.text = "{0} {1}: {2} = {3}".format([
-			"Global" if empty_block.block_resource.variable_is_global else "Local",
-			Types.VariableType.find_key(empty_block.block_resource.variable_type),
-			empty_block.block_resource.variable_name,
-			empty_block.block_resource.variable_value
-		])
+var block_body
 
-var empty_block
+var data: Dictionary:
+	set (p_data):
+		data = p_data
+		variable_icon.texture = global_icon if block_body.data.parameters.variable_is_global else local_icon
+		variable_text.text = "{0} {1}: {2} = {3}".format([
+			"Global" if block_body.data.parameters.variable_is_global else "Local",
+			Types.VariableType.find_key(block_body.data.parameters.variable_type),
+			block_body.data.parameters.variable_name,
+			block_body.data.parameters.variable_value
+		])
 
 func _ready() -> void:
 	color = EditorInterface.get_editor_theme().get_color("accent_color", "Editor")
@@ -44,9 +44,9 @@ func _on_theme_changed() -> void:
 func _on_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.double_click:
-			empty_block.change.emit(empty_block.block_resource, self)
+			block_body.change.emit(block_body.data, block_body)
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-			empty_block.context_menu.emit()
+			block_body.context_menu.emit()
 
 #func _on_focus_entered() -> void:
 	#left_body.panel.focus_entered.emit()

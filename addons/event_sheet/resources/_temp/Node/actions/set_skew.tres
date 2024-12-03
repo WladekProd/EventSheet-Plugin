@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://byf2yg4kua5ik" path="res://addons/event_sheet/resources/icons/system.svg" id="1_4ou2c"]
 [ext_resource type="Script" path="res://addons/event_sheet/source/resources/action_resource.gd" id="1_4thux"]
-[ext_resource type="Script" path="res://addons/event_sheet/modules/Node/actions/set_skew.gd" id="1_q3kgq"]
+[ext_resource type="Script" path="res://addons/event_sheet/resources/_temp/Node/actions/set_skew.gd" id="1_q3kgq"]
 
 [resource]
 script = ExtResource("1_4thux")

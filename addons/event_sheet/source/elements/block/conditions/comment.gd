@@ -11,14 +11,14 @@ const Types = preload("res://addons/event_sheet/source/utils/event_sheet_types.g
 		if p_color != color:
 			color = p_color
 
+var block_body
+
 var is_focused: bool = false
 
-var resource: BlockResource:
-	set (p_resource):
-		resource = p_resource
-		comment_text.text = empty_block.block_resource.comment_text
-
-var empty_block
+var data: Dictionary:
+	set (p_data):
+		data = p_data
+		comment_text.text = block_body.data.parameters.comment_text
 
 func _input(event: InputEvent) -> void:
 	if comment_text.editable and ESUtils.is_plugin_screen:
@@ -28,18 +28,20 @@ func _input(event: InputEvent) -> void:
 					EditorInterface.get_selection().clear()
 					comment_button.grab_focus()
 				ESUtils.is_editing = false
-				empty_block.block_resource.comment_text = comment_text.text
+				block_body.data.parameters.comment_text = comment_text.text
+				ESUtils.save_event_sheet_data()
 				comment_text.editable = false
 				comment_text.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		if event is InputEventKey:
 			if event.keycode == KEY_ENTER and event.pressed:
 				ESUtils.is_editing = false
-				empty_block.block_resource.comment_text = comment_text.text
+				block_body.data.parameters.comment_text = comment_text.text
+				ESUtils.save_event_sheet_data()
 				comment_text.editable = false
 				comment_text.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			elif event.keycode == KEY_ESCAPE and event.pressed:
 				ESUtils.is_editing = false
-				comment_text.text = empty_block.block_resource.comment_text
+				comment_text.text = block_body.data.parameters.comment_text
 				comment_text.editable = false
 				comment_text.mouse_filter = Control.MOUSE_FILTER_IGNORE
 

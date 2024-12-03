@@ -2,6 +2,7 @@
 extends Node
 class_name ESUtils
 
+const Data = preload("res://addons/event_sheet/source/utils/event_sheet_data.gd")
 const Types = preload("res://addons/event_sheet/source/utils/event_sheet_types.gd")
 const UUID = preload("res://addons/event_sheet/source/utils/event_sheet_uuid.gd")
 const Plugin = preload("res://addons/event_sheet/plugin.gd")
@@ -67,7 +68,8 @@ static func get_file_icon(object_path: String):
 
 static func get_node_icon(node_path: NodePath) -> String:
 	if ESUtils.current_scene.has_node(node_path):
-		var _node = ESUtils.current_scene.get_node(node_path)
+		var _node = ESUtils.current_scene.get_node_or_null(node_path)
+		if !_node: return ""
 		
 		if _node is Sprite2D:
 			if !_node.texture.resource_path.is_empty():
@@ -86,16 +88,30 @@ static func get_node_icon(node_path: NodePath) -> String:
 			EditorInterface.get_resource_filesystem().scan()
 			return _full_save_path
 		
-		return _full_save_path if FileAccess.file_exists(_full_save_path) else "res://addons/event_sheet/resources/icons/event_sheet_small.png"
+		return _full_save_path if FileAccess.file_exists(_full_save_path) else "res://addons/event_sheet/resources/icons/event_sheet_big.svg"
 	else:
-		return "res://addons/event_sheet/resources/icons/event_sheet_small.png"
+		return "res://addons/event_sheet/resources/icons/event_sheet_big.svg"
+
+static func get_node_icon_texture(node: NodePath) -> Texture2D:
+	if ESUtils.current_scene.has_node(node):
+		var _node = ESUtils.current_scene.get_node_or_null(node)
+		if !_node: return load("res://addons/event_sheet/resources/icons/event_sheet_big.svg")
+		
+		if _node is Sprite2D:
+			if _node.texture:
+				return _node.texture
+		
+		return EditorInterface.get_editor_theme().get_icon(_node.get_class(), "EditorIcons")
+	else:
+		return load("res://addons/event_sheet/resources/icons/event_sheet_big.svg")
 
 static func get_node_name(node_path: NodePath) -> String:
 	if ESUtils.current_scene.has_node(node_path):
-		var _node = ESUtils.current_scene.get_node(node_path)
+		var _node = ESUtils.current_scene.get_node_or_null(node_path)
+		if !_node: return ""
 		return _node.name
 	else:
-		return "Null"
+		return ""
 
 static func ensure_trailing_slash(path: String) -> String:
 	return path if path.ends_with("/") else path + "/"
@@ -138,16 +154,10 @@ static func has_item_in_select(item: Node) -> bool:
 			break
 	return _exists
 
-static func selection_is_equal_to_type(resource) -> bool:
+static func selection_is_equal_to_type(data) -> bool:
 	if ESUtils.selected_items:
-		var _resource
-		
-		if "block_resource" in ESUtils.selected_items[ESUtils.selected_items.size() - 1].object:
-			_resource = ESUtils.selected_items[ESUtils.selected_items.size() - 1].object.block_resource
-		if "resource" in ESUtils.selected_items[ESUtils.selected_items.size() - 1].object:
-			_resource = ESUtils.selected_items[ESUtils.selected_items.size() - 1].object.resource
-		
-		if resource.get_class() != _resource.get_class():
+		var _data = ESUtils.selected_items[ESUtils.selected_items.size() - 1].object.data
+		if data.class != _data.class:
 			return true
 	return false
 
@@ -159,10 +169,10 @@ static func sort_selected_items_by_block_number() -> Array:
 	)
 	return ESUtils.selected_items
 
-static func unselect_item(id: String):
+static func unselect_item(uuid: String):
 	for i in range(ESUtils.selected_items.size() - 1, -1, -1):
-		var _id = ESUtils.selected_items[i].object.id
-		if _id == id:
+		var _uuid = ESUtils.selected_items[i].object.uuid
+		if _uuid == uuid:
 			ESUtils.selected_items.remove_at(i)
 			return
 
@@ -238,28 +248,53 @@ static func update_block_ids(block: BlockResource):
 		if sub_block != null:
 			update_block_ids(sub_block)
 
-static func find_tres_files_in_paths(resource_paths: Array, sub_dirs: Array) -> Dictionary:
-	var tres_files: Dictionary = {"actions": [], "events": []}
-	for path in resource_paths:
-		for sub_dir in sub_dirs:
-			var full_sub_dir_path: String = "{0}/{1}".format([path, sub_dir])
-			var dir = DirAccess.open(full_sub_dir_path)
-			if dir:
-				dir.list_dir_begin()
-				var file_name: String = dir.get_next()
-				while file_name != "":
-					if file_name != "." and file_name != "..":
-						var full_path: String = "{0}/{1}".format([full_sub_dir_path, file_name])
-						if dir.current_is_dir():
-							# Рекурсивно обрабатываем вложенные папки
-							var sub_tres_files: Dictionary = find_tres_files_in_paths([full_path], sub_dirs)
-							for category in tres_files.keys():
-								tres_files[category].append_array(sub_tres_files[category])
-						elif file_name.ends_with(".tres"):
-							tres_files[sub_dir].append(full_path)
-					file_name = dir.get_next()
-				dir.list_dir_end()
-	return tres_files
+static func find_gd_files_in_paths(resource_paths: Array, object_path_or_type) -> Dictionary:
+	var gd_files: Dictionary = { "actions": [], "events": [] }
+	
+	for base_path in resource_paths:
+		var dir = DirAccess.open(base_path)
+		if not dir:
+			continue
+		
+		dir.list_dir_begin()
+		var folder_name = dir.get_next()
+		
+		while folder_name != "":
+			if folder_name != "." and folder_name != "..":
+				var sub_dir_path = "{0}/{1}".format([base_path, folder_name])
+				
+				# Проверяем, это папка или файл
+				if dir.current_is_dir():
+					# Проверяем, это ли директория "actions" или "events"
+					if folder_name in ["actions", "events"]:
+						var sub_dir = DirAccess.open(sub_dir_path)
+						if sub_dir:
+							sub_dir.list_dir_begin()
+							var file_name = sub_dir.get_next()
+							
+							while file_name != "":
+								if file_name != "." and file_name != "..":
+									if file_name.ends_with(".gd"):
+										# Получаем имя класса из имени файла
+										var _split_name: PackedStringArray = file_name.split(".")
+										if object_path_or_type is NodePath:
+											if current_scene.get_node(object_path_or_type).is_class(_split_name[0]):
+												gd_files[folder_name].append("{0}/{1}".format([sub_dir_path, file_name]))
+										else:
+											if object_path_or_type == _split_name[0]:
+												gd_files[folder_name].append("{0}/{1}".format([sub_dir_path, file_name]))
+								file_name = sub_dir.get_next()
+							sub_dir.list_dir_end()
+					else:
+						# Рекурсивно обрабатываем вложенные папки
+						var sub_files = find_gd_files_in_paths([sub_dir_path], object_path_or_type)
+						gd_files["actions"].append_array(sub_files["actions"])
+						gd_files["events"].append_array(sub_files["events"])
+			folder_name = dir.get_next()
+		
+		dir.list_dir_end()
+	
+	return gd_files
 
 static func find_child_by_class(node:Node, cls:String):
 	for child in node.get_children():
@@ -326,18 +361,6 @@ static func find_parent_block(event_sheet_data: Array[BlockResource], block: Blo
 	
 	return null
 
-# Найти root блок
-static func find_root_block(event_sheet_data: Array[BlockResource], block: BlockResource) -> BlockResource:
-	var current_block = block
-	var parent_block = find_parent_block(event_sheet_data, current_block)
-	
-	# Поднимаемся по иерархии до корневого блока
-	while parent_block != null:
-		current_block = parent_block
-		parent_block = find_parent_block(event_sheet_data, current_block)
-	
-	return current_block
-
 # Найти визуальное тело блока
 static func find_empty_block(parent: Node, target_id: String, expected_type: String) -> Variant:
 	if "id" in parent and parent.get_class() == expected_type and parent.id == target_id:
@@ -351,16 +374,6 @@ static func find_empty_block(parent: Node, target_id: String, expected_type: Str
 	return null
 
 
-# Проверить перемещён ли текущий блок в свои-же дочерние блоки
-static func is_descendant_of(block: BlockResource, potential_ancestor: BlockResource) -> bool:
-	if block == potential_ancestor:
-		return true
-	
-	for sub_block in potential_ancestor.sub_blocks:
-		if is_descendant_of(block, sub_block):
-			return true
-	
-	return false
 
 
 
@@ -432,145 +445,6 @@ static func add_item(item: Node, index: int, parent: Node, event_sheet_data: Arr
 	if "block_resource" in parent: parent.move_child(item, index + 1 if index != -1 else 0)
 	else: parent.move_child(item, index if index != -1 else 0)
 
-
-
-
-static func change_resource(block, index: int, new_data):
-	if block is EventResource: block.events[index] = new_data
-	elif block is ActionResource: block.actions[index] = new_data
-
-static func spawn_block_item(event_sheet_class, parent_item: Node, item: Node, resource, spawn_resource: bool = true):
-	if parent_item:
-		if resource is BlockResource:
-			if spawn_resource: parent_item.block_resource.sub_blocks.append(resource)
-			parent_item.add_child(item)
-		elif resource is EventResource:
-			if spawn_resource: parent_item.block_resource.events.append(resource)
-			parent_item.block_events.add_child(item)
-		elif resource is ActionResource:
-			if spawn_resource: parent_item.block_resource.actions.append(resource)
-			parent_item.block_actions.add_child(item)
-	else:
-		if resource is BlockResource:
-			if spawn_resource: event_sheet_class.event_sheet_data.append(resource)
-			event_sheet_class.block_items.add_child(item)
-	event_sheet_class.generate_code()
-
-static func remove_block_item(event_sheet_class, parent_item: Node, item: Node, resource):
-	if parent_item:
-		if resource is BlockResource:
-			var _index = parent_item.block_resource.sub_blocks.find(resource)
-			parent_item.block_resource.sub_blocks.remove_at(_index)
-			parent_item.remove_child(item)
-		elif resource is EventResource:
-			var _index = parent_item.block_resource.events.find(resource)
-			parent_item.block_resource.events.remove_at(_index)
-			parent_item.block_events.remove_child(item)
-		elif resource is ActionResource:
-			var _index = parent_item.block_resource.actions.find(resource)
-			parent_item.block_resource.actions.remove_at(_index)
-			parent_item.block_actions.remove_child(item)
-	else:
-		if resource is BlockResource:
-			var _index = event_sheet_class.event_sheet_data.find(resource)
-			event_sheet_class.event_sheet_data.remove_at(_index)
-			event_sheet_class.block_items.remove_child(item)
-	event_sheet_class.generate_code()
-
-static func create_block(event_sheet_class, block_type: Types.BlockType, block_data, parent_item: Node = null, create_new_resource: bool = true, save_resources: bool = true, fill_conditions: bool = false) -> VBoxContainer:
-	var _new_block = block_data
-	
-	if create_new_resource:
-		_new_block = BlockResource.new()
-		_new_block.id = UUID.v4()
-		_new_block.block_type = block_type
-		match block_type:
-			Types.BlockType.GROUP:
-				_new_block.group_name = block_data.group_name
-				_new_block.group_description = block_data.group_description
-			Types.BlockType.COMMENT:
-				_new_block.comment_text = block_data.comment_text
-			Types.BlockType.VARIABLE:
-				_new_block.variable_is_global = block_data.variable_is_global
-				_new_block.variable_name = block_data.variable_name
-				_new_block.variable_type = block_data.variable_type
-				_new_block.variable_value = block_data.variable_value
-	
-	var _block_item = event_sheet_class.empty_block.instantiate()
-	_block_item.id = _new_block.id
-	if save_resources:
-		ESUtils.undo_redo.create_action("Add Blocks")
-		ESUtils.undo_redo.add_do_method(ESUtils, "spawn_block_item", event_sheet_class, parent_item, _block_item, _new_block)
-		ESUtils.undo_redo.add_undo_method(ESUtils, "remove_block_item", event_sheet_class, parent_item, _block_item, _new_block)
-		ESUtils.undo_redo.commit_action()
-	else:
-		spawn_block_item(event_sheet_class, parent_item, _block_item, _new_block, false)
-	_block_item.block_resource = _new_block
-	
-	_block_item.drop_data.connect(event_sheet_class._drop_data_block)
-	_block_item.select.connect(event_sheet_class._on_select_content)
-	_block_item.change.connect(event_sheet_class._on_change_content)
-	#_block_item.context_menu.connect(_on_context_menu)
-	_block_item.add_action.connect(event_sheet_class._on_add_action)
-	
-	if fill_conditions:
-		for event in _new_block.events:
-			create_event(event_sheet_class, _block_item, event, save_resources)
-		for action in _new_block.actions:
-			create_action(event_sheet_class, _block_item, action, save_resources)
-	
-	event_sheet_class.generate_code()
-	return _block_item
-
-static func create_event(event_sheet_class, block_item: Node, event_data, save_resources: bool = true) -> Button:
-	var _event_resource: EventResource = event_data
-	
-	_event_resource.id = UUID.v4()
-	
-	var _event_item = event_sheet_class.event_instance.instantiate()
-	_event_item.id = _event_resource.id
-	
-	if save_resources:
-		ESUtils.undo_redo.create_action("Add Events")
-		ESUtils.undo_redo.add_do_method(ESUtils, "spawn_block_item", event_sheet_class, block_item, _event_item, _event_resource)
-		ESUtils.undo_redo.add_undo_method(ESUtils, "remove_block_item", event_sheet_class, block_item, _event_item, _event_resource)
-		ESUtils.undo_redo.commit_action()
-	else:
-		spawn_block_item(event_sheet_class, block_item, _event_item, _event_resource, false)
-	
-	_event_item.resource = _event_resource
-	_event_item.empty_block = block_item
-	_event_item.drop_data.connect(event_sheet_class._drop_data_event)
-	
-	event_sheet_class.generate_code()
-	return _event_item
-
-static func create_action(event_sheet_class, block_item: Node, action_data, save_resources: bool = true) -> Button:
-	var _action_resource: ActionResource = action_data
-	
-	_action_resource.id = UUID.v4()
-	
-	var _action_item = event_sheet_class.action_instance.instantiate()
-	_action_item.id = _action_resource.id
-	
-	if save_resources:
-		ESUtils.undo_redo.create_action("Add Actions")
-		ESUtils.undo_redo.add_do_method(ESUtils, "spawn_block_item", event_sheet_class, block_item, _action_item, _action_resource)
-		ESUtils.undo_redo.add_undo_method(ESUtils, "remove_block_item", event_sheet_class, block_item, _action_item, _action_resource)
-		ESUtils.undo_redo.commit_action()
-	else:
-		spawn_block_item(event_sheet_class, block_item, _action_item, _action_resource, false)
-	
-	_action_item.resource = _action_resource
-	_action_item.empty_block = block_item
-	_action_item.drop_data.connect(event_sheet_class._drop_data_action)
-	
-	return _action_item
-
-static func duplicate_block(event_sheet_class, block_resource: BlockResource, parent_block: Node = null) -> VBoxContainer:
-	var _duplicated_item = create_block(event_sheet_class, block_resource.block_type, block_resource, parent_block, false, false)
-	return _duplicated_item
-
 static func update_block(event_sheet_class, block_item: Node, block_level: int = 0) -> VBoxContainer:
 	if block_item == null:
 		return null
@@ -605,3 +479,252 @@ static func update_block(event_sheet_class, block_item: Node, block_level: int =
 	event_sheet_class.block_items.update_lines()
 	event_sheet_class.generate_code()
 	return _empty_block
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+static func save_event_sheet_data():
+	if current_scene:
+		var _file_path = current_scene.event_sheet_file.resource_path
+		var _data_string = JSON.stringify(current_scene.event_sheet_file.data, "\t")
+		var _file = FileAccess.open(_file_path, FileAccess.WRITE)
+		if _file:
+			_file.store_line(_data_string)
+			_file.close()
+			EditorInterface.get_resource_filesystem().update_file(_file_path)
+			EditorInterface.get_resource_filesystem().scan()
+			EditorInterface.get_resource_filesystem().scan_sources()
+		else:
+			print("file open failed")
+
+# Проверить перемещён ли текущий блок в свои-же дочерние блоки
+static func is_descendant_of(block: Dictionary, potential_ancestor: Dictionary) -> bool:
+	if block == potential_ancestor:
+		return true
+	if not potential_ancestor.has("childrens"):
+		return false
+	for children in potential_ancestor["childrens"]:
+		if is_descendant_of(block, children):
+			return true
+	return false
+
+static func get_root_block(child_uuid: String, event_sheet_data: Array) -> String:
+	for block in event_sheet_data:
+		if block.has("uuid"):
+			if block["uuid"] == child_uuid:
+				return block["uuid"]
+			if block.has("childrens"):
+				for child in block["childrens"]:
+					if get_root_block(child_uuid, [child]) != "":
+						return block["uuid"]
+	return ""
+
+static func find_data(uuid: String, data: Dictionary) -> Dictionary:
+	if data.has("uuid") and data.uuid == uuid:
+		return { "dir": "", "item": data }
+	if data.has("actions") and data.actions is Array:
+		for action in data.actions:
+			if action.has("uuid") and action.uuid == uuid:
+				return { "dir": "actions", "item": action }
+	if data.has("events") and data.events is Array:
+		for event in data.events:
+			if event.has("uuid") and event.uuid == uuid:
+				return { "dir": "events", "item": event }
+	if data.has("childrens") and data.childrens is Array:
+		for child in data.childrens:
+			var result = find_data(uuid, child)
+			if result != null:
+				return { "dir": "childrens", "item": result }
+	return {}
+
+static func get_parent_block(uuid: String, event_sheet_data: Array) -> String:
+	for block in event_sheet_data:
+		if block.has("childrens"):
+			for child in block["childrens"]:
+				if child.has("uuid") and child["uuid"] == uuid:
+					return block["uuid"]
+			var result = get_parent_block(uuid, block["childrens"])
+			if result:
+				return result
+	return ""
+
+static func get_block_body(uuid: String, parent) -> VBoxContainer:
+	if parent.get_class() == "VBoxContainer" and "uuid" in parent and parent.uuid == uuid:
+		return parent
+	for child in parent.get_children():
+		var result = get_block_body(uuid, child)
+		if result != null:
+			return result
+	return null
+
+static func create_blocks(event_sheet_class, data: Dictionary, parent_block: Dictionary = {}) -> VBoxContainer:
+	if data.is_empty(): return
+	var root_block_body = create_block(event_sheet_class, data, parent_block)
+	if data.has("childrens"):
+		for children in data.childrens:
+			create_blocks(event_sheet_class, children, data)
+	return root_block_body
+
+static func unique_block(data: Dictionary, level: int = 0):
+	if data.is_empty(): return
+	
+	if data.has("uuid"):
+		data.uuid = UUID.v4()
+	if data.has("level"):
+		data.level = level
+	if data.has("events"):
+		for event in data.events: unique_condition(event)
+	if data.has("actions"):
+		for action in data.actions: unique_condition(action)
+	
+	if data.has("childrens"):
+		for children in data.childrens:
+			unique_block(children, level + 1)
+
+static func unique_condition(data: Dictionary):
+	if data.is_empty(): return
+	if data.has("uuid"):
+		data.uuid = UUID.v4()
+
+static func create_block(event_sheet_class, block: Dictionary, parent_block: Dictionary = {}) -> VBoxContainer:
+	var _block_body: VBoxContainer = event_sheet_class.block_body.instantiate()
+	_block_body.add_action.connect(event_sheet_class._on_add_action)
+	_block_body.change.connect(event_sheet_class._on_change_content)
+	_block_body.select.connect(event_sheet_class._on_select_content)
+	_block_body.drop_data.connect(event_sheet_class._drop_data_block)
+	if parent_block.is_empty():
+		event_sheet_class.block_items.add_child(_block_body)
+	else:
+		var _parent_block_body: VBoxContainer = get_block_body(parent_block.uuid, event_sheet_class.block_items)
+		if _parent_block_body != null:
+			_parent_block_body.add_child(_block_body)
+			if !_parent_block_body.expand:
+				_block_body.visible = false
+			print(parent_block.uuid)
+		else:
+			print("Ошибка: Родительский блок не найден.")
+	_block_body.data = block
+	if block.has("events"):
+		for event in block.events:
+			create_condition(event_sheet_class, _block_body, "event", event)
+	if block.has("actions"):
+		for action in block.actions:
+			create_condition(event_sheet_class, _block_body, "action", action)
+	return _block_body
+
+static func create_condition(event_sheet_class, block_body: VBoxContainer, condition_class: String, condition: Dictionary) -> Button:
+	if condition_class == "event":
+		var event_type: String = condition.type
+		match event_type:
+			"standart":
+				var event_body: Button = event_sheet_class.event_body.instantiate()
+				event_body.drop_data.connect(event_sheet_class._drop_data_block)
+				block_body.block_events.add_child(event_body)
+				event_body.data = condition
+				event_body.block_body = block_body
+				return event_body
+	elif condition_class == "action":
+		var event_type: String = condition.type
+		match event_type:
+			"standart":
+				var action_body: Button = event_sheet_class.action_body.instantiate()
+				action_body.drop_data.connect(event_sheet_class._drop_data_block)
+				block_body.block_actions.add_child(action_body)
+				action_body.data = condition
+				action_body.block_body = block_body
+				return action_body
+	return null
+
+static func _paste_items(event_sheet_class, clipboard_object: Object):
+	var _to_block: Dictionary = clipboard_object.get_meta("to_block", {})
+	var _clipboard_array:  Array = clipboard_object.get_meta("clipboard_array", [])
+	var _objects_data: Array
+	if _clipboard_array is Array:
+		for _data in _clipboard_array:
+			if _data.has("class"):
+				var _duplicated_data = _data.duplicate(true)
+				match _duplicated_data.class:
+					"block":
+						if !_to_block.is_empty():
+							unique_block(_duplicated_data, _to_block.level + 1)
+							_to_block.childrens.append(_duplicated_data)
+							var root_block = create_blocks(event_sheet_class, _duplicated_data, _to_block)
+							event_sheet_class.block_items.update_events(root_block)
+							event_sheet_class.block_items.update_lines()
+							_objects_data.append(root_block)
+						else:
+							unique_block(_duplicated_data)
+							event_sheet_class.event_sheet_data.blocks.append(_duplicated_data)
+							var root_block = create_blocks(event_sheet_class, _duplicated_data)
+							_objects_data.append(root_block)
+					"event":
+						if !_to_block.is_empty():
+							unique_condition(_duplicated_data)
+							_to_block.events.append(_duplicated_data)
+							var block_body = get_block_body(_to_block.uuid, event_sheet_class.block_items)
+							var condition_body = create_condition(event_sheet_class, block_body, _duplicated_data.class, _duplicated_data)
+							_objects_data.append(condition_body)
+					"action":
+						if !_to_block.is_empty():
+							unique_condition(_duplicated_data)
+							_to_block.actions.append(_duplicated_data)
+							var block_body = get_block_body(_to_block.uuid, event_sheet_class.block_items)
+							var condition_body = create_condition(event_sheet_class, block_body, _duplicated_data.class, _duplicated_data)
+							_objects_data.append(condition_body)
+	clipboard_object.set_meta("objects_data", _objects_data)
+
+static func _remove_items(event_sheet_class, clipboard_object: Object):
+	var _selected_item = ESUtils.selected_items[0] if ESUtils.selected_items.size() > 0 else null
+	var _objects_data:  Array = clipboard_object.get_meta("objects_data", [])
+	if _objects_data is Array:
+		for _item in _objects_data:
+			_remove_item(event_sheet_class, _item.get_parent(), _item)
+
+static func _add_item(event_sheet_class, item_parent, item):
+	match item.data.class:
+		"block":
+			if item_parent is String and !item_parent.is_empty():
+				item_parent = get_block_body(item_parent, event_sheet_class.block_items)
+			
+			if "data" in item_parent: item_parent.data.childrens.append(item.data)
+			else: event_sheet_class.event_sheet_data.blocks.append(item.data)
+			item_parent.add_child(item)
+		"event":
+			item.block_body.data.events.append(item.data)
+			item.block_body.block_events.add_child(item)
+		"action":
+			item.block_body.data.actions.append(item.data)
+			item.block_body.block_actions.add_child(item)
+	save_event_sheet_data()
+
+static func _remove_item(event_sheet_class, item_parent, item):
+	match item.data.class:
+		"block":
+			if item_parent is String and !item_parent.is_empty():
+				item_parent = get_block_body(item_parent, event_sheet_class.block_items)
+			
+			if "data" in item_parent: item_parent.data.childrens.erase(item.data)
+			else: event_sheet_class.event_sheet_data.blocks.erase(item.data)
+			item_parent.remove_child(item)
+			if "data" in item_parent: item_parent.data = item_parent.data
+		"event":
+			item.block_body.data.events.erase(item.data)
+			item.block_body.block_events.remove_child(item)
+		"action":
+			item.block_body.data.actions.erase(item.data)
+			item.block_body.block_actions.remove_child(item)
+	save_event_sheet_data()
