@@ -1,10 +1,24 @@
 extends Node
 
-enum VariableType {
-	NUMBER,
-	STRING,
-	BOOLEAN,
-}
+const VariableType: Array = [
+	"Number",
+	"String",
+	"Boolean",
+	"Class",
+]
+
+const ClassType: Array = [
+	"Debug",
+	"Input",
+	"Array",
+]
+
+#enum VariableType {
+	#NUMBER,
+	#STRING,
+	#BOOLEAN,
+	#CLASS,
+#}
 
 enum EventType {
 	STANDART,
@@ -102,17 +116,6 @@ enum WindowFrame {
 	EDIT_GROUP,
 	EDIT_FUNCTION,
 	EDIT_VARIABLE,
+	EDIT_CLASS,
 	EDITOR_SETTINGS,
 }
-
-class EventSheet:
-	@export var data: Dictionary = {}
-
-	func _init():
-		data = {}
-
-class Event:
-	@export var event: EventResource
-
-class Action:
-	@export var action: ActionResource

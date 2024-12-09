@@ -16,13 +16,10 @@ func _ready() -> void:
 func update_frame(current_scene, condition_type: String, finish_button_instance: Button, frame: Types.WindowFrame, frame_data: Dictionary = {}, window_search: LineEdit = null):
 	current_frame = frame
 	
-	current_data = frame_data[Types.WindowFrame.EDIT_VARIABLE].parameters if frame_data[Types.WindowFrame.EDIT_VARIABLE] else {}
+	current_data = frame_data[Types.WindowFrame.EDIT_CLASS].parameters if frame_data[Types.WindowFrame.EDIT_CLASS] else {}
 	if !current_data:
 		current_data = {
-			"variable_is_global": true,
-			"variable_name": "",
-			"variable_type": "0",
-			"variable_value": "",
+			"class_value": "0",
 		}
 	
 	if finish_button_instance:
@@ -31,30 +28,16 @@ func update_frame(current_scene, condition_type: String, finish_button_instance:
 		finish_button_instance.button_up.connect(_on_submit.bind(current_data, current_frame))
 	
 	for item in parameter_items.get_children():
-		if item.name == "variable_name":
-			var line_edit: LineEdit = item.get_child(1)
-			line_edit.text = current_data["variable_name"]
-			
-			if line_edit.text_changed.is_connected(_on_parameter_edited):
-				line_edit.text_changed.disconnect(_on_parameter_edited)
-			line_edit.text_changed.connect(_on_parameter_edited)
-		if item.name == "variable_type":
+		if item.name == "class_value":
 			var line_edit: OptionButton = item.get_child(1)
 			
-			for index in range(Types.VariableType.size()):
-				line_edit.add_item(Types.VariableType[index], index)
-			line_edit.select(str_to_var(current_data["variable_type"]) if current_data["variable_type"] is String else current_data["variable_type"])
+			for index in range(Types.ClassType.size()):
+				line_edit.add_item(Types.ClassType[index], index)
+			line_edit.select(str_to_var(current_data["class_value"]) if current_data["class_value"] is String else current_data["class_value"])
 			
 			if line_edit.item_selected.is_connected(_on_item_selected):
 				line_edit.item_selected.disconnect(_on_item_selected)
 			line_edit.item_selected.connect(_on_item_selected)
-		if item.name == "variable_value":
-			var line_edit: LineEdit = item.get_child(1)
-			line_edit.text = current_data["variable_value"]
-			
-			if line_edit.text_changed.is_connected(_on_parameter_edited):
-				line_edit.text_changed.disconnect(_on_parameter_edited)
-			line_edit.text_changed.connect(_on_parameter_edited)
 
 func _input(event: InputEvent) -> void:
 	if visible and ESUtils.is_plugin_screen:
@@ -68,7 +51,6 @@ func _on_parameter_edited(new_text: String):
 		var parameter_value = child.get_child(1)
 		
 		if current_data:
-			if parameter_value is LineEdit: current_data[parameter_name] = parameter_value.text
 			if parameter_value is OptionButton: current_data[parameter_name] = str(parameter_value.get_selected_id())
 
 func _on_item_selected(index: int):

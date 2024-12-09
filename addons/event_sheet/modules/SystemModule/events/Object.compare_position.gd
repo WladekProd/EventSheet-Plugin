@@ -6,19 +6,33 @@ static func params() -> Dictionary:
 		"pos_a": {
 			"order": 0,
 			"name": "Position A",
-			"type": Types.STANDART_TYPES.STRING,
+			"type": {
+				"name": "string",
+				"data": []
+			},
 			"value": ""
 		},
 		"comparison": {
 			"order": 1,
 			"name": "Comparison",
-			"type": Types.STIPULATION,
-			"value": Types.STIPULATION_SYMBOL[Types.STIPULATION.EQUALS]
+			"type": {
+				"name": "select",
+				"data": [
+					"==",
+					"!=",
+					"<",
+					">",
+				]
+			},
+			"value": "=="
 		},
 		"pos_b": {
 			"order": 2,
 			"name": "Position B",
-			"type": Types.STANDART_TYPES.STRING,
+			"type": {
+				"name": "string",
+				"data": []
+			},
 			"value": ""
 		}
 	}

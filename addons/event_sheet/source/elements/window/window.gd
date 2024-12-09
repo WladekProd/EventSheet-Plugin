@@ -24,6 +24,7 @@ var pick_condition_frame := preload("res://addons/event_sheet/elements/window/pi
 var change_parameters_frame := preload("res://addons/event_sheet/elements/window/change_parameters_frame/change_parameters_frame.tscn")
 var edit_group_frame := preload("res://addons/event_sheet/elements/window/edit_group_frame/edit_group_frame.tscn")
 var edit_variable_frame := preload("res://addons/event_sheet/elements/window/edit_variable_frame/edit_variable_frame.tscn")
+var edit_class_frame := preload("res://addons/event_sheet/elements/window/edit_class_frame/edit_class_frame.tscn")
 var editor_settings_frame := preload("res://addons/event_sheet/elements/window/editor_settings_frame/editor_settings_frame.tscn")
 
 var current_data_body
@@ -37,6 +38,7 @@ var frame_data: Dictionary = {
 	Types.WindowFrame.CHANGE_PARAMETERS: null,
 	Types.WindowFrame.EDIT_GROUP: null,
 	Types.WindowFrame.EDIT_VARIABLE: null,
+	Types.WindowFrame.EDIT_CLASS: null,
 }
 
 var search_opened: bool = false
@@ -230,6 +232,42 @@ func show_add_variable(block: Dictionary = {}, window_size: Vector2 = Vector2(33
 	frame_instance.frame_result.connect(_on_frame_result)
 	frame_instance.update_frame(event_sheet.current_node, "variable", finish_button_instance, current_frame, frame_data)
 
+func show_add_class(block: Dictionary = {}, window_size: Vector2 = Vector2(330, 230)):
+	clear_window()
+	
+	current_block_type = "class"
+	current_block = block
+	current_frame = Types.WindowFrame.EDIT_CLASS
+	window_panel.set_size(window_size)
+	window_panel.set_position((size / 2) - (window_size / 2))
+	window_panel.pivot_offset = window_size / 2
+	
+	if !visible:
+		if ESUtils.get_setting("animations_enable"):
+			animation_player.play("show_window", -1, ESUtils.get_setting("animations_speed"))
+		else:
+			visible = true
+	
+	update_buttons()
+	
+	var frame_instance = edit_class_frame.instantiate()
+	window_title.text = "Add class"
+	search_line.visible = false
+	search_button.visible = false
+	cancel_button_instance.visible = true
+	help_button_instance.visible = false
+	back_button_instance.visible = false
+	next_button_instance.visible = false
+	finish_button_instance.visible = true
+	
+	window_frame_instance.add_child(frame_instance)
+	
+	if frame_instance.frame_result.is_connected(_on_frame_result):
+		frame_instance.frame_result.disconnect(_on_frame_result)
+	
+	frame_instance.frame_result.connect(_on_frame_result)
+	frame_instance.update_frame(event_sheet.current_node, "class", finish_button_instance, current_frame, frame_data)
+
 func show_change_window(data: Dictionary = {}, data_body: Variant = null):
 	clear_window()
 	
@@ -354,6 +392,7 @@ func _on_cancel_button_up() -> void:
 		Types.WindowFrame.CHANGE_PARAMETERS: null,
 		Types.WindowFrame.EDIT_GROUP: null,
 		Types.WindowFrame.EDIT_VARIABLE: null,
+		Types.WindowFrame.EDIT_CLASS: null,
 	}
 	hide_window()
 

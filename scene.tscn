@@ -1,8 +1,35 @@
-[gd_scene load_steps=5 format=3 uid="uid://1pej4df0pxlq"]
+[gd_scene load_steps=7 format=3 uid="uid://1pej4df0pxlq"]
 
 [ext_resource type="Script" path="res://addons/event_sheet/source/nodes/EventSheet.gd" id="2_3cc1c"]
 [ext_resource type="JSON" path="res://demo_project/event_sheets/event_sheet_1.json" id="3_tvi5e"]
+[ext_resource type="Texture2D" uid="uid://cmwl07hf2qbwl" path="res://icon.svg" id="4_vvoxj"]
 [ext_resource type="Texture2D" uid="uid://b5fio4vb6m01y" path="res://icon2.svg" id="6_ijjpy"]
+
+[sub_resource type="GDScript" id="GDScript_uwse3"]
+script/source = "extends Sprite2D
+
+var speed = 1.2
+@onready var sprite_2d = $\".\"
+@onready var sprite_2d_1 = $\"Sprite2D\"
+
+func _init():
+	set_process_input(true)
+	set_process_unhandled_input(true)
+	set_physics_process(true)
+	_ready()
+
+func _ready():
+	sprite_2d.set_position(Vector2(266, 266))
+	sprite_2d_1.set_position(Vector2(355, 355))
+
+func _process(delta: float):
+	sprite_2d.set_position(Vector2(sprite_2d.position.x + speed, sprite_2d.position.y + speed))
+	sprite_2d_1.set_position(Vector2(sprite_2d_1.position.x + speed + 0.5, sprite_2d_1.position.y + speed + 0.5))
+
+func _input(event: InputEvent):
+	if event.is_action_pressed(\"attack\"):
+		print(\"fire\")
+"
 
 [sub_resource type="GDScript" id="GDScript_rastk"]
 resource_name = "test"
@@ -38,8 +65,15 @@ scale = Vector2(0.13748, 0.13748)
 texture = ExtResource("6_ijjpy")
 script = ExtResource("2_3cc1c")
 event_sheet_file = ExtResource("3_tvi5e")
+final_script = SubResource("GDScript_uwse3")
 
 [node name="Marker2D" type="Marker2D" parent="Sprite2D"]
 position = Vector2(-385.511, -400.058)
 scale = Vector2(7.27379, 7.27379)
 script = SubResource("GDScript_rastk")
+
+[node name="Sprite2D" type="Sprite2D" parent="Sprite2D"]
+visible = false
+modulate = Color(1, 1, 1, 0.435294)
+scale = Vector2(5.00073, 5.00073)
+texture = ExtResource("4_vvoxj")

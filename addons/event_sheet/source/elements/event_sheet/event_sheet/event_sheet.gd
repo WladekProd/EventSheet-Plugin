@@ -4,6 +4,7 @@ extends Panel
 const Types = preload("res://addons/event_sheet/source/utils/event_sheet_types.gd")
 const UUID = preload("res://addons/event_sheet/source/utils/event_sheet_uuid.gd")
 const WindowClass = preload("res://addons/event_sheet/source/elements/window/window.gd")
+const ScriptGeneration = preload("res://addons/event_sheet/source/elements/event_sheet/script_generation.gd")
 
 var theme_colors: Dictionary = {
 	"base_color": EditorInterface.get_editor_theme().get_color("base_color", "Editor"),
@@ -80,6 +81,9 @@ func _input(event: InputEvent) -> void:
 					if event.keycode == KEY_V and event.pressed:
 						# Создать переменную
 						_window.show_add_variable()
+					if event.keycode == KEY_C and event.pressed:
+						# Добавить класс
+						_window.show_add_class()
 					if event.keycode == KEY_DELETE and event.pressed and !ESUtils.selected_items.is_empty():
 						# Удалить блок
 						remove_data()
@@ -160,6 +164,7 @@ func load_event_sheet():
 		ESUtils.create_blocks(self, block)
 	
 	block_items.update_lines()
+	generate_code()
 
 func remove_data():
 	ESUtils.undo_redo.create_action("Remove Blocks")
@@ -174,7 +179,7 @@ func remove_data():
 	ESUtils.undo_redo.commit_action()
 	
 	ESUtils.unselect_all()
-	#generate_code()
+	generate_code()
 
 func paste_data():
 	ESUtils.undo_redo.create_action("Remove Blocks")
@@ -197,149 +202,11 @@ func paste_data():
 	
 	ESUtils.save_event_sheet_data()
 	ESUtils.unselect_all()
-	#generate_code()
+	generate_code()
 
-var function_contents: Dictionary = {
-	"globals": [],
-	"_init": { "params": [], "body": ["pass"] },
-}
-
-#func generate_code():
-	#result_script = ""
-	#function_contents = {
-		#"globals": [],
-		#"_init": {"params": [], "body": [
-			#"set_process_input(true)",
-			#"set_process_unhandled_input(true)",
-			#"set_physics_process(true)",
-			##"_ready()"
-		#]},
-	#}
-	#
-	#if current_scene:
-		#result_script += "extends {0}\n\n".format([str(current_scene.get_class())])
-	#else:
-		#result_script += "extends Node\n\n"
-	#
-	#for block in event_sheet_data:
-		#process_block(block)
-	#
-	## Добавляем глобальные переменные
-	#for global_var in function_contents["globals"]:
-		#result_script += "{0}\n".format([global_var])
-	#
-	## Добавляем содержимое всех функций в итоговый скрипт
-	#for func_name in function_contents.keys():
-		#if func_name == "globals":  # Пропускаем блок глобальных переменных
-			#continue
-		#
-		#var func_data = function_contents[func_name]
-		#var func_params = str(", ").join(func_data["params"])
-		#var func_body = func_data["body"]
-		#
-		#var func_content = "\nfunc {0}({1}):\n".format([func_name, func_params])
-		#for line in func_body:
-			#func_content += "\t{0}\n".format([line])
-		#result_script += func_content
-	#
-	#code_editor.text = result_script
-	#
-	#var _script = GDScript.new()
-	#_script.source_code = result_script
-	#current_scene.final_script = _script
-
-#func process_block(block: BlockResource, sub_block_index: int = 1, parent_func_name: String = "_init"):
-	#var func_name: String = parent_func_name
-	#var is_stipulation: bool
-	#
-	#var _spaces: String
-	#if func_name != "_init": 
-		#_spaces = "\t".repeat(sub_block_index - 2) if sub_block_index >= 2 else ""
-	#else: 
-		#_spaces = "\t".repeat(sub_block_index - 1) if sub_block_index >= 2 else ""
-	#
-	#if block.block_type == Types.BlockType.VARIABLE:
-		#if sub_block_index <= 1:
-			#var _var_template = "var {0} = {1}".format([block.variable_name, str(block.variable_value)]).strip_edges()
-			#if not function_contents["globals"].has(_var_template):
-				#function_contents["globals"].append(_var_template)
-		#else:
-			#var _var_template = _spaces + "var {0} = {1}".format([block.variable_name, str(block.variable_value)]).strip_edges()
-			#if not function_contents[parent_func_name]["body"].has(_var_template):
-				#function_contents[parent_func_name]["body"].append(_var_template)
-	#elif block.block_type == Types.BlockType.STANDART:
-		#for event: EventResource in block.events:
-			#var _script = event.gd_script
-			#var _template: String = _script.get_template(event.parameters).strip_edges()
-			#
-			#if _template.begins_with("func"):
-				#var _split_template: PackedStringArray = _template.split(" ")
-				#func_name = _split_template[1].substr(0, _split_template[1].find("("))
-				#
-				## Извлечение параметров функции
-				#var param_start = _template.find("(") + 1
-				#var param_end = _template.find(")")
-				#var func_params = _template.substr(param_start, param_end - param_start).split(", ")
-				#
-				## Проверка на существование функции и создание списка, если функция новая
-				#if !function_contents.has(func_name):
-					#function_contents[func_name] = { "params": func_params, "body": [] }
-				#continue
-			#
-			#if _template.begins_with("if"):
-				#var _if_template: String = _spaces + "{0}".format([_template])
-				#
-				#if func_name.is_empty(): 
-					#func_name = "_init"
-				#
-				#if function_contents.has(func_name):
-					#function_contents[func_name]["body"].append(_if_template)
-					#sub_block_index += 1
-				#
-				#is_stipulation = true
-		#
-		#for action: ActionResource in block.actions:
-			#var _object_name: String
-			#if action.pick_object and action.pick_object.object != null:
-				#var _object_node: Node = get_node(action.pick_object.object)
-				#var _object_path = '$"{0}"'.format([str(current_scene.get_path_to(_object_node))])
-				#_object_name = str(action.pick_object.name).to_snake_case()
-				#var _var_template = "@onready var {0}".format([_object_name, str(_object_path)]).strip_edges()
-				#if not function_contents["globals"].has(_var_template):
-					#function_contents["globals"].append(_var_template)
-				#
-				#var _init_template = "{0} = {1}".format([_object_name, str(_object_path)]).strip_edges()
-				#if not function_contents["_init"]["body"].has(_init_template):
-					#function_contents["_init"]["body"].insert(0, _init_template)
-			#
-			#var _script = action.gd_script
-			#var _template: String = _script.get_template(action.parameters).strip_edges()
-			#var _split_template: PackedStringArray = _template.split("\n")
-			#
-			#var _action_spaces: String = _spaces + "\t" if is_stipulation else ""
-			#
-			#if block.events.is_empty() and sub_block_index > 1:
-				#_action_spaces += "\t"
-			#
-			#if func_name.is_empty(): 
-				#func_name = "_init"
-			#
-			## Если функция существует, добавляем действие к её содержимому
-			#if function_contents.has(func_name):
-				#if _split_template.size() > 1:
-					#for line in _split_template:
-						#function_contents[func_name]["body"].append(_action_spaces + line.format({ "object": _object_name }))
-				#else:
-					#function_contents[func_name]["body"].append(_action_spaces + _template.format({ "object": _object_name }))
-	#
-	#if function_contents.has(func_name):
-		#if function_contents[func_name]["body"].size() == 0:
-			#function_contents[func_name]["body"].append("pass")
-		#else:
-			#function_contents[func_name]["body"].erase("pass")
-	#
-	#for sub_block in block.sub_blocks:
-		#process_block(sub_block, sub_block_index + 1, func_name)
+func generate_code():
+	var _script = ScriptGeneration.generate_code(self)
+	current_node.final_script = _script
 
 # Event Sheet Inputs
 func _on_scroll_container_gui_input(event: InputEvent) -> void:
@@ -390,8 +257,12 @@ func _on_add_action(block):
 	_window.show_add_window("action", "standart", block)
 
 func _on_finish_data(finish_data: Dictionary, block = {}):
-	print(finish_data)
 	#print(block)
+	
+	if finish_data.block_data.has("parameters"):
+		for param_name in finish_data.block_data.parameters:
+			finish_data.block_data.parameters[param_name].type.data = []
+	#print(finish_data)
 	
 	if finish_data.has("current_data_body") and finish_data.current_data_body:
 		# Change data
@@ -437,6 +308,7 @@ func _on_finish_data(finish_data: Dictionary, block = {}):
 					event_sheet_data.blocks.append(_block_data)
 	
 	ESUtils.save_event_sheet_data()
+	generate_code()
 
 func _on_select_content(data: Dictionary):
 	if !ESUtils.is_ctrl_pressed:
@@ -491,7 +363,7 @@ func _drop_data_block(from_item: Variant, to_item: Variant, move_type: Types.Mov
 			ItemMove.move_sub_or_content(self, sorted_selected_array, to_item)
 	ESUtils.unselect_all()
 	ESUtils.save_event_sheet_data()
-	#generate_code()
+	generate_code()
 
 #func _on_editor_settings_change():
 	#code_editor.visible = ESUtils.get_setting("code_editor_enable")

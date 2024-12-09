@@ -33,23 +33,24 @@ func update_frame(current_scene, condition_type: String, finish_button_instance:
 		var object_path_or_type = pick_object_data.path if pick_object_data.path else pick_object_data.type
 		var _script_instance = load(current_data.script)
 		var _metadata = _script_instance.get_condition_metadata(object_path_or_type if object_path_or_type is NodePath else "")
+		var _params = _script_instance.params()
 		
 		condition_description.text = "{0}: {1}".format([_metadata.name, _metadata.description])
 		
-		var sorted_keys: Array = current_data.parameters.keys()
+		var sorted_keys: Array = _params.keys()
 		sorted_keys.sort_custom(
 			func(a: String, b: String) -> bool:
-				return current_data.parameters[a]["order"] < current_data.parameters[b]["order"]
+				return _params[a]["order"] < _params[b]["order"]
 		)
 		
 		var previous_node: Control = null
 		for p_key in sorted_keys:
 			
-			print(current_data.parameters[p_key])
+			print(_params)
 			
-			var p_name: String = current_data.parameters[p_key].name
+			var p_name: String = _params[p_key].name
 			var p_value: String = current_data.parameters[p_key].value
-			var p_type = current_data.parameters[p_key].type
+			var p_type = _params[p_key].type
 			var p_node: Control = add_parameter(p_key, p_name, p_value, p_type)
 			
 			if p_node:
@@ -92,9 +93,9 @@ func set_next_focus():
 		frame_result.emit(current_data, current_frame, true)
 	else: focus_index += 1
 
-func add_parameter(p_key, p_name, p_value, p_type):
-	match p_type:
-		Types.STANDART_TYPES.SELECT_NODE:
+func add_parameter(p_key: String, p_name: String, p_value: String, p_type: Dictionary):
+	match p_type.name:
+		"select_node":
 			var select_node_item_template: HBoxContainer = select_node_parameter.instantiate()
 			select_node_item_template.name = p_key
 			
@@ -108,7 +109,7 @@ func add_parameter(p_key, p_name, p_value, p_type):
 			items_list.add_child(select_node_item_template)
 			
 			return parameter_value
-		Types.STANDART_TYPES.OPEN_FILE:
+		"open_file":
 			var open_file_item_template: HBoxContainer = open_file_patameter.instantiate()
 			open_file_item_template.name = p_key
 			
@@ -122,7 +123,7 @@ func add_parameter(p_key, p_name, p_value, p_type):
 			items_list.add_child(open_file_item_template)
 			
 			return parameter_value
-		Types.STIPULATION:
+		"select":
 			var stipulation_item_template: HBoxContainer = stipulation_parameter.instantiate()
 			stipulation_item_template.name = p_key
 			
@@ -130,11 +131,12 @@ func add_parameter(p_key, p_name, p_value, p_type):
 			parameter_name.text = p_name
 			
 			var parameter_value: OptionButton = stipulation_item_template.get_child(1)
-			for i in Types.STIPULATION.values():
-				parameter_value.add_item(Types.STIPULATION_SYMBOL[i], i)
+			
+			for i in range(p_type.data.size()):
+				parameter_value.add_item(p_type.data[i], i)
 			
 			parameter_value.item_selected.connect(_on_parameter_selected)
-			parameter_value.select(Types.STIPULATION_SYMBOL.find_key(p_value))
+			parameter_value.select(p_type.data.find(p_value))
 			
 			items_list.add_child(stipulation_item_template)
 			
@@ -162,7 +164,7 @@ func save_parameters():
 			"LineEdit":
 				current_data.parameters[parameter_name].value = parameter_value.text
 			"OptionButton":
-				current_data.parameters[parameter_name].value = Types.STIPULATION_SYMBOL[parameter_value.selected]
+				current_data.parameters[parameter_name].value = parameter_value.text
 			"Button":
 				if parameter_value.has_method("get_file_path"):
 					current_data.parameters[parameter_name].value = parameter_value.get_file_path()

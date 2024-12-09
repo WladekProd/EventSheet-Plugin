@@ -1,0 +1,55 @@
+[gd_scene load_steps=3 format=3 uid="uid://vx2p5013bh0c"]
+
+[ext_resource type="Script" path="res://addons/event_sheet/elements/window/edit_class_frame/edit_class_frame.gd" id="1_jkmto"]
+[ext_resource type="Script" path="res://addons/event_sheet/elements/window/parameters.gd" id="2_sllqj"]
+
+[node name="EditClassFrame" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_jkmto")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="Parameters" type="VBoxContainer" parent="MarginContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_sllqj")
+
+[node name="class_value" type="HBoxContainer" parent="MarginContainer/ScrollContainer/Parameters"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/ScrollContainer/Parameters/class_value"]
+custom_minimum_size = Vector2(55, 0)
+layout_mode = 2
+size_flags_vertical = 1
+text = "Class: "
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="OptionButton" type="OptionButton" parent="MarginContainer/ScrollContainer/Parameters/class_value"]
+layout_mode = 2
+size_flags_horizontal = 3

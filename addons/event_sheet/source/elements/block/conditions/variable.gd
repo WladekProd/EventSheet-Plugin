@@ -28,7 +28,7 @@ var data: Dictionary:
 		variable_icon.texture = global_icon if block_body.data.parameters.variable_is_global else local_icon
 		variable_text.text = "{0} {1}: {2} = {3}".format([
 			"Global" if block_body.data.parameters.variable_is_global else "Local",
-			Types.VariableType.find_key(block_body.data.parameters.variable_type),
+			Types.VariableType[str_to_var(block_body.data.parameters.variable_type)],
 			block_body.data.parameters.variable_name,
 			block_body.data.parameters.variable_value
 		])

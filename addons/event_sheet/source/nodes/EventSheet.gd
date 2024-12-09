@@ -5,7 +5,7 @@ signal open_event_sheet
 
 @export var event_sheet_file: JSON
 var global_block_id: int = 0
-var final_script: GDScript
+@export var final_script: GDScript
 
 #@export var button: bool:
 	#set (p_button):
@@ -61,6 +61,10 @@ func update_scene_tree(item: TreeItem):
 					index += 1
 		for child in item.get_children():
 			update_scene_tree(child)
+
+func _ready() -> void:
+	if !Engine.is_editor_hint():
+		set_script(final_script)
 
 func _process(delta: float) -> void:
 	if ESUtils.scene_tree_editor_tree: update_scene_tree(ESUtils.scene_tree_editor_tree.get_root())

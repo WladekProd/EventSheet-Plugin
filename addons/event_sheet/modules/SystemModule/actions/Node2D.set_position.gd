@@ -6,13 +6,19 @@ static func params() -> Dictionary:
 		"x": {
 			"order": 0,
 			"name": "X",
-			"type": "String",
+			"type": {
+				"name": "string",
+				"data": []
+			},
 			"value": "0"
 		},
 		"y": {
 			"order": 1,
 			"name": "Y",
-			"type": "String",
+			"type": {
+				"name": "string",
+				"data": []
+			},
 			"value": "0"
 		}
 	}

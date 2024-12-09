@@ -83,11 +83,12 @@ func _get_plugin_icon():
 	#return resource
 
 func _on_scene_change(scene: Node) -> void:
-	if scene is VNode2D or scene is VNode3D:
-		#print('Changed scene to %s' % (scene.name if scene else "empty"))
-		if ESUtils.is_plugin_screen:
-			#open_event_sheet_editor(scene.event_sheet_data, scene)
-			print(scene.name)
+	#if "EventSheet" in scene:
+		##print('Changed scene to %s' % (scene.name if scene else "empty"))
+		#if ESUtils.is_plugin_screen:
+			##open_event_sheet_editor(scene.event_sheet_data, scene)
+			#print(scene.name)
+	pass
 
 func _on_screen_change(screen_name: String) -> void:
 	ESUtils.is_plugin_screen = screen_name == _get_plugin_name()

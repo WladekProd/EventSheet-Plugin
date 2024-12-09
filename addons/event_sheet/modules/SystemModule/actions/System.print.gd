@@ -6,9 +6,27 @@ static func params() -> Dictionary:
 		"text": {
 			"order": 0,
 			"name": "Text",
-			"type": Types.STANDART_TYPES.STRING,
+			"type": {
+				"name": "string",
+				"data": []
+			},
 			"value": '""'
 		}
+	}
+
+static func get_condition_metadata(object_path: String = "") -> Dictionary:
+	return {
+		"name": "Print",
+		"category": Types.Category.MAIN,
+		"icon": preload("res://addons/event_sheet/resources/icons/system.svg"),
+		"change_icon_color": true,
+		"description": "Debug console print."
+	}
+
+static func get_object_metadata(object_path: String = "") -> Dictionary:
+	return {
+		"name": "System",
+		"icon": {}
 	}
 
 static func get_template(_params: Dictionary = params()) -> String:

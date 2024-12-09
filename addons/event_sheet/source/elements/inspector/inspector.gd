@@ -60,5 +60,5 @@ func _parse_begin(object: Object) -> void:
 				add_custom_control(button)
 			_: pass
 
-func _open_event_sheet_editor(data: Array[BlockResource] = [], scene = null):
+func _open_event_sheet_editor(data, scene = null):
 	open_event_sheet_editor.emit(data, scene)

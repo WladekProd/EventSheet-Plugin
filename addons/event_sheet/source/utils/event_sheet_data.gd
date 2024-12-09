@@ -7,9 +7,39 @@ static func create_event_sheet(name: String) -> Dictionary:
 		"blocks": []
 	}
 
+static func get_static_objects(condition_type) -> Array:
+	return [
+		{
+			"icon": "res://addons/event_sheet/resources/icons/system.svg",
+			"disable_color": false,
+			"name": "System",
+			"type": "System",
+			"path": "",
+			"condition_type": condition_type,
+		},
+		{
+			"icon": "res://addons/event_sheet/resources/icons/input.svg",
+			"disable_color": false,
+			"name": "Input",
+			"type": "Input",
+			"path": "",
+			"condition_type": condition_type,
+		}
+	]
+
 # =-=-=-= // Block
 static func create_block(type: String, level: int = 0, parameters: Dictionary = {}) -> Dictionary:
 	match type:
+		"class":
+			return {
+				"uuid": ESUtils.UUID.v4(),
+				"class": "block",
+				"type": "class",
+				"level": level,
+				"parameters": {
+					"class_value": parameters.class_value
+				}
+			}
 		"variable":
 			return {
 				"uuid": ESUtils.UUID.v4(),

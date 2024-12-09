@@ -19,15 +19,10 @@ func update_frame(current_scene, condition_type: String, finish_button_instance:
 		var pick_object_data: Array = []
 		current_frame = frame
 		
-		var system_item: Dictionary = {
-			"icon": "res://addons/event_sheet/resources/icons/system.svg",
-			"disable_color": false,
-			"name": "System",
-			"type": "System",
-			"path": "",
-			"condition_type": condition_type,
-		}
-		pick_object_data.append(system_item)
+		var system_items: Array = ESUtils.Data.get_static_objects(condition_type)
+		for item in system_items:
+			if ESUtils.has_class(item.type, current_scene.event_sheet_file):
+				pick_object_data.append(item)
 		
 		if current_scene: get_all_child_nodes(current_scene, condition_type, pick_object_data)
 		

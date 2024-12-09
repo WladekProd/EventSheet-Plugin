@@ -188,41 +188,6 @@ static func unselect_all():
 			_object.is_dragged = false
 	ESUtils.selected_items.clear()
 
-static func deep_duplicate_block(block_resource: Resource) -> Resource:
-	if block_resource == null:
-		return null
-
-	# Глубокое дублирование текущего блока
-	var duplicated_resource: BlockResource = block_resource.duplicate(true)
-
-	# Глубокое дублирование событий
-	var duplicated_events: Array[EventResource] = []
-	for event in duplicated_resource.events:
-		if event != null:
-			var duplicated_event: EventResource = event.duplicate(true)
-			duplicated_events.append(duplicated_event)
-	duplicated_resource.events = duplicated_events
-
-	# Глубокое дублирование действий
-	var duplicated_actions: Array[ActionResource] = []
-	for action in duplicated_resource.actions:
-		if action != null:
-			var duplicated_action: ActionResource = action.duplicate(true)
-			duplicated_actions.append(duplicated_action)
-	duplicated_resource.actions = duplicated_actions
-
-	# Рекурсивное глубокое дублирование вложенных блоков
-	var duplicated_sub_blocks: Array[BlockResource] = []
-	for sub_block in duplicated_resource.sub_blocks:
-		if sub_block != null:
-			var duplicated_sub_block: BlockResource = deep_duplicate_block(sub_block)
-			duplicated_sub_blocks.append(duplicated_sub_block)
-	duplicated_resource.sub_blocks = duplicated_sub_blocks
-
-	ESUtils.update_block_ids(duplicated_resource)
-
-	return duplicated_resource
-
 static func deep_duplicate_condition(resource: Resource):
 	if resource == null:
 		return null
@@ -232,69 +197,6 @@ static func deep_duplicate_condition(resource: Resource):
 	duplicated_resource.gd_script.duplicate(true)
 	
 	return duplicated_resource
-
-static func update_block_ids(block: BlockResource):
-	if block == null: return
-	
-	block.id = UUID.v4()
-	for event in block.events:
-		if event != null:
-			event.id = UUID.v4()
-	for action in block.actions:
-		if action != null:
-			action.id = UUID.v4()
-	
-	for sub_block in block.sub_blocks:
-		if sub_block != null:
-			update_block_ids(sub_block)
-
-static func find_gd_files_in_paths(resource_paths: Array, object_path_or_type) -> Dictionary:
-	var gd_files: Dictionary = { "actions": [], "events": [] }
-	
-	for base_path in resource_paths:
-		var dir = DirAccess.open(base_path)
-		if not dir:
-			continue
-		
-		dir.list_dir_begin()
-		var folder_name = dir.get_next()
-		
-		while folder_name != "":
-			if folder_name != "." and folder_name != "..":
-				var sub_dir_path = "{0}/{1}".format([base_path, folder_name])
-				
-				# Проверяем, это папка или файл
-				if dir.current_is_dir():
-					# Проверяем, это ли директория "actions" или "events"
-					if folder_name in ["actions", "events"]:
-						var sub_dir = DirAccess.open(sub_dir_path)
-						if sub_dir:
-							sub_dir.list_dir_begin()
-							var file_name = sub_dir.get_next()
-							
-							while file_name != "":
-								if file_name != "." and file_name != "..":
-									if file_name.ends_with(".gd"):
-										# Получаем имя класса из имени файла
-										var _split_name: PackedStringArray = file_name.split(".")
-										if object_path_or_type is NodePath:
-											if current_scene.get_node(object_path_or_type).is_class(_split_name[0]):
-												gd_files[folder_name].append("{0}/{1}".format([sub_dir_path, file_name]))
-										else:
-											if object_path_or_type == _split_name[0]:
-												gd_files[folder_name].append("{0}/{1}".format([sub_dir_path, file_name]))
-								file_name = sub_dir.get_next()
-							sub_dir.list_dir_end()
-					else:
-						# Рекурсивно обрабатываем вложенные папки
-						var sub_files = find_gd_files_in_paths([sub_dir_path], object_path_or_type)
-						gd_files["actions"].append_array(sub_files["actions"])
-						gd_files["events"].append_array(sub_files["events"])
-			folder_name = dir.get_next()
-		
-		dir.list_dir_end()
-	
-	return gd_files
 
 static func find_child_by_class(node:Node, cls:String):
 	for child in node.get_children():
@@ -317,49 +219,12 @@ static func _collect_items(item: TreeItem, items: Array) -> void:
 		item = item.get_next()
 
 
-static func find_event_block(event_sheet_data: Array[BlockResource], event: EventResource):
-	for _block in event_sheet_data:
-		if _block.events.has(event):
-			return _block
-		
-		# Рекурсивно проверяем суб-блоки
-		var block = find_event_block(_block.sub_blocks, event)
-		if block != null:
-			return block
-	
-	return null
-
-static func find_action_block(event_sheet_data: Array[BlockResource], action: ActionResource):
-	for _block in event_sheet_data:
-		if _block.actions.has(action):
-			return _block
-		
-		# Рекурсивно проверяем суб-блоки
-		var block = find_action_block(_block.sub_blocks, action)
-		if block != null:
-			return block
-	
-	return null
-
 static func find_index_by_id(array: Array, target_id: String) -> int:
 	for i in range(array.size()):
 		var item = array[i]
 		if "id" in item and item.id == target_id:
 			return i
 	return -1
-
-# Найти родительский блок
-static func find_parent_block(event_sheet_data: Array[BlockResource], block: BlockResource) -> BlockResource:
-	for potential_parent in event_sheet_data:
-		if potential_parent.sub_blocks.has(block):
-			return potential_parent
-		
-		# Рекурсивно проверяем суб-блоки
-		var parent = find_parent_block(potential_parent.sub_blocks, block)
-		if parent != null:
-			return parent
-	
-	return null
 
 # Найти визуальное тело блока
 static func find_empty_block(parent: Node, target_id: String, expected_type: String) -> Variant:
@@ -376,109 +241,6 @@ static func find_empty_block(parent: Node, target_id: String, expected_type: Str
 
 
 
-
-static func get_parent_block_resource(item: Node, parent: Node = null):
-	var _item_resource = item.block_resource if "block_resource" in item else item.resource
-	if _item_resource is EventResource or _item_resource is ActionResource:
-		return item.empty_block.block_resource
-	else:
-		if parent:
-			if "block_resource" in parent:
-				return parent.block_resource
-		else:
-			if "block_resource" in item.get_parent():
-				return item.get_parent().block_resource
-	return null
-
-static func find_index(item: Node, event_sheet_data: Array[BlockResource] = []) -> int:
-	var _item_resource = item.block_resource if "block_resource" in item else item.resource
-	
-	var _parent_resource: BlockResource = get_parent_block_resource(item)
-	
-	if _parent_resource != null:
-		if _item_resource is EventResource: return _parent_resource.events.find(_item_resource)
-		if _item_resource is ActionResource: return _parent_resource.actions.find(_item_resource)
-		if _item_resource is BlockResource: return _parent_resource.sub_blocks.find(_item_resource)
-	else:
-		if _item_resource is BlockResource: return event_sheet_data.find(_item_resource)
-	
-	return 0
-
-static func remove_item(item: Node, event_sheet_data: Array[BlockResource] = []):
-	var _item_resource = item.block_resource if "block_resource" in item else item.resource
-	
-	var _parent_resource: BlockResource = get_parent_block_resource(item)
-	
-	var _item_resource_index: int = -1
-	if _parent_resource != null:
-		if _item_resource is EventResource:
-			_item_resource_index = _parent_resource.events.find(_item_resource)
-			_parent_resource.events.erase(_item_resource)
-		if _item_resource is ActionResource:
-			_item_resource_index = _parent_resource.actions.find(_item_resource)
-			_parent_resource.actions.erase(_item_resource)
-		if _item_resource is BlockResource:
-			_item_resource_index = _parent_resource.sub_blocks.find(_item_resource)
-			_parent_resource.sub_blocks.erase(_item_resource)
-	else:
-		if _item_resource is BlockResource:
-			_item_resource_index = event_sheet_data.find(_item_resource)
-			event_sheet_data.erase(_item_resource)
-	
-	item.get_parent().remove_child(item)
-	return _item_resource_index
-
-static func add_item(item: Node, index: int, parent: Node, event_sheet_data: Array[BlockResource] = []):
-	var _item_resource = item.block_resource if "block_resource" in item else item.resource
-	var _item_index: int = index
-	
-	var _parent_resource: BlockResource = get_parent_block_resource(item, parent)
-	
-	if _parent_resource != null:
-		if _item_resource is EventResource: _parent_resource.events.insert(index, _item_resource)
-		if _item_resource is ActionResource: _parent_resource.actions.insert(index, _item_resource)
-		if _item_resource is BlockResource: _parent_resource.sub_blocks.insert(index, _item_resource)
-	else:
-		if _item_resource is BlockResource: event_sheet_data.insert(index, _item_resource)
-	
-	parent.add_child(item)
-	if "block_resource" in parent: parent.move_child(item, index + 1 if index != -1 else 0)
-	else: parent.move_child(item, index if index != -1 else 0)
-
-static func update_block(event_sheet_class, block_item: Node, block_level: int = 0) -> VBoxContainer:
-	if block_item == null:
-		return null
-	
-	var _empty_block: VBoxContainer = block_item
-	var _block_resource: BlockResource = _empty_block.block_resource
-	
-	_block_resource.level = block_level
-	
-	if _block_resource.block_type == Types.BlockType.GROUP:
-		pass
-	
-	if _block_resource.block_type == Types.BlockType.COMMENT:
-		pass
-	
-	if _block_resource.block_type == Types.BlockType.VARIABLE:
-		_block_resource.variable_is_global = _block_resource.level == 0
-	
-	_empty_block.block_resource = _block_resource
-	_empty_block.block_type = _block_resource.block_type
-	_empty_block.block_expand = Types.SubBlocksState.NONE if _block_resource.sub_blocks.size() == 0 else _block_resource.block_expand
-	
-	if _block_resource.block_type == Types.BlockType.STANDART:
-		for event in _block_resource.events:
-			var _event_item: Button = find_empty_block(_empty_block.block_events, event.id, "Button")
-			if _event_item != null: _event_item.resource = event
-		
-		for action in _block_resource.actions:
-			var _action_item: Button = find_empty_block(_empty_block.block_actions, action.id, "Button")
-			if _action_item != null: _action_item.resource = action
-	
-	event_sheet_class.block_items.update_lines()
-	event_sheet_class.generate_code()
-	return _empty_block
 
 
 
@@ -510,6 +272,75 @@ static func save_event_sheet_data():
 			EditorInterface.get_resource_filesystem().scan_sources()
 		else:
 			print("file open failed")
+
+static func find_gd_files_in_paths(resource_paths: Array, object_path_or_type) -> Dictionary:
+	var gd_files: Dictionary = { "actions": [], "events": [] }
+	for base_path in resource_paths:
+		var dir = DirAccess.open(base_path)
+		if not dir:
+			continue
+		dir.list_dir_begin()
+		var folder_name = dir.get_next()
+		while folder_name != "":
+			if folder_name != "." and folder_name != "..":
+				var sub_dir_path = "{0}/{1}".format([base_path, folder_name])
+				if dir.current_is_dir():
+					if folder_name in ["actions", "events"]:
+						_process_directory(sub_dir_path, folder_name, object_path_or_type, gd_files)
+					else:
+						var sub_files = find_gd_files_in_paths([sub_dir_path], object_path_or_type)
+						gd_files["actions"].append_array(sub_files["actions"])
+						gd_files["events"].append_array(sub_files["events"])
+			folder_name = dir.get_next()
+		dir.list_dir_end()
+	return gd_files
+
+# Добавляем вспомогательную функцию для обработки директорий "actions" и "events"
+static func _process_directory(base_path: String, folder_name: String, object_path_or_type, gd_files: Dictionary) -> void:
+	var dir = DirAccess.open(base_path)
+	if not dir: return
+	dir.list_dir_begin()
+	var file_name = dir.get_next()
+	while file_name != "":
+		if file_name != "." and file_name != "..":
+			var sub_path = "{0}/{1}".format([base_path, file_name])
+			if dir.current_is_dir():
+				_process_directory(sub_path, folder_name, object_path_or_type, gd_files)
+			elif file_name.ends_with(".gd"):
+				var _split_name: PackedStringArray = file_name.split(".")
+				if object_path_or_type is NodePath:
+					if current_scene.get_node(object_path_or_type).is_class(_split_name[0]):
+						gd_files[folder_name].append(sub_path)
+				else:
+					if object_path_or_type == _split_name[0]:
+						gd_files[folder_name].append(sub_path)
+		file_name = dir.get_next()
+	dir.list_dir_end()
+
+static func has_class(item_type: String, event_sheet_file: JSON) -> bool:
+	if item_type == "System":
+		return true
+	var _data: Dictionary = event_sheet_file.data
+	if not _data.has("blocks"):
+		return false
+	for block in _data.blocks:
+		if block.has("type") and block.type == "class" and block.has("parameters"):
+			if block.parameters.has("class_value") and str_to_var(block.parameters.class_value) == Types.ClassType.find(item_type):
+				return true
+	return false
+
+static func get_input_actions_data() -> Array:
+	var actions: Array = []
+	for setting in ProjectSettings.get_property_list():
+		if setting.name.begins_with('input/'):
+			#prints(setting.name, ProjectSettings.get_setting(setting.name))
+			#print(action_name)
+			var action_path: String = setting.name
+			var action_name: String = action_path.replace("input/", "")
+			if !action_path.begins_with('input/ui_'):
+				actions.append(action_name)
+	actions.reverse()
+	return actions
 
 # Проверить перемещён ли текущий блок в свои-же дочерние блоки
 static func is_descendant_of(block: Dictionary, potential_ancestor: Dictionary) -> bool:

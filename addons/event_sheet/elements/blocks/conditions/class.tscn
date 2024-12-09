@@ -1,0 +1,65 @@
+[gd_scene load_steps=5 format=3 uid="uid://bqe75fajls7cb"]
+
+[ext_resource type="Script" path="res://addons/event_sheet/source/elements/block/conditions/class.gd" id="1_c6se7"]
+[ext_resource type="Texture2D" uid="uid://cmopsroosmhhr" path="res://addons/event_sheet/resources/icons/event_sheet_big.svg" id="2_n0c77"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_waf5y"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_v4nwd"]
+font_size = 10
+font_color = Color(0.894118, 0, 0.27451, 1)
+
+[node name="Class" type="VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
+offset_right = 200.0
+offset_bottom = 30.0
+size_flags_horizontal = 3
+mouse_filter = 2
+script = ExtResource("1_c6se7")
+color = Color(0.892955, 0, 0.275886, 1)
+
+[node name="ClassButton" type="Button" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/focus = SubResource("StyleBoxEmpty_waf5y")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_waf5y")
+flat = true
+
+[node name="MarginContainer" type="MarginContainer" parent="ClassButton"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -10.0
+offset_right = 160.0
+offset_bottom = 10.0
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ClassButton/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="ClassButton/MarginContainer/HBoxContainer"]
+modulate = Color(0.894118, 0, 0.27451, 1)
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("2_n0c77")
+expand_mode = 1
+
+[node name="Variable" type="Label" parent="ClassButton/MarginContainer/HBoxContainer"]
+layout_mode = 2
+text = "Include class: TEST"
+label_settings = SubResource("LabelSettings_v4nwd")
+vertical_alignment = 2
+
+[connection signal="theme_changed" from="." to="." method="_on_theme_changed"]
+[connection signal="focus_entered" from="ClassButton" to="." method="_on_focus_entered"]
+[connection signal="focus_exited" from="ClassButton" to="." method="_on_focus_exited"]
+[connection signal="gui_input" from="ClassButton" to="." method="_on_gui_input"]

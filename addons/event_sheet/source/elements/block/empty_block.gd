@@ -6,6 +6,7 @@ const Types = preload("res://addons/event_sheet/source/utils/event_sheet_types.g
 var group_item := preload("res://addons/event_sheet/elements/blocks/conditions/group.tscn")
 var comment_item := preload("res://addons/event_sheet/elements/blocks/conditions/comment.tscn")
 var variable_item := preload("res://addons/event_sheet/elements/blocks/conditions/variable.tscn")
+var class_item := preload("res://addons/event_sheet/elements/blocks/conditions/class.tscn")
 
 # Standart block elements
 @onready var block_margin: MarginContainer = $MarginContainer/Block/MarginContainer
@@ -52,6 +53,8 @@ var is_hovered: bool = false
 					expand = data.expand
 				"variable":
 					expand = false
+				"class":
+					expand = false
 				"comment":
 					expand = false
 				"group":
@@ -96,6 +99,12 @@ var is_hovered: bool = false
 						_variable.block_body = self
 						_variable.data = data
 						other_drop_container.drop_types = 12
+					elif type == "class":
+						var _class = class_item.instantiate()
+						other_items.add_child(_class)
+						_class.block_body = self
+						_class.data = data
+						other_drop_container.drop_types = 12
 		_on_theme_changed()
 
 @export var level: int = 0:
@@ -129,9 +138,6 @@ var is_hovered: bool = false
 			for _child in get_children():
 				if _child is VBoxContainer:
 					_child.visible = expand
-
-@export var event_items: Array[EventResource]
-@export var action_items: Array[ActionResource]
 
 @export var events_color: Color = Color.WEB_MAROON:
 	set (p_events_color):
@@ -247,6 +253,8 @@ func _on_theme_changed() -> void:
 	elif type == "comment":
 		other_color.a = 0.1
 	elif type == "variable":
+		other_color.a = 0.0
+	elif type == "class":
 		other_color.a = 0.0
 
 func _on_v_split_mouse_entered() -> void:
