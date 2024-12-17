@@ -1,4 +1,4 @@
-# EventSheet Plugin - Godot 4
+# EventSheet Plugin - Redot / Godot 4
 
 ![Demo Image](https://github.com/user-attachments/assets/f6c2e36d-7160-4562-9d80-5c73d7339ba2)
 
