@@ -53,10 +53,6 @@ func update_frame(current_scene, condition_type: String, finish_button_instance:
 
 func get_all_child_nodes(child: Node, condition_type: String, pick_object_data):
 	var icon_path = ESUtils.get_node_icon(child.get_path())
-	print(icon_path)
-	#if child is Node2D:
-		#icon = child.texture if "texture" in child else EditorInterface.get_editor_theme().get_icon(child.get_class(), "EditorIcons")
-	
 	
 	var node_item: Dictionary = {
 		"icon": icon_path,

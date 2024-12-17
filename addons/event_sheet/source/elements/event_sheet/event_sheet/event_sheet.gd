@@ -33,8 +33,7 @@ var current_popup_menu: String = "general"
 var popup_menus: Dictionary = {
 	"general": ["Add Event", "Add Blank Event", "Add Group"]
 }
-const events: Dictionary = {}
-const actions: Dictionary = {}
+
 
 
 
@@ -50,7 +49,7 @@ func _input(event: InputEvent) -> void:
 				if !event.shift_pressed:
 					ESUtils.is_split_pressed = false
 					if event.keycode == KEY_E and event.pressed:
-						# Добавить или создать эвент
+						# Add or create an event
 						if ESUtils.selected_items.size() == 1:
 							var selected_item = ESUtils.selected_items[0].object
 							var selected_block
@@ -62,30 +61,30 @@ func _input(event: InputEvent) -> void:
 								ESUtils.unselect_all()
 							_window.show_add_window("event", "standart")
 					if event.keycode == KEY_A and event.pressed and ESUtils.selected_items.size() == 1:
-						# Добавить событие
+						# Add an action
 						var selected_item = ESUtils.selected_items[0].object
 						var selected_block
 						if selected_item is VBoxContainer:
 							selected_block = selected_item.block_resource
 						_window.show_add_window("action", "standart", selected_block)
 					if event.keycode == KEY_G and event.pressed:
-						# Создать группу
+						# Create a group
 						_window.show_add_group()
 					if event.keycode == KEY_Q and event.pressed:
-						# Создать комментарий
+						# Create a comment
 						_on_finish_data({
 							"block_type": "comment",
 							"block_condition_type": "",
 							"block_data": { "comment_text": "test" }
 						}, {})
 					if event.keycode == KEY_V and event.pressed:
-						# Создать переменную
+						# Create a variable
 						_window.show_add_variable()
 					if event.keycode == KEY_C and event.pressed:
-						# Добавить класс
+						# Add a class
 						_window.show_add_class()
 					if event.keycode == KEY_DELETE and event.pressed and !ESUtils.selected_items.is_empty():
-						# Удалить блок
+						# Delete block
 						remove_data()
 				else: pass
 			else:
@@ -95,12 +94,6 @@ func _input(event: InputEvent) -> void:
 						for item in ESUtils.selected_items:
 							
 							ESUtils.clipboard_items.append(item.object.data)
-							
-							#if item.class == "Block":
-								#var _resource: BlockResource = ESUtils.deep_duplicate_block(item.object.block_resource)
-								#ESUtils.clipboard_items.append(_resource)
-							#else:
-								#ESUtils.clipboard_items.append(item.object.resource)
 						
 						DisplayServer.clipboard_set(str(ESUtils.clipboard_items))
 				if event.keycode == KEY_V and event.pressed:
@@ -111,7 +104,7 @@ func _input(event: InputEvent) -> void:
 				else: pass
 		if event is InputEventMouseButton:
 			if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-				# Выделить блок
+				# Select block
 				if !ESUtils.selected_items.is_empty():
 					if ESUtils.is_ctrl_pressed:
 						return
@@ -123,7 +116,7 @@ func _input(event: InputEvent) -> void:
 					if ESUtils.hovered_select and ESUtils.hovered_select is VBoxContainer:
 						ESUtils.hovered_select._select()
 			if event.button_index == MOUSE_BUTTON_LEFT and event.double_click and has_hover:
-				# Создать блок
+				# Create a block
 				_window.show_add_window(Types.ConditionType.EVENTS, Types.BlockType.STANDART)
 
 func _ready() -> void:
@@ -141,15 +134,12 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	pass
 
-
-
-
-# Кэшированные элементы интерфейса для блоков
+# Cached visual elements for blocks
 var block_body := preload("res://addons/event_sheet/elements/blocks/empty_block.tscn")
 var event_body := preload("res://addons/event_sheet/elements/blocks/conditions/event.tscn")
 var action_body := preload("res://addons/event_sheet/elements/blocks/conditions/action.tscn")
 
-# Загрузить Event Sheet
+# Load Event Sheet
 func load_event_sheet():
 	ESUtils.selected_items.clear()
 	ESUtils.is_editing = false
@@ -166,6 +156,7 @@ func load_event_sheet():
 	block_items.update_lines()
 	generate_code()
 
+# Delete selected block
 func remove_data():
 	ESUtils.undo_redo.create_action("Remove Blocks")
 	for item in ESUtils.selected_items:
@@ -181,6 +172,7 @@ func remove_data():
 	ESUtils.unselect_all()
 	generate_code()
 
+# Paste copied items
 func paste_data():
 	ESUtils.undo_redo.create_action("Remove Blocks")
 	
@@ -204,6 +196,7 @@ func paste_data():
 	ESUtils.unselect_all()
 	generate_code()
 
+# Generate a script from the event sheet
 func generate_code():
 	var _script = ScriptGeneration.generate_code(self)
 	current_node.final_script = _script
@@ -256,14 +249,11 @@ func _on_scene_bar_pressed(id: int) -> void:
 func _on_add_action(block):
 	_window.show_add_window("action", "standart", block)
 
+# When receiving data from the add window
 func _on_finish_data(finish_data: Dictionary, block = {}):
-	#print(block)
-	
 	if finish_data.block_data.has("parameters"):
 		for param_name in finish_data.block_data.parameters:
 			finish_data.block_data.parameters[param_name].type.data = []
-	#print(finish_data)
-	
 	if finish_data.has("current_data_body") and finish_data.current_data_body:
 		# Change data
 		var _uuid = finish_data.current_data_body.uuid
@@ -310,6 +300,7 @@ func _on_finish_data(finish_data: Dictionary, block = {}):
 	ESUtils.save_event_sheet_data()
 	generate_code()
 
+# Cancel selection when clicking on an empty area
 func _on_select_content(data: Dictionary):
 	if !ESUtils.is_ctrl_pressed:
 		selected_content.clear()
@@ -350,6 +341,7 @@ func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 
 const ItemMove = preload("res://addons/event_sheet/source/utils/item_move.gd")
 
+# If you move a block to another block
 func _drop_data_block(from_item: Variant, to_item: Variant, move_type: Types.MoveBlock) -> void:
 	var sorted_selected_array: Array = ESUtils.sort_selected_items_by_block_number()
 	if move_type == Types.MoveBlock.DOWN:

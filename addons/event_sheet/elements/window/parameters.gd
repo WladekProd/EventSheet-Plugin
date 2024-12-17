@@ -4,6 +4,7 @@ extends VBoxContainer
 func _ready() -> void:
 	pass
 
+# Align parameter fields
 func fix_items_size():
 	var max_x_size: float = 0
 	for item in get_children():

@@ -86,17 +86,17 @@ func _input(event: InputEvent) -> void:
 						search_line.modulate = Color.TRANSPARENT
 					search_opened = false
 
-# Очистить окно
+# Clear window
 func clear_window():
 	if window_frame_instance.get_child_count() > 0:
 		window_frame_instance.get_child(0).queue_free()
 
-# Обновить кнопки
+# Update buttons
 func update_buttons():
 	if next_button_instance:
 		next_button_instance.disabled = !frame_data[current_frame] and current_frame < Types.WindowFrame.CHANGE_PARAMETERS
 
-# Показать окно добавления
+# Show add window
 func show_add_window(condition_type: String, block_type: String = "standart", \
 	block: Dictionary = {}, frame: Types.WindowFrame = Types.WindowFrame.PICK_OBJECT, window_size: Vector2 = Vector2(620, 376)):
 	clear_window()
@@ -160,6 +160,7 @@ func show_add_window(condition_type: String, block_type: String = "standart", \
 	frame_instance.frame_result.connect(_on_frame_result)
 	frame_instance.update_frame(event_sheet.current_node, condition_type, finish_button_instance, current_frame, frame_data, search_line)
 
+# Show window for adding a group
 func show_add_group(block: Dictionary = {}, window_size: Vector2 = Vector2(330, 210)):
 	clear_window()
 	
@@ -196,6 +197,7 @@ func show_add_group(block: Dictionary = {}, window_size: Vector2 = Vector2(330, 
 	frame_instance.frame_result.connect(_on_frame_result)
 	frame_instance.update_frame(event_sheet.current_node, "group", finish_button_instance, current_frame, frame_data)
 
+# Show window for adding a variable
 func show_add_variable(block: Dictionary = {}, window_size: Vector2 = Vector2(330, 230)):
 	clear_window()
 	
@@ -232,6 +234,7 @@ func show_add_variable(block: Dictionary = {}, window_size: Vector2 = Vector2(33
 	frame_instance.frame_result.connect(_on_frame_result)
 	frame_instance.update_frame(event_sheet.current_node, "variable", finish_button_instance, current_frame, frame_data)
 
+# Show window for adding a class
 func show_add_class(block: Dictionary = {}, window_size: Vector2 = Vector2(330, 230)):
 	clear_window()
 	
@@ -268,6 +271,7 @@ func show_add_class(block: Dictionary = {}, window_size: Vector2 = Vector2(330, 
 	frame_instance.frame_result.connect(_on_frame_result)
 	frame_instance.update_frame(event_sheet.current_node, "class", finish_button_instance, current_frame, frame_data)
 
+# Show window for changing something
 func show_change_window(data: Dictionary = {}, data_body: Variant = null):
 	clear_window()
 	
@@ -305,6 +309,7 @@ func show_change_window(data: Dictionary = {}, data_body: Variant = null):
 		else:
 			show_add_window(current_condition_type, current_block_type, current_block, Types.WindowFrame.PICK_CONDITION)
 
+# Show editor settings window
 func show_editor_settings(window_size: Vector2 = Vector2(725, 475)):
 	clear_window()
 	
@@ -336,7 +341,7 @@ func show_editor_settings(window_size: Vector2 = Vector2(725, 475)):
 	
 	window_frame_instance.add_child(frame_instance)
 
-# Скрыть окно
+# Hide window
 func hide_window():
 	if ESUtils.get_setting("animations_enable"):
 		if search_opened:
@@ -356,7 +361,7 @@ func hide_window():
 
 
 
-
+# When the final window is reached, send the data to the Event Sheet
 func _on_frame_result(data, frame: Types.WindowFrame, finish: bool = false, next_frame: bool = false) -> void:
 	if finish:
 		if current_data_body:

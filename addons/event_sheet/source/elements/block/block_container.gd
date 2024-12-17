@@ -225,18 +225,18 @@ func _handle_sort_children():
 		var cw = 0
 		var rh = 0
 
-		# Рассчитываем ширину и высоту на основе span
+		# Calculate width and height based on span
 		for n in range(col_span):
 			if col + n < columns:
 				cw += col_width[col + n]
 		for n in range(row_span):
 			rh += row_height[row + n]
 
-		# Применяем отступы и разделители
+		# Applying indents and separators
 		var size = Vector2i(cw + theme_v_separation * (col_span - 1), rh + theme_h_separation * (row_span - 1))
 		fit_child_in_rect(child_entry.child, Rect2(p, size))
 
-	# Логика для двух столбцов
+	# Logic for two columns
 	if columns == 2 and child_array.size() >= 2:
 		
 		if column_sizes[0] == -1:
@@ -247,7 +247,7 @@ func _handle_sort_children():
 		var rh_top = row_height[child_array[0].row]
 		var rh_bottom = row_height[child_array[1].row]
 
-		# Устанавливаем позиции и размеры для первого и второго столбца
+		# Set positions and sizes for the first and second columns
 		fit_child_in_rect(child_array[0].child, Rect2(Vector2i(col_pos[0], row_pos[child_array[0].row]), Vector2i(cw_left - padding, rh_top)))
 		fit_child_in_rect(child_array[1].child, Rect2(Vector2i(col_pos[0] + cw_left - padding, row_pos[child_array[1].row]), Vector2i(cw_right, rh_bottom)))
 

@@ -45,9 +45,6 @@ func update_frame(current_scene, condition_type: String, finish_button_instance:
 		
 		var previous_node: Control = null
 		for p_key in sorted_keys:
-			
-			print(_params)
-			
 			var p_name: String = _params[p_key].name
 			var p_value: String = current_data.parameters[p_key].value
 			var p_type = _params[p_key].type

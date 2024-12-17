@@ -68,9 +68,3 @@ func _on_comment_mouse_entered() -> void:
 
 func _on_comment_mouse_exited() -> void:
 	is_focused = false
-
-#func _on_focus_entered() -> void:
-	#empty_block.panel.focus_entered.emit()
-#
-#func _on_focus_exited() -> void:
-	#empty_block.panel.focus_exited.emit()

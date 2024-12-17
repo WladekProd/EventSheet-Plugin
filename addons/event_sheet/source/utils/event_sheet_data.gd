@@ -7,6 +7,7 @@ static func create_event_sheet(name: String) -> Dictionary:
 		"blocks": []
 	}
 
+# =-=-=-= // Static objects for classes (System is always displayed)
 static func get_static_objects(condition_type) -> Array:
 	return [
 		{
@@ -27,7 +28,7 @@ static func get_static_objects(condition_type) -> Array:
 		}
 	]
 
-# =-=-=-= // Block
+# =-=-=-= // Blocks
 static func create_block(type: String, level: int = 0, parameters: Dictionary = {}) -> Dictionary:
 	match type:
 		"class":
@@ -88,7 +89,7 @@ static func create_block(type: String, level: int = 0, parameters: Dictionary = 
 				"childrens": []
 			}
 
-# =-=-=-= // Event
+# =-=-=-= // Events
 static func create_event(name: String, type: String, script_path: String, object, params) -> Dictionary:
 	match type:
 		_:
@@ -102,7 +103,7 @@ static func create_event(name: String, type: String, script_path: String, object
 				"parameters": params
 			}
 
-# =-=-=-= // Action
+# =-=-=-= // Actions
 static func create_action(name: String, type: String, script_path: String, object, params) -> Dictionary:
 	match type:
 		_:

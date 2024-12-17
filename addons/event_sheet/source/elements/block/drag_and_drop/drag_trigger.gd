@@ -1,7 +1,6 @@
 @tool
 extends Control
 
-#@onready var panel: PanelContainer = $"../../../../.."
 @export var block: VBoxContainer
 
 func _get_drag_data(at_position: Vector2) -> VBoxContainer:
@@ -11,6 +10,3 @@ func _get_drag_data(at_position: Vector2) -> VBoxContainer:
 		"class": "Block"
 	}
 	return block
-
-#func _on_gui_input(event: InputEvent) -> void:
-	#panel.gui_input.emit(event)

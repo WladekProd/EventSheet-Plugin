@@ -201,8 +201,6 @@ func _select():
 	is_selected = true
 	is_hovered = true
 	select_all_childs()
-	
-	print(ESUtils.selected_items)
 
 func select_all_childs(parent: VBoxContainer = self):
 	for child_empty_block in parent.get_children():

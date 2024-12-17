@@ -47,9 +47,3 @@ func _on_gui_input(event: InputEvent) -> void:
 			block_body.change.emit(block_body.data, block_body)
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 			block_body.context_menu.emit()
-
-#func _on_focus_entered() -> void:
-	#left_body.panel.focus_entered.emit()
-#
-#func _on_focus_exited() -> void:
-	#left_body.panel.focus_exited.emit()

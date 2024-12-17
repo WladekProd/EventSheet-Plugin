@@ -1,5 +1,6 @@
 extends Node
 
+# Data types for variables
 const VariableType: Array = [
 	"Number",
 	"String",
@@ -7,52 +8,28 @@ const VariableType: Array = [
 	"Class",
 ]
 
+# Class data types (includes)
 const ClassType: Array = [
 	"Debug",
 	"Input",
 	"Array",
 ]
 
-#enum VariableType {
-	#NUMBER,
-	#STRING,
-	#BOOLEAN,
-	#CLASS,
-#}
-
-enum EventType {
-	STANDART,
-	SINGLE_EVENT,
-	FUNCTION,
-	CYCLE,
-}
-
+# Types of blocks
 enum BlockType {
 	STANDART,
 	VARIABLE,
 	COMMENT,
 	GROUP,
 }
-enum SubBlocksState {
-	NONE,
-	VISIBLE,
-	HIDDEN,
-}
 
+# Types of conditions
 enum ConditionType {
 	EVENTS,
 	ACTIONS,
 }
 
-enum Group {
-	NONE,
-	SYSTEM,
-}
-const GROUP_NAMES = {
-	Group.NONE: "None",
-	Group.SYSTEM: "System",
-}
-
+# Types of categories
 enum Category {
 	MAIN,
 	TRANSFORM,
@@ -80,6 +57,7 @@ const CATEGORY_NAMES = {
 	Category.MISK: "Misk",
 }
 
+# Types of block movement
 enum MoveBlock {
 	NONE = 0,
 	UP = 1 << 0,
@@ -88,27 +66,7 @@ enum MoveBlock {
 	CONTENT = 1 << 3,
 }
 
-# Parameter Types
-enum STANDART_TYPES {
-	STRING,
-	NUMBER,
-	OPEN_FILE,
-	SELECT_NODE,
-}
-
-enum STIPULATION {
-	EQUALS,
-	UNEVEN,
-	MORE,
-	LESS,
-}
-const STIPULATION_SYMBOL = {
-	STIPULATION.EQUALS: "==",
-	STIPULATION.UNEVEN: "!=",
-	STIPULATION.MORE: ">",
-	STIPULATION.LESS: "<"
-}
-
+# Types of windows
 enum WindowFrame {
 	PICK_OBJECT,
 	PICK_CONDITION,

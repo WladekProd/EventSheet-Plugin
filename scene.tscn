@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://cmwl07hf2qbwl" path="res://icon.svg" id="4_vvoxj"]
 [ext_resource type="Texture2D" uid="uid://b5fio4vb6m01y" path="res://icon2.svg" id="6_ijjpy"]
 
-[sub_resource type="GDScript" id="GDScript_uwse3"]
+[sub_resource type="GDScript" id="GDScript_syrej"]
 script/source = "extends Sprite2D
 
 var speed = 1.2
@@ -65,7 +65,7 @@ scale = Vector2(0.13748, 0.13748)
 texture = ExtResource("6_ijjpy")
 script = ExtResource("2_3cc1c")
 event_sheet_file = ExtResource("3_tvi5e")
-final_script = SubResource("GDScript_uwse3")
+final_script = SubResource("GDScript_syrej")
 
 [node name="Marker2D" type="Marker2D" parent="Sprite2D"]
 position = Vector2(-385.511, -400.058)

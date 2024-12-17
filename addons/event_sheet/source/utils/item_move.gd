@@ -1,5 +1,5 @@
 
-
+# Move up
 static func move_up(event_sheet, selected_array: Array, to: Variant) -> void:
 	for item in selected_array:
 		var from = item.object
@@ -15,7 +15,7 @@ static func move_up(event_sheet, selected_array: Array, to: Variant) -> void:
 				var to_root: VBoxContainer = get_root_body(event_sheet, to)
 				
 				if ESUtils.is_descendant_of(to_data, from_data):
-					print("Нельзя перемещать блок в свои подблоки или под самого себя.")
+					print("You can't move a block into its sub-blocks or under itself.")
 					return
 				
 				if to_parent:
@@ -101,6 +101,7 @@ static func move_up(event_sheet, selected_array: Array, to: Variant) -> void:
 				to.block_body.block_actions.move_child(from, to_index)
 				from.block_body = to.block_body
 
+# Move down
 static func move_down(event_sheet, selected_array: Array, to: Variant) -> void:
 	for item in selected_array:
 		var from = item.object
@@ -116,7 +117,7 @@ static func move_down(event_sheet, selected_array: Array, to: Variant) -> void:
 				var to_root: VBoxContainer = get_root_body(event_sheet, to)
 				
 				if ESUtils.is_descendant_of(to_data, from_data):
-					print("Нельзя перемещать блок в свои подблоки или под самого себя.")
+					print("You can't move a block into its sub-blocks or under itself.")
 					return
 				
 				if to_parent:
@@ -200,6 +201,7 @@ static func move_down(event_sheet, selected_array: Array, to: Variant) -> void:
 				to.block_body.block_actions.move_child(from, to_index)
 				from.block_body = to.block_body
 
+# Move to child
 static func move_sub_or_content(event_sheet, selected_array: Array, to: Variant) -> void:
 	for item in selected_array:
 		var from = item.object
@@ -215,7 +217,7 @@ static func move_sub_or_content(event_sheet, selected_array: Array, to: Variant)
 				var to_root: VBoxContainer = get_root_body(event_sheet, to)
 				
 				if ESUtils.is_descendant_of(to_data, from_data):
-					print("Нельзя перемещать блок в свои подблоки или под самого себя.")
+					print("You can't move a block into its sub-blocks or under itself.")
 					return
 				
 				if from_parent: from_parent.data.childrens.erase(from_data)
@@ -255,17 +257,20 @@ static func move_sub_or_content(event_sheet, selected_array: Array, to: Variant)
 				to.block_actions.move_child(from, to.block_actions.get_child_count())
 				from.block_body = to
 
+# To get the root item
 static func get_root_body(event_sheet, block) -> VBoxContainer:
 	var _root_block_uuid: String = ESUtils.get_root_block(block.data.uuid, event_sheet.event_sheet_data.blocks)
 	var _root_block_body: VBoxContainer = ESUtils.get_block_body(_root_block_uuid, event_sheet.block_items)
 	return _root_block_body if _root_block_body and "data" in _root_block_body else null
 
+# Update the hierarchy
 static func update_hierarchy(root_block) -> void:
 	if root_block is VBoxContainer and "data" in root_block:
 		if "expand" in root_block: root_block.expand = root_block.expand
 	for child in root_block.get_children():
 		update_hierarchy(child)
 
+# Update the blocks
 static func update_blocks(event_sheet, from, to, from_root, to_root) -> void:
 	if from_root and to_root:
 		update_hierarchy(from_root)

@@ -7,42 +7,53 @@ const Types = preload("res://addons/event_sheet/source/utils/event_sheet_types.g
 const UUID = preload("res://addons/event_sheet/source/utils/event_sheet_uuid.gd")
 const Plugin = preload("res://addons/event_sheet/plugin.gd")
 
+# Variables for the Godot object tree hook
 static var base_control = EditorInterface.get_base_control() if Engine.is_editor_hint() else null
 static var scene_tree_dock = base_control.find_children("Scene", "", true, false)[0] if Engine.is_editor_hint() else null
 static var scene_tree_editor = find_child_by_class(scene_tree_dock, 'SceneTreeEditor') if Engine.is_editor_hint() else null
 static var scene_tree_editor_tree: Tree = ESUtils.find_child_by_class(scene_tree_editor, 'Tree') if Engine.is_editor_hint() else null
 
+# Variables of the currently open event sheet
 static var current_scene: Node = null
 static var is_plugin_screen: bool = false
 static var is_ctrl_pressed: bool = false
 
+# Variables of selected items
 static var selected_items: Array = []
 static var hovered_select: Node
 static var selected_class: String = ""
 
+# Variables of copied items
 static var clipboard_items: Array = []
 
+# Variables undo\redo
 static var undo_redo: EditorUndoRedoManager = null
 
+# Drag and drop variables
 static var is_editing: bool = false
 static var is_dragging: bool = false
 static var is_dragging_finished: bool = true
 static var dragging_data: Dictionary = {}
 
+# Drag and drop variables
 static var global_split: int = 200
 static var max_block_level: int = 0
 
+# Variables to separate the screen of events and actions
 static var is_split_hovered: bool = false
 static var is_split_pressed: bool = false
 
+# Icon cache folder
 static var cache_folder: String = "res://addons/event_sheet/~cache/"
 
+# Generating a scene picture
 static func generate_file_icon(file_path: String, script: Variant, function: String):
 	if !FileAccess.file_exists(file_path):
 		return false
 	EditorInterface.get_resource_previewer().queue_resource_preview(file_path, script, function, null)
 	return true
 
+# Preserving a picture of a scene
 static func save_file_icon(path: String, preview: Texture2D, thumbnail: Texture2D, userdata: Variant) -> Texture2D:
 	var _object_path: String = path.get_base_dir().replace("res://", "") + "/"
 	var _image_name: String = path.get_file().get_basename() + ".tres"
@@ -56,6 +67,7 @@ static func save_file_icon(path: String, preview: Texture2D, thumbnail: Texture2
 	
 	return preview
 
+# Get icon path
 static func get_file_icon(object_path: String):
 	var _object_path: String = object_path.get_base_dir().replace("res://", "") + "/"
 	var _image_name: String = object_path.get_file().get_basename() + ".tres"
@@ -66,6 +78,7 @@ static func get_file_icon(object_path: String):
 			return "res://addons/event_sheet/resources/icons/event_sheet_small.png"
 	return _image_path
 
+# Get path to node icon
 static func get_node_icon(node_path: NodePath) -> String:
 	if ESUtils.current_scene.has_node(node_path):
 		var _node = ESUtils.current_scene.get_node_or_null(node_path)
@@ -92,6 +105,7 @@ static func get_node_icon(node_path: NodePath) -> String:
 	else:
 		return "res://addons/event_sheet/resources/icons/event_sheet_big.svg"
 
+# Get node icon texture
 static func get_node_icon_texture(node: NodePath) -> Texture2D:
 	if ESUtils.current_scene.has_node(node):
 		var _node = ESUtils.current_scene.get_node_or_null(node)
@@ -105,6 +119,7 @@ static func get_node_icon_texture(node: NodePath) -> Texture2D:
 	else:
 		return load("res://addons/event_sheet/resources/icons/event_sheet_big.svg")
 
+# Get node name
 static func get_node_name(node_path: NodePath) -> String:
 	if ESUtils.current_scene.has_node(node_path):
 		var _node = ESUtils.current_scene.get_node_or_null(node_path)
@@ -113,11 +128,12 @@ static func get_node_name(node_path: NodePath) -> String:
 	else:
 		return ""
 
+# Fix the path
 static func ensure_trailing_slash(path: String) -> String:
 	return path if path.ends_with("/") else path + "/"
 
 
-
+# Get Event Sheet settings
 static func get_setting(setting_name: String = "") -> Variant:
 	var settings := EditorInterface.get_editor_settings()
 	var setting_path := Plugin.PLUGIN_SETTINGS_PATH + "/" + setting_name
@@ -146,6 +162,7 @@ func _notification(what: int) -> void:
 				node.mouse_filter = Control.MOUSE_FILTER_STOP
 				node._update_buttons()
 
+# Check if an item is selected
 static func has_item_in_select(item: Node) -> bool:
 	var _exists = false
 	for _item in selected_items:
@@ -154,6 +171,7 @@ static func has_item_in_select(item: Node) -> bool:
 			break
 	return _exists
 
+# Check if the class of the selected item is a class of its own kind
 static func selection_is_equal_to_type(data) -> bool:
 	if ESUtils.selected_items:
 		var _data = ESUtils.selected_items[ESUtils.selected_items.size() - 1].object.data
@@ -161,6 +179,7 @@ static func selection_is_equal_to_type(data) -> bool:
 			return true
 	return false
 
+# Sort the selected items by block number (from min to max)
 static func sort_selected_items_by_block_number() -> Array:
 	ESUtils.selected_items.sort_custom(func (a, b):
 		if a["number"] < b["number"]:
@@ -169,6 +188,13 @@ static func sort_selected_items_by_block_number() -> Array:
 	)
 	return ESUtils.selected_items
 
+# Find a child object by class
+static func find_child_by_class(node:Node, cls:String):
+	for child in node.get_children():
+		if child.get_class() == cls:
+			return child
+
+# Deselect an item
 static func unselect_item(uuid: String):
 	for i in range(ESUtils.selected_items.size() - 1, -1, -1):
 		var _uuid = ESUtils.selected_items[i].object.uuid
@@ -176,6 +202,7 @@ static func unselect_item(uuid: String):
 			ESUtils.selected_items.remove_at(i)
 			return
 
+# Deselect all items
 static func unselect_all():
 	for item in ESUtils.selected_items:
 		var _object = item.object
@@ -188,77 +215,8 @@ static func unselect_all():
 			_object.is_dragged = false
 	ESUtils.selected_items.clear()
 
-static func deep_duplicate_condition(resource: Resource):
-	if resource == null:
-		return null
-	
-	var duplicated_resource: Resource = resource.duplicate(true)
-	duplicated_resource.id = UUID.v4()
-	duplicated_resource.gd_script.duplicate(true)
-	
-	return duplicated_resource
 
-static func find_child_by_class(node:Node, cls:String):
-	for child in node.get_children():
-		if child.get_class() == cls:
-			return child
-
-
-static func get_all_items(tree: Tree) -> Array:
-	var items = []
-	var root = tree.get_root()
-	_collect_items(root, items)
-	return items
-
-
-static func _collect_items(item: TreeItem, items: Array) -> void:
-	while item:
-		items.append(item)
-		if item.get_child_count() > 0:
-			_collect_items(item.get_first_child(), items)
-		item = item.get_next()
-
-
-static func find_index_by_id(array: Array, target_id: String) -> int:
-	for i in range(array.size()):
-		var item = array[i]
-		if "id" in item and item.id == target_id:
-			return i
-	return -1
-
-# Найти визуальное тело блока
-static func find_empty_block(parent: Node, target_id: String, expected_type: String) -> Variant:
-	if "id" in parent and parent.get_class() == expected_type and parent.id == target_id:
-		return parent
-	
-	for child in parent.get_children():
-		var result = find_empty_block(child, target_id, expected_type)
-		if result != null:
-			return result
-	
-	return null
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Save Event Sheet to JSON file
 static func save_event_sheet_data():
 	if current_scene:
 		var _file_path = current_scene.event_sheet_file.resource_path
@@ -271,8 +229,9 @@ static func save_event_sheet_data():
 			EditorInterface.get_resource_filesystem().scan()
 			EditorInterface.get_resource_filesystem().scan_sources()
 		else:
-			print("file open failed")
+			print("Failed open file")
 
+# Find all the scripts in the path
 static func find_gd_files_in_paths(resource_paths: Array, object_path_or_type) -> Dictionary:
 	var gd_files: Dictionary = { "actions": [], "events": [] }
 	for base_path in resource_paths:
@@ -295,7 +254,7 @@ static func find_gd_files_in_paths(resource_paths: Array, object_path_or_type) -
 		dir.list_dir_end()
 	return gd_files
 
-# Добавляем вспомогательную функцию для обработки директорий "actions" и "events"
+# Auxiliary function for processing “actions” and “events” directories
 static func _process_directory(base_path: String, folder_name: String, object_path_or_type, gd_files: Dictionary) -> void:
 	var dir = DirAccess.open(base_path)
 	if not dir: return
@@ -317,6 +276,7 @@ static func _process_directory(base_path: String, folder_name: String, object_pa
 		file_name = dir.get_next()
 	dir.list_dir_end()
 
+# Has a class
 static func has_class(item_type: String, event_sheet_file: JSON) -> bool:
 	if item_type == "System":
 		return true
@@ -329,12 +289,11 @@ static func has_class(item_type: String, event_sheet_file: JSON) -> bool:
 				return true
 	return false
 
+# Get a list of all actions from the engine
 static func get_input_actions_data() -> Array:
 	var actions: Array = []
 	for setting in ProjectSettings.get_property_list():
 		if setting.name.begins_with('input/'):
-			#prints(setting.name, ProjectSettings.get_setting(setting.name))
-			#print(action_name)
 			var action_path: String = setting.name
 			var action_name: String = action_path.replace("input/", "")
 			if !action_path.begins_with('input/ui_'):
@@ -342,7 +301,7 @@ static func get_input_actions_data() -> Array:
 	actions.reverse()
 	return actions
 
-# Проверить перемещён ли текущий блок в свои-же дочерние блоки
+# Check if the current block has been moved to its own child blocks
 static func is_descendant_of(block: Dictionary, potential_ancestor: Dictionary) -> bool:
 	if block == potential_ancestor:
 		return true
@@ -353,6 +312,7 @@ static func is_descendant_of(block: Dictionary, potential_ancestor: Dictionary) 
 			return true
 	return false
 
+# Get a root block
 static func get_root_block(child_uuid: String, event_sheet_data: Array) -> String:
 	for block in event_sheet_data:
 		if block.has("uuid"):
@@ -364,6 +324,7 @@ static func get_root_block(child_uuid: String, event_sheet_data: Array) -> Strin
 						return block["uuid"]
 	return ""
 
+# Find JSON data by uuid
 static func find_data(uuid: String, data: Dictionary) -> Dictionary:
 	if data.has("uuid") and data.uuid == uuid:
 		return { "dir": "", "item": data }
@@ -382,6 +343,7 @@ static func find_data(uuid: String, data: Dictionary) -> Dictionary:
 				return { "dir": "childrens", "item": result }
 	return {}
 
+# Get parent block by uuid
 static func get_parent_block(uuid: String, event_sheet_data: Array) -> String:
 	for block in event_sheet_data:
 		if block.has("childrens"):
@@ -393,6 +355,7 @@ static func get_parent_block(uuid: String, event_sheet_data: Array) -> String:
 				return result
 	return ""
 
+# Get the visual body of the block
 static func get_block_body(uuid: String, parent) -> VBoxContainer:
 	if parent.get_class() == "VBoxContainer" and "uuid" in parent and parent.uuid == uuid:
 		return parent
@@ -402,6 +365,7 @@ static func get_block_body(uuid: String, parent) -> VBoxContainer:
 			return result
 	return null
 
+# Create visual block bodies
 static func create_blocks(event_sheet_class, data: Dictionary, parent_block: Dictionary = {}) -> VBoxContainer:
 	if data.is_empty(): return
 	var root_block_body = create_block(event_sheet_class, data, parent_block)
@@ -410,6 +374,7 @@ static func create_blocks(event_sheet_class, data: Dictionary, parent_block: Dic
 			create_blocks(event_sheet_class, children, data)
 	return root_block_body
 
+# Make the block unique
 static func unique_block(data: Dictionary, level: int = 0):
 	if data.is_empty(): return
 	
@@ -426,11 +391,13 @@ static func unique_block(data: Dictionary, level: int = 0):
 		for children in data.childrens:
 			unique_block(children, level + 1)
 
+# Make events and actions unique
 static func unique_condition(data: Dictionary):
 	if data.is_empty(): return
 	if data.has("uuid"):
 		data.uuid = UUID.v4()
 
+# Create the body of the visual block
 static func create_block(event_sheet_class, block: Dictionary, parent_block: Dictionary = {}) -> VBoxContainer:
 	var _block_body: VBoxContainer = event_sheet_class.block_body.instantiate()
 	_block_body.add_action.connect(event_sheet_class._on_add_action)
@@ -445,9 +412,8 @@ static func create_block(event_sheet_class, block: Dictionary, parent_block: Dic
 			_parent_block_body.add_child(_block_body)
 			if !_parent_block_body.expand:
 				_block_body.visible = false
-			print(parent_block.uuid)
 		else:
-			print("Ошибка: Родительский блок не найден.")
+			print("Error: Parent unit not found.")
 	_block_body.data = block
 	if block.has("events"):
 		for event in block.events:
@@ -457,6 +423,7 @@ static func create_block(event_sheet_class, block: Dictionary, parent_block: Dic
 			create_condition(event_sheet_class, _block_body, "action", action)
 	return _block_body
 
+# Create an event or action
 static func create_condition(event_sheet_class, block_body: VBoxContainer, condition_class: String, condition: Dictionary) -> Button:
 	if condition_class == "event":
 		var event_type: String = condition.type
@@ -480,6 +447,7 @@ static func create_condition(event_sheet_class, block_body: VBoxContainer, condi
 				return action_body
 	return null
 
+# Insert the clipboard items
 static func _paste_items(event_sheet_class, clipboard_object: Object):
 	var _to_block: Dictionary = clipboard_object.get_meta("to_block", {})
 	var _clipboard_array:  Array = clipboard_object.get_meta("clipboard_array", [])
@@ -518,6 +486,7 @@ static func _paste_items(event_sheet_class, clipboard_object: Object):
 							_objects_data.append(condition_body)
 	clipboard_object.set_meta("objects_data", _objects_data)
 
+# Delete selected items
 static func _remove_items(event_sheet_class, clipboard_object: Object):
 	var _selected_item = ESUtils.selected_items[0] if ESUtils.selected_items.size() > 0 else null
 	var _objects_data:  Array = clipboard_object.get_meta("objects_data", [])
@@ -525,6 +494,7 @@ static func _remove_items(event_sheet_class, clipboard_object: Object):
 		for _item in _objects_data:
 			_remove_item(event_sheet_class, _item.get_parent(), _item)
 
+# Create selected items
 static func _add_item(event_sheet_class, item_parent, item):
 	match item.data.class:
 		"block":
@@ -542,6 +512,7 @@ static func _add_item(event_sheet_class, item_parent, item):
 			item.block_body.block_actions.add_child(item)
 	save_event_sheet_data()
 
+# Delete selected item
 static func _remove_item(event_sheet_class, item_parent, item):
 	match item.data.class:
 		"block":

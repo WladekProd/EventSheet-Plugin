@@ -5,6 +5,7 @@ static var function_contents: Dictionary = {
 	"_init": { "params": [], "body": ["pass"] },
 }
 
+# Generating a script from the event table
 static func generate_code(event_sheet_class: Variant) -> GDScript:
 	event_sheet_class.result_script = ""
 	function_contents = {
@@ -51,7 +52,7 @@ static func generate_code(event_sheet_class: Variant) -> GDScript:
 	
 	return _script
 
-
+# Processing each block
 static func process_block(block: Dictionary, sub_block_index: int = 1, parent_func_name: String = "_init"):
 	var func_name: String = parent_func_name
 	var is_stipulation: bool
