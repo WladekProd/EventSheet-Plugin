@@ -2,6 +2,8 @@
 
 ![Demo Image](https://github.com/user-attachments/assets/f6c2e36d-7160-4562-9d80-5c73d7339ba2)
 
+##Attention, it's just a work-in-progress. The plugin needs to be finalized. If you want to continue working on the project - forks are welcome.
+
 The plugin is just a visual shell with a little functionality, but it cannot execute the code itself when the game starts. It has a basic implementation of code execution from the event table, but it is very simple. If there are experts in Godot 4 and want to improve this plugin you can clone this repository and create it.
 
 The full implementation of this plugin will facilitate the transition of Construct 3 engine users to Godot 4 and open more opportunities in the realization of 2D games and in 3D. With the help of this plugin it will be easier and more convenient to create games without programming.
