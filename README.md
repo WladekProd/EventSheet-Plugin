@@ -29,4 +29,8 @@ After all actions, there are sub-events that can check for other conditions, cre
 ## Authors
 
 - [@wladekprod](https://github.com/WladekProd)
-this could be your name.
+- [@daemonchik](https://github.com/daemonchik)
+
+## Documentation
+
+Для подробного описания всех функций плагина см. [ФУНКЦИОНАЛ_ПЛАГИНА.md](ФУНКЦИОНАЛ_ПЛАГИНА.md)
