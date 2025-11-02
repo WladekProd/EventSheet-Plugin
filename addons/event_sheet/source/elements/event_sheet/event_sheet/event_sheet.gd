@@ -387,11 +387,13 @@ func _drop_data_block(from_item: Variant, to_item: Variant, move_type: Types.Mov
 
 # Отладка через консоль
 func toggle_debug(enabled: bool):
-	EventSheetDebugger.set_debugging(enabled)
+	if EventSheetDebugger and EventSheetDebugger.has_method("set_debugging"):
+		EventSheetDebugger.set_debugging(enabled)
 	print("EventSheet Debug: ", "Enabled" if enabled else "Disabled")
 
 func clear_debug_log():
-	EventSheetDebugger.clear_debug_data()
+	if EventSheetDebugger and EventSheetDebugger.has_method("clear_debug_data"):
+		EventSheetDebugger.clear_debug_data()
 	print("EventSheet Debug: Log cleared")
 
 # Показ окна отладки
@@ -410,7 +412,7 @@ func _show_debug_window():
 	var hbox = HBoxContainer.new()
 	var debug_btn = Button.new()
 	debug_btn.text = "Toggle Debug"
-	debug_btn.pressed.connect(func(): toggle_debug(!EventSheetDebugger.is_debugging))
+	debug_btn.pressed.connect(func(): toggle_debug(!(EventSheetDebugger and EventSheetDebugger.has_method("is_debugging") and EventSheetDebugger.is_debugging)))
 	hbox.add_child(debug_btn)
 	
 	var clear_btn = Button.new()
@@ -430,17 +432,20 @@ func _show_debug_window():
 	log_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	
 	# Заполняем лог
-	var logs = EventSheetDebugger.get_execution_log()
-	for log_entry in logs:
-		var level_text = ""
-		match log_entry.level:
-			0: # ERROR
-				level_text = "[ERROR]"
-			1: # WARNING
-				level_text = "[WARN]"
-			_:
-				level_text = "[INFO]"
-		log_list.add_item("%s %s %s" % [log_entry.timestamp, level_text, log_entry.message])
+	if EventSheetDebugger and EventSheetDebugger.has_method("get_execution_log"):
+		var logs = EventSheetDebugger.get_execution_log()
+		for log_entry in logs:
+			var level_text = ""
+			match log_entry.level:
+				0: # ERROR
+					level_text = "[ERROR]"
+				1: # WARNING
+					level_text = "[WARN]"
+				_:
+					level_text = "[INFO]"
+			log_list.add_item("%s %s %s" % [log_entry.timestamp, level_text, log_entry.message])
+	else:
+		log_list.add_item("EventSheetDebugger not available")
 	
 	vbox.add_child(log_list)
 	

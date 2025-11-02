@@ -13,7 +13,7 @@ static func generate_code(event_sheet_class: Variant) -> GDScript:
 		"_init": {"params": [], "body": ["pass"]},
 	}
 
-	if ESUtils.current_scene:
+	if ESUtils and ESUtils.current_scene:
 		event_sheet_class.result_script += "extends {0}\n\n".format([str(ESUtils.current_scene.get_class())])
 	else:
 		event_sheet_class.result_script += "extends Node\n\n"
@@ -23,7 +23,7 @@ static func generate_code(event_sheet_class: Variant) -> GDScript:
 			process_block(block)
 
 	# Add local variables to _ready function
-	if VariableManager:
+	if VariableManager and VariableManager.has_method("get_all_variables"):
 		var local_vars = VariableManager.get_all_variables(1)  # LOCAL
 		if not local_vars.is_empty():
 			if not function_contents.has("_ready"):
@@ -58,7 +58,7 @@ static func generate_code(event_sheet_class: Variant) -> GDScript:
 		}
 
 	# Добавляем переменные из VariableManager
-	if VariableManager:
+	if VariableManager and VariableManager.has_method("get_all_variables"):
 		var global_vars = VariableManager.get_all_variables(0)  # GLOBAL
 		for var_name in global_vars:
 			var var_data = global_vars[var_name]
@@ -163,7 +163,7 @@ static func process_block(block: Dictionary, sub_block_index: int = 0, parent_fu
 				
 				# Обработка объектов (Node2D, Sprite2D и т.д.)
 				if action.has("object") and action.object.has("path") and action.object.path != null and action.object.get("type", "") != "System":
-					if ESUtils.current_scene and ESUtils.current_scene.has_node(action.object.path):
+					if ESUtils and ESUtils.current_scene and ESUtils.current_scene.has_node(action.object.path):
 						var _object_node: Node = ESUtils.current_scene.get_node(action.object.path)
 						var _object_path = '$"{0}"'.format([str(ESUtils.current_scene.get_path_to(_object_node))])
 						_object_name = str(action.object.name).to_snake_case()

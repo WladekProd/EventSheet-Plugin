@@ -6,6 +6,12 @@ const Types = preload("res://addons/event_sheet/source/utils/event_sheet_types.g
 const UUID = preload("res://addons/event_sheet/source/utils/event_sheet_uuid.gd")
 const Plugin = preload("res://addons/event_sheet/plugin.gd")
 
+# Инициализация при загрузке
+func _ready():
+	if not Engine.is_editor_hint():
+		return
+	_init_editor_tree()
+
 # Variables for the Godot object tree hook
 static var base_control = EditorInterface.get_base_control() if Engine.is_editor_hint() else null
 static var scene_tree_dock = null

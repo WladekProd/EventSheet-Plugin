@@ -30,14 +30,16 @@ static func execute_block(block_data: Dictionary, context: Node = null) -> bool:
 		return false
 	
 	var block_id = block_data.get("uuid", "unknown")
-	EventSheetDebugger.debug_block_start(block_id, block_data)
+	if EventSheetDebugger and EventSheetDebugger.has_method("debug_block_start"):
+		EventSheetDebugger.debug_block_start(block_id, block_data)
 	
 	var all_conditions_met = true
 	
 	# Проверяем все события
 	for event in events:
 		var condition_result = execute_condition(event, context)
-		EventSheetDebugger.debug_condition(event.get("uuid", ""), event, condition_result)
+		if EventSheetDebugger and EventSheetDebugger.has_method("debug_condition"):
+			EventSheetDebugger.debug_condition(event.get("uuid", ""), event, condition_result)
 		if not condition_result:
 			all_conditions_met = false
 			break
@@ -46,9 +48,11 @@ static func execute_block(block_data: Dictionary, context: Node = null) -> bool:
 	if (all_conditions_met and not events.is_empty()) or (events.is_empty() and not actions.is_empty()):
 		for action in actions:
 			execute_action(action, context)
-			EventSheetDebugger.debug_action(action.get("uuid", ""), action)
+			if EventSheetDebugger and EventSheetDebugger.has_method("debug_action"):
+				EventSheetDebugger.debug_action(action.get("uuid", ""), action)
 	
-	EventSheetDebugger.debug_block_end(block_id)
+	if EventSheetDebugger and EventSheetDebugger.has_method("debug_block_end"):
+		EventSheetDebugger.debug_block_end(block_id)
 	return (all_conditions_met and not events.is_empty()) or (events.is_empty() and not actions.is_empty())
 
 # Выполнение условия
