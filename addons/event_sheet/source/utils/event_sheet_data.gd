@@ -33,6 +33,30 @@ static func get_static_objects(condition_type) -> Array:
 			"type": "Variables",
 			"path": "",
 			"condition_type": condition_type,
+		},
+		{
+			"icon": "res://addons/event_sheet/resources/icons/system.svg",
+			"disable_color": false,
+			"name": "Node2D",
+			"type": "Node2D",
+			"path": "",
+			"condition_type": condition_type,
+		},
+		{
+			"icon": "res://addons/event_sheet/resources/icons/start.svg",
+			"disable_color": false,
+			"name": "AnimationPlayer",
+			"type": "AnimationPlayer",
+			"path": "",
+			"condition_type": condition_type,
+		},
+		{
+			"icon": "res://addons/event_sheet/resources/icons/system.svg",
+			"disable_color": false,
+			"name": "Node",
+			"type": "Node",
+			"path": "",
+			"condition_type": condition_type,
 		}
 	]
 

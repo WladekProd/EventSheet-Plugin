@@ -44,6 +44,18 @@ static func get_info(_params: Dictionary = params()) -> String:
 # Прямое выполнение в рантайме
 static func execute(_params: Dictionary, context: Node = null) -> bool:
 	var action_value = _params.get("action", {}).get("value", "")
-	if context and context.has_method("_input"):
-		return Input.is_action_pressed(action_value)
-	return false
+	if action_value.is_empty():
+		return false
+	return Input.is_action_pressed(action_value)
+
+# Типизированное выполнение
+static func execute_typed(typed_params, context: Node = null) -> bool:
+	var action_param = typed_params.get_parameter("action")
+	if not action_param:
+		return false
+	
+	var action_value = action_param.get_typed_value()
+	if action_value.is_empty():
+		return false
+	
+	return Input.is_action_pressed(action_value)

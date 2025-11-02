@@ -1,5 +1,5 @@
 @tool
-extends RefCounted
+extends Node
 
 static var error_count: int = 0
 static var last_errors: Array = []
@@ -28,7 +28,8 @@ static func handle_error(error_type: ErrorType, message: String, context: Dictio
 	if last_errors.size() > 50:
 		last_errors = last_errors.slice(25)
 	
-	EventSheetDebugger.log_error(message, context.get("block_id", ""))
+	if EventSheetDebugger and EventSheetDebugger.has_method("log_error"):
+		EventSheetDebugger.log_error(message, context.get("block_id", ""))
 	
 	match error_type:
 		ErrorType.SCRIPT_NOT_FOUND:

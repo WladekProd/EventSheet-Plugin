@@ -1,15 +1,25 @@
 const Types = preload("res://addons/event_sheet/source/utils/event_sheet_types.gd")
 
 static func params() -> Dictionary:
-	return {}
+	return {
+		"seconds": {
+			"order": 0,
+			"name": "Seconds",
+			"type": {
+				"name": "float",
+				"data": []
+			},
+			"value": 0.05
+		}
+	}
 
 static func get_condition_metadata(object_path: String = "") -> Dictionary:
 	return {
-		"name": "Every tick",
-		"category": Types.Category.MAIN,
+		"name": "Wait",
+		"category": Types.Category.TIME,
 		"icon": preload("res://addons/event_sheet/resources/icons/time.svg"),
 		"change_icon_color": true,
-		"description": "Execute every frame in the _process function."
+		"description": "Wait for specified time in seconds."
 	}
 
 static func get_object_metadata(object_path: String = "") -> Dictionary:
@@ -19,15 +29,15 @@ static func get_object_metadata(object_path: String = "") -> Dictionary:
 	}
 
 static func get_template(_params: Dictionary = params()) -> String:
-	return "true"  # Every tick всегда возвращает true в условиях
+	var seconds = _params.get("seconds", {}).get("value", "1.0")
+	return "await get_tree().create_timer(%s).timeout" % seconds
 
 static func get_info(_params: Dictionary = params()) -> String:
-	return "Every tick"
+	var seconds = _params.get("seconds", {}).get("value", "1.0")
+	return "Wait %s seconds" % seconds
 
-# Прямое выполнение в рантайме
 static func execute(_params: Dictionary, context: Node = null) -> bool:
-	return true  # Every tick всегда выполняется
+	return true
 
-# Типизированное выполнение
 static func execute_typed(typed_params, context: Node = null) -> bool:
-	return true  # Every tick всегда выполняется
+	return true

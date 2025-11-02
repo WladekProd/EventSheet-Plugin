@@ -1,82 +1,35 @@
-[gd_scene load_steps=7 format=3 uid="uid://1pej4df0pxlq"]
+[gd_scene load_steps=5 format=3 uid="uid://1pej4df0pxlq"]
 
-[ext_resource type="Script" path="res://addons/event_sheet/source/nodes/EventSheet.gd" id="2_3cc1c"]
-[ext_resource type="JSON" path="res://demo_project/event_sheets/event_sheet_1.json" id="3_tvi5e"]
-[ext_resource type="Texture2D" uid="uid://cmwl07hf2qbwl" path="res://icon.svg" id="4_vvoxj"]
-[ext_resource type="Texture2D" uid="uid://b5fio4vb6m01y" path="res://icon2.svg" id="6_ijjpy"]
+[ext_resource type="Script" path="res://addons/event_sheet/source/nodes/EventSheet.gd" id="1_3253y"]
+[ext_resource type="Texture2D" uid="uid://b5fio4vb6m01y" path="res://icon2.svg" id="1_ijjpy"]
+[ext_resource type="JSON" path="res://demo_project/event_sheets/events.json" id="2_3253y"]
 
-[sub_resource type="GDScript" id="GDScript_u3cyc"]
+[sub_resource type="GDScript" id="GDScript_3253y"]
 script/source = "extends Node2D
 
-var test = 123
-var test4 = \"fdgdfg\"
-var gfhfhg123 = \"fghfgh456\"
-@onready var sprite_2d = $\"Sprite2D\"
 
 func _init():
 	pass
 
-func _process(delta: float):
-	if 2 > 1:
-	if 2 > 1:
-		if sprite_2d:
-			sprite_2d.position = Vector2(500, 500)
-		print(\"123\")
-
 func _ready():
-	var test5 = true
-	var test3 = 7676
-	var test2 = 456
-	var gfhgf = \"ghfgh\"
-	var fergrg = \"gergegergerg\"
+	rotation_degrees += 45
 	set_process_input(true)
 	set_process_unhandled_input(true)
 	set_physics_process(true)
 "
 
-[sub_resource type="GDScript" id="GDScript_rastk"]
-resource_name = "test"
-script/source = "@tool
-extends Marker2D
-
-@export var button: bool = false:
-	set (p_button):
-		button = false
-		
-		#print(get_property_list())
-		#print(get_method_list())
-		
-		#for property in self.get_property_list():
-			#print(\"/ ===================== /\")
-			#print(property.name)
-			#print(property.class_name)
-			#print(property.type)
-			#print(property.hint)
-			#print(property.hint_string)
-			#print(property.usage)
-			#print(\"/ ===================== /\")
-		
-		#for method in self.get_method_list():
-			#print(method)
-"
-
 [node name="Node2D" type="Node2D"]
-script = ExtResource("2_3cc1c")
-event_sheet_file = ExtResource("3_tvi5e")
-final_script = SubResource("GDScript_u3cyc")
+script = ExtResource("1_3253y")
+event_sheet_file = ExtResource("2_3253y")
+final_script = SubResource("GDScript_3253y")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(53, 55)
-scale = Vector2(0.13748, 0.13748)
-texture = ExtResource("6_ijjpy")
 
-[node name="Marker2D" type="Marker2D" parent="Sprite2D"]
-position = Vector2(-385.511, -400.058)
-scale = Vector2(7.27379, 7.27379)
-script = SubResource("GDScript_rastk")
+[node name="Icon2" type="Sprite2D" parent="Sprite2D"]
+position = Vector2(505, 266)
+scale = Vector2(0.342881, 0.439778)
+texture = ExtResource("1_ijjpy")
 
-[node name="Sprite2D" type="Sprite2D" parent="Sprite2D"]
-visible = false
-modulate = Color(1, 1, 1, 0.435294)
-scale = Vector2(5.00073, 5.00073)
-texture = ExtResource("4_vvoxj")
+[node name="Timer" type="Timer" parent="."]
+one_shot = true
+autostart = true

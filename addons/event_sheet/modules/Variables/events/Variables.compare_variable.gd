@@ -61,14 +61,9 @@ static func get_template(_params: Dictionary = params()) -> String:
 	var value = _params.get("value", {}).get("value", "0")
 	var scope = _params.get("scope", {}).get("value", "Global")
 	
-	var scope_enum = "VariableManager.VariableScope.GLOBAL" if scope == "Global" else "VariableManager.VariableScope.LOCAL"
+	var scope_enum = "0" if scope == "Global" else "1"  # Use numeric values
 	
-	return """if VariableManager.get_variable("{var_name}", {scope}) {comparison} {value}:""".format({
-		"var_name": var_name,
-		"comparison": comparison,
-		"value": value,
-		"scope": scope_enum
-	})
+	return "(Engine.has_singleton(\"VariableManager\") and Engine.get_singleton(\"VariableManager\").get_variable(\"%s\", %s) %s %s)" % [var_name, scope_enum, comparison, value]
 
 static func get_info(_params: Dictionary = params()) -> String:
 	var var_name = _params.get("variable_name", {}).get("value", "")
@@ -92,23 +87,36 @@ static func execute(_params: Dictionary, context: Node = null) -> bool:
 	if var_name.is_empty():
 		return false
 	
-	var scope = VariableManager.VariableScope.GLOBAL if scope_str == "Global" else VariableManager.VariableScope.LOCAL
-	var var_value = VariableManager.get_variable(var_name, scope)
+	if not Engine.has_singleton("VariableManager"):
+		return false
+	
+	var scope = 0 if scope_str == "Global" else 1  # Use numeric values
+	var var_value = Engine.get_singleton("VariableManager").get_variable(var_name, scope)
 	
 	if var_value == null:
 		return false
 	
+	# Преобразуем оба значения к одному типу
+	var converted_var_value = var_value
 	var converted_value = value
+	
+	# Преобразуем в число, если возможно
+	if var_value is String and var_value.is_valid_float():
+		converted_var_value = float(var_value)
 	if value is String and value.is_valid_float():
 		converted_value = float(value)
-	elif value is String and value.to_lower() in ["true", "false"]:
+	
+	# Преобразуем в булево, если возможно
+	if var_value is String and var_value.to_lower() in ["true", "false"]:
+		converted_var_value = var_value.to_lower() == "true"
+	if value is String and value.to_lower() in ["true", "false"]:
 		converted_value = value.to_lower() == "true"
 	
 	match comparison:
-		"==": return var_value == converted_value
-		"!=": return var_value != converted_value
-		"<": return var_value < converted_value
-		"<=": return var_value <= converted_value
-		">": return var_value > converted_value
-		">=": return var_value >= converted_value
+		"==": return converted_var_value == converted_value
+		"!=": return converted_var_value != converted_value
+		"<": return converted_var_value < converted_value
+		"<=": return converted_var_value <= converted_value
+		">": return converted_var_value > converted_value
+		">=": return converted_var_value >= converted_value
 		_: return false

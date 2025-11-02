@@ -6,6 +6,7 @@ const UUID = preload("res://addons/event_sheet/source/utils/event_sheet_uuid.gd"
 const WindowClass = preload("res://addons/event_sheet/source/elements/window/window.gd")
 const ScriptGeneration = preload("res://addons/event_sheet/source/elements/event_sheet/script_generation.gd")
 
+
 var theme_colors: Dictionary = {
 	"base_color": EditorInterface.get_editor_theme().get_color("base_color", "Editor"),
 	"accent_color": EditorInterface.get_editor_theme().get_color("accent_color", "Editor"),
@@ -82,8 +83,10 @@ func _ready() -> void:
 		scroll_container.gui_input.connect(_on_scroll_container_gui_input)
 	
 	# Connect to variable changes to regenerate code
-	if VariableManager and not VariableManager.variable_changed.is_connected(_on_variable_changed):
-		VariableManager.variable_changed.connect(_on_variable_changed)
+	if Engine.has_singleton("VariableManager"):
+		var vm = Engine.get_singleton("VariableManager")
+		if vm and vm.has_signal("variable_changed") and not vm.variable_changed.is_connected(_on_variable_changed):
+			vm.variable_changed.connect(_on_variable_changed)
 	
 	ESUtils.selected_items.clear()
 	ESUtils.is_editing = false
@@ -270,6 +273,7 @@ func _on_scene_bar_pressed(id: int) -> void:
 				"block_condition_type": "",
 				"block_data": { "comment_text": "New comment" }
 			}, {})
+
 
 func _on_add_action(block):
 	_window.show_add_window("action", "standart", block)

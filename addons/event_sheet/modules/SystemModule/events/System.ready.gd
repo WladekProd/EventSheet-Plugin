@@ -20,7 +20,15 @@ static func get_object_metadata(object_path: String = "") -> Dictionary:
 	}
 
 static func get_template(_params: Dictionary = params()) -> String:
-	return "func _ready() -> void:"
+	return "true"  # Ready всегда выполняется при старте
 
 static func get_info(_params: Dictionary = params()) -> String:
-	return """Ready""".format({ })
+	return "Ready"
+
+# Прямое выполнение в рантайме
+static func execute(_params: Dictionary, context: Node = null) -> bool:
+	return true  # Ready всегда выполняется
+
+# Типизированное выполнение
+static func execute_typed(typed_params, context: Node = null) -> bool:
+	return true  # Ready всегда выполняется

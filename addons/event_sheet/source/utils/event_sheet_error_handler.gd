@@ -1,6 +1,5 @@
 @tool
 extends RefCounted
-class_name EventSheetErrorHandler
 
 enum ErrorType {
 	INVALID_PARAMETERS,
@@ -17,7 +16,7 @@ static func handle_error(error_type: ErrorType, message: String, context: Dictio
 	print_rich("[color=red]%s[/color]" % error_text)
 	
 	# Log to debugger if available
-	if EventSheetDebugger:
+	if EventSheetDebugger and EventSheetDebugger.has_method("log_error"):
 		EventSheetDebugger.log_error(message, context.get("block_id", ""))
 
 static func safe_execute(callable: Callable) -> Variant:

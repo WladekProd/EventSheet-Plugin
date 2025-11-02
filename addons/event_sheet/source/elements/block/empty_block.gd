@@ -113,7 +113,7 @@ var is_hovered: bool = false
 		if block_margin != null:
 			block_margin.add_theme_constant_override("margin_right", (block_expand_button.size.x + block_line.size.x) * level)
 		if !data.is_empty():
-			data.level = level
+			data["level"] = level
 		update_split_container()
 
 @export var expand: bool:

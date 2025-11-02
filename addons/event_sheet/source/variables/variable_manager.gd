@@ -23,6 +23,10 @@ func _ready():
 	load_variables()
 
 func create_variable(name: String, type: VariableType, scope: VariableScope, initial_value: Variant = null):
+	if name.is_empty():
+		print("Warning: Cannot create variable with empty name")
+		return
+	
 	var default_value = get_default_value(type)
 	var value = initial_value if initial_value != null else default_value
 
@@ -48,7 +52,8 @@ func set_variable(name: String, value: Variant, scope = VariableScope.GLOBAL):
 	if scope is int:
 		scope = VariableScope.GLOBAL if scope == 0 else VariableScope.LOCAL
 	
-	# Debug output removed for production
+	if name.is_empty():
+		return
 	
 	var variables = global_variables if scope == VariableScope.GLOBAL else local_variables
 

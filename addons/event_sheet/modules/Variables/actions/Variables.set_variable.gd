@@ -51,9 +51,9 @@ static func get_template(_params: Dictionary = params()) -> String:
 	var value = _params.get("value", {}).get("value", "0")
 	var scope = _params.get("scope", {}).get("value", "Global")
 	
-	var scope_enum = "VariableManager.VariableScope.GLOBAL" if scope == "Global" else "VariableManager.VariableScope.LOCAL"
+	var scope_enum = "0" if scope == "Global" else "1"  # Use numeric values
 	
-	return """VariableManager.set_variable("{var_name}", {value}, {scope})""".format({
+	return """if Engine.has_singleton(\"VariableManager\"): Engine.get_singleton(\"VariableManager\").set_variable(\"{var_name}\", {value}, {scope})""".format({
 		"var_name": var_name,
 		"value": value,
 		"scope": scope_enum
@@ -78,7 +78,7 @@ static func execute(_params: Dictionary, context: Node = null):
 	if var_name.is_empty():
 		return
 	
-	var scope = VariableManager.VariableScope.GLOBAL if scope_str == "Global" else VariableManager.VariableScope.LOCAL
+	var scope = 0 if scope_str == "Global" else 1  # Use numeric values
 	
 	var converted_value = value
 	if value is String:
@@ -87,4 +87,25 @@ static func execute(_params: Dictionary, context: Node = null):
 		elif value.to_lower() in ["true", "false"]:
 			converted_value = value.to_lower() == "true"
 	
-	VariableManager.set_variable(var_name, converted_value, scope)
+	if Engine.has_singleton("VariableManager"):
+		Engine.get_singleton("VariableManager").set_variable(var_name, converted_value, scope)
+
+# Типизированное выполнение
+static func execute_typed(typed_params, context: Node = null):
+	var var_name_param = typed_params.get_parameter("variable_name")
+	var value_param = typed_params.get_parameter("value")
+	var scope_param = typed_params.get_parameter("scope")
+	
+	if not var_name_param:
+		return
+	
+	var var_name = var_name_param.get_typed_value()
+	var value = value_param.get_typed_value() if value_param else 0
+	var scope_str = scope_param.get_typed_value() if scope_param else "Global"
+	
+	if var_name.is_empty():
+		return
+	
+	var scope = 0 if scope_str == "Global" else 1  # Use numeric values
+	if Engine.has_singleton("VariableManager"):
+		Engine.get_singleton("VariableManager").set_variable(var_name, value, scope)

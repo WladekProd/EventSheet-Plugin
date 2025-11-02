@@ -33,13 +33,16 @@ static func get_object_metadata(object_path: String = "") -> Dictionary:
 	}
 
 static func get_template(_params: Dictionary = params()) -> String:
-	if _params.process.value == "Process":
-		return "func _process(delta: float) -> void:"
-	else:
-		return "func _physics_process(delta: float) -> void:"
+	return "true"  # Process всегда выполняется
 
 static func get_info(_params: Dictionary = params()) -> String:
-	if _params.process.value == "Process":
-		return """Process""".format({ })
-	else:
-		return """Physics process""".format({ })
+	var process_type = _params.get("process", {}).get("value", "Process")
+	return process_type
+
+# Прямое выполнение в рантайме
+static func execute(_params: Dictionary, context: Node = null) -> bool:
+	return true  # Process всегда выполняется
+
+# Типизированное выполнение
+static func execute_typed(typed_params, context: Node = null) -> bool:
+	return true  # Process всегда выполняется

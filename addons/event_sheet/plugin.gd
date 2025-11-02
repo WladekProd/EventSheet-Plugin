@@ -6,13 +6,14 @@ const EventSheet = preload("res://addons/event_sheet/elements/event_sheet/event_
 var event_sheet_instance
 
 func _enter_tree():
-	add_autoload_singleton("EventSheetUtils", "res://addons/event_sheet/source/utils/event_sheet_utils.gd")
 	add_autoload_singleton("EventSheetRuntime", "res://addons/event_sheet/source/runtime/event_sheet_runtime.gd")
 	add_autoload_singleton("EventSheetDebugger", "res://addons/event_sheet/source/debug/event_sheet_debugger.gd")
 	add_autoload_singleton("EventSheetErrorHandler", "res://addons/event_sheet/source/debug/error_handler.gd")
 	add_autoload_singleton("VariableManager", "res://addons/event_sheet/source/variables/variable_manager.gd")
 	
-	ESUtils.undo_redo = get_undo_redo()
+	# Безопасная инициализация ESUtils
+	if ESUtils and ESUtils.has_method("_ready"):
+		ESUtils.undo_redo = get_undo_redo()
 	
 	if !scene_changed.is_connected(_on_scene_change):
 		scene_changed.connect(_on_scene_change)
@@ -38,7 +39,7 @@ func _exit_tree():
 		ESUtils.scene_tree_editor_tree.button_clicked.disconnect(_on_scene_tree_button_clicked)
 	
 	# Безопасное удаление автозагрузок
-	var autoloads = ["EventSheetUtils", "EventSheetRuntime", "EventSheetDebugger", "EventSheetErrorHandler", "VariableManager"]
+	var autoloads = ["EventSheetRuntime", "EventSheetDebugger", "EventSheetErrorHandler", "VariableManager"]
 	for autoload_name in autoloads:
 		if ProjectSettings.has_setting("autoload/" + autoload_name):
 			remove_autoload_singleton(autoload_name)

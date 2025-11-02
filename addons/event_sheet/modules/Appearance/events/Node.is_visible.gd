@@ -5,29 +5,31 @@ static func params() -> Dictionary:
 
 static func get_condition_metadata(object_path: String = "") -> Dictionary:
 	return {
-		"name": "Every tick",
-		"category": Types.Category.MAIN,
-		"icon": preload("res://addons/event_sheet/resources/icons/time.svg"),
+		"name": "Is visible",
+		"category": Types.Category.APPEARANCE,
+		"icon": preload("res://addons/event_sheet/resources/icons/show.svg"),
 		"change_icon_color": true,
-		"description": "Execute every frame in the _process function."
+		"description": "Check if object is visible."
 	}
 
 static func get_object_metadata(object_path: String = "") -> Dictionary:
 	return {
-		"name": "System",
+		"name": "Node",
 		"icon": {}
 	}
 
 static func get_template(_params: Dictionary = params()) -> String:
-	return "true"  # Every tick всегда возвращает true в условиях
+	return "if visible:"
 
 static func get_info(_params: Dictionary = params()) -> String:
-	return "Every tick"
+	return "Is visible"
 
-# Прямое выполнение в рантайме
 static func execute(_params: Dictionary, context: Node = null) -> bool:
-	return true  # Every tick всегда выполняется
+	if not context:
+		return false
+	return context.visible
 
-# Типизированное выполнение
 static func execute_typed(typed_params, context: Node = null) -> bool:
-	return true  # Every tick всегда выполняется
+	if not context:
+		return false
+	return context.visible

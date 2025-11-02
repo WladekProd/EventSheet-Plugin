@@ -31,7 +31,10 @@ static func get_object_metadata(object_path: String = "") -> Dictionary:
 
 static func get_template(_params: Dictionary = params()) -> String:
 	var text_value = _params.get("text", {}).get("value", '""')
-	return """print({text})""".format({
+	# Убираем лишние кавычки для компиляции
+	if text_value.begins_with('"') and text_value.ends_with('"'):
+		text_value = text_value.slice(1, -1)
+	return """print("{text}")""".format({
 		"text": text_value
 	})
 
@@ -45,5 +48,14 @@ static func get_info(_params: Dictionary = params()) -> String:
 static func execute(_params: Dictionary, context: Node = null):
 	var text_value = _params.get("text", {}).get("value", '""')
 	if text_value.begins_with('"') and text_value.ends_with('"'):
-		text_value = text_value.substr(1, text_value.length() - 2)
+		text_value = text_value.slice(1, -1)
 	print(text_value)
+
+# Типизированное выполнение
+static func execute_typed(typed_params, context: Node = null):
+	var text_param = typed_params.get_parameter("text")
+	if text_param:
+		var text_value = text_param.get_typed_value()
+		print(text_value)
+	else:
+		print("")

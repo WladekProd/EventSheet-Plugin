@@ -1,0 +1,137 @@
+{
+	"blocks": [
+		{
+			"actions": [
+				{
+					"class": "action",
+					"name": "Set Variable",
+					"object": {
+						"condition_type": "action",
+						"disable_color": false,
+						"icon": "res://addons/event_sheet/resources/icons/global.svg",
+						"name": "Variables",
+						"path": "",
+						"type": "Variables"
+					},
+					"parameters": {
+						"scope": {
+							"name": "Scope",
+							"order": 2,
+							"type": {
+								"data": [],
+								"name": "select"
+							},
+							"value": "Global"
+						},
+						"value": {
+							"name": "Value",
+							"order": 1,
+							"type": {
+								"data": [],
+								"name": "string"
+							},
+							"value": "0"
+						},
+						"variable_name": {
+							"name": "Variable Name",
+							"order": 0,
+							"type": {
+								"data": [],
+								"name": "string"
+							},
+							"value": "timer"
+						}
+					},
+					"script": "res://addons/event_sheet/modules//Variables/actions/Variables.set_variable.gd",
+					"type": "standart",
+					"uuid": "626447b1-ecba-4272-b3da-7aa5bde8e899"
+				}
+			],
+			"childrens": [],
+			"class": "block",
+			"events": [
+				{
+					"class": "event",
+					"name": "On timeout",
+					"object": {
+						"condition_type": "event",
+						"disable_color": true,
+						"icon": "res://addons/event_sheet/~cache/icons/Timer.tres",
+						"is_current": false,
+						"name": "Timer",
+						"path": "Timer",
+						"type": "Timer"
+					},
+					"parameters": {
+
+					},
+					"script": "res://addons/event_sheet/modules//Time/events/Timer.timeout.gd",
+					"type": "standart",
+					"uuid": "59602fa9-5bb3-4bab-9eba-636383493796"
+				}
+			],
+			"expand": true,
+			"level": 0,
+			"type": "standart",
+			"uuid": "00bcec71-1df3-43b2-a263-9e2163285e8e"
+		},
+		{
+			"actions": [
+				{
+					"class": "action",
+					"name": "Rotate by",
+					"object": {
+						"condition_type": "action",
+						"disable_color": false,
+						"icon": "res://addons/event_sheet/resources/icons/system.svg",
+						"name": "Node2D",
+						"path": "",
+						"type": "Node2D"
+					},
+					"parameters": {
+						"angle": {
+							"name": "Angle",
+							"order": 0,
+							"type": {
+								"data": [],
+								"name": "string"
+							},
+							"value": "45"
+						}
+					},
+					"script": "res://addons/event_sheet/modules/Angles/actions/Node2D.rotate_by.gd",
+					"type": "standart",
+					"uuid": "action_2182194942"
+				}
+			],
+			"childrens": [],
+			"class": "block",
+			"events": [
+				{
+					"class": "event",
+					"name": "Ready",
+					"object": {
+						"condition_type": "event",
+						"disable_color": false,
+						"icon": "res://addons/event_sheet/resources/icons/system.svg",
+						"name": "System",
+						"path": "",
+						"type": "System"
+					},
+					"parameters": {
+
+					},
+					"script": "res://addons/event_sheet/modules/SystemModule/events/System.ready.gd",
+					"type": "standart",
+					"uuid": "event_1652288617"
+				}
+			],
+			"expand": true,
+			"level": 0,
+			"type": "standart",
+			"uuid": "block_501432737"
+		}
+	],
+	"name": "EventSheet 1",
+	"uuid": "0"
+}

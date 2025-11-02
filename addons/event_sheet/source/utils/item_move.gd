@@ -1,4 +1,3 @@
-
 # Move up
 static func move_up(event_sheet, selected_array: Array, to: Variant) -> void:
 	for item in selected_array:
@@ -32,7 +31,7 @@ static func move_up(event_sheet, selected_array: Array, to: Variant) -> void:
 					else: event_sheet.event_sheet_file.data.blocks.erase(from_data)
 					
 					var index = to_parent.data.childrens.find(to_data)
-					from_data.level = to_data.level
+					from_data["level"] = to_data.get("level", 0)
 					if index >= 0: to_parent.data.childrens.insert(index, from_data)
 					
 					from.reparent(to_parent)
@@ -51,7 +50,7 @@ static func move_up(event_sheet, selected_array: Array, to: Variant) -> void:
 					else: event_sheet.event_sheet_file.data.blocks.erase(from_data)
 					
 					var index = event_sheet.event_sheet_file.data.blocks.find(to_data)
-					from_data.level = to_data.level
+					from_data["level"] = to_data.get("level", 0)
 					if index >= 0: event_sheet.event_sheet_file.data.blocks.insert(index, from_data)
 					
 					from.reparent(event_sheet.block_items)
@@ -133,7 +132,7 @@ static func move_down(event_sheet, selected_array: Array, to: Variant) -> void:
 					else: event_sheet.event_sheet_file.data.blocks.erase(from_data)
 					
 					var index = to_parent.data.childrens.find(to_data)
-					from_data.level = to_data.level
+					from_data["level"] = to_data.get("level", 0)
 					if index >= 0: to_parent.data.childrens.insert(index + 1, from_data)
 					
 					from.reparent(to_parent)
@@ -151,7 +150,7 @@ static func move_down(event_sheet, selected_array: Array, to: Variant) -> void:
 					else: event_sheet.event_sheet_file.data.blocks.erase(from_data)
 					
 					var index = event_sheet.event_sheet_file.data.blocks.find(to_data)
-					from_data.level = to_data.level
+					from_data["level"] = to_data.get("level", 0)
 					if index >= 0: event_sheet.event_sheet_file.data.blocks.insert(index + 1, from_data)
 					
 					from.reparent(event_sheet.block_items)
@@ -223,8 +222,9 @@ static func move_sub_or_content(event_sheet, selected_array: Array, to: Variant)
 				if from_parent: from_parent.data.childrens.erase(from_data)
 				else: event_sheet.event_sheet_file.data.blocks.erase(from_data)
 				
-				from_data.level = to_data.level + 1
-				to_data.childrens.append(from_data)
+				from_data["level"] = to_data.get("level", 0) + 1
+				if not to_data.has("childrens"): to_data["childrens"] = []
+				to_data["childrens"].append(from_data)
 				
 				from.reparent(to)
 				update_blocks(event_sheet, from, to, from_root, to_root)

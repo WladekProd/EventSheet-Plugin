@@ -26,9 +26,10 @@ static func _init_editor_tree():
 	var scene_children = base_control.find_children("Scene", "", true, false)
 	if scene_children.size() > 0:
 		scene_tree_dock = scene_children[0]
-		scene_tree_editor = find_child_by_class(scene_tree_dock, 'SceneTreeEditor')
-		if scene_tree_editor:
-			scene_tree_editor_tree = find_child_by_class(scene_tree_editor, 'Tree')
+		if scene_tree_dock:
+			scene_tree_editor = find_child_by_class(scene_tree_dock, 'SceneTreeEditor')
+			if scene_tree_editor:
+				scene_tree_editor_tree = find_child_by_class(scene_tree_editor, 'Tree')
 
 # Variables of the currently open event sheet
 static var current_scene: Node = null
@@ -102,7 +103,7 @@ static func get_node_icon(node_path: NodePath) -> String:
 		if !_node: return ""
 		
 		if _node is Sprite2D:
-			if !_node.texture.resource_path.is_empty():
+			if _node.texture and !_node.texture.resource_path.is_empty():
 				return _node.texture.resource_path
 		
 		var _node_class: String = str(_node.get_class())
@@ -191,7 +192,7 @@ static func has_item_in_select(item: Node) -> bool:
 static func selection_is_equal_to_type(data) -> bool:
 	if ESUtils.selected_items:
 		var _data = ESUtils.selected_items[ESUtils.selected_items.size() - 1].object.data
-		if data.class != _data.class:
+		if data.get("class", "") != _data.get("class", ""):
 			return true
 	return false
 
@@ -237,19 +238,29 @@ static func unselect_all():
 
 # Save Event Sheet to JSON file
 static func save_event_sheet_data():
-	if current_scene and current_scene.event_sheet_file:
-		var _file_path = current_scene.event_sheet_file.resource_path
-		if _file_path and not _file_path.is_empty():
-			var _data_string = JSON.stringify(current_scene.event_sheet_file.data, "\t")
-			var _file = FileAccess.open(_file_path, FileAccess.WRITE)
+	if current_scene and current_scene.has("event_sheet_data"):
+		var event_sheet_data = current_scene.event_sheet_data
+		var file_path = ""
+		
+		if current_scene.has("event_sheet_file") and current_scene.event_sheet_file:
+			file_path = current_scene.event_sheet_file.resource_path
+		
+		if file_path and not file_path.is_empty():
+			var _data_string = JSON.stringify(event_sheet_data, "\t")
+			var _file = FileAccess.open(file_path, FileAccess.WRITE)
 			if _file:
-				_file.store_line(_data_string)
+				_file.store_string(_data_string)
 				_file.close()
 				if EditorInterface.get_resource_filesystem():
-					EditorInterface.get_resource_filesystem().update_file(_file_path)
+					EditorInterface.get_resource_filesystem().update_file(file_path)
 					EditorInterface.get_resource_filesystem().scan()
+				print("EventSheet saved to: ", file_path)
 			else:
-				print("Failed to open file: ", _file_path)
+				print("Failed to open file: ", file_path)
+		else:
+			print("No file path found for EventSheet")
+	else:
+		print("No current_scene or event_sheet_data found")
 
 # Find all the scripts in the path
 static func find_gd_files_in_paths(resource_paths: Array, object_path_or_type) -> Dictionary:
@@ -288,17 +299,23 @@ static func _process_directory(base_path: String, folder_name: String, object_pa
 			elif file_name.ends_with(".gd"):
 				var _split_name: PackedStringArray = file_name.split(".")
 				if object_path_or_type is NodePath:
-					if current_scene.get_node(object_path_or_type).is_class(_split_name[0]):
-						gd_files[folder_name].append(sub_path)
+					if current_scene and current_scene.has_node(object_path_or_type):
+						var node = current_scene.get_node(object_path_or_type)
+						if node.is_class(_split_name[0]):
+							gd_files[folder_name].append(sub_path)
 				else:
-					if object_path_or_type == _split_name[0]:
+					if _split_name[0] == object_path_or_type or _split_name[0] == "System" or _split_name[0] == "Node" or _split_name[0] == "Node2D":
+						gd_files[folder_name].append(sub_path)
+					elif object_path_or_type == "Node2D" and (_split_name[0] == "Node" or _split_name[0] == "Node2D"):
+						gd_files[folder_name].append(sub_path)
+					elif object_path_or_type == "AnimationPlayer" and _split_name[0] == "AnimationPlayer":
 						gd_files[folder_name].append(sub_path)
 		file_name = dir.get_next()
 	dir.list_dir_end()
 
 # Has a class
 static func has_class(item_type: String, event_sheet_file: JSON) -> bool:
-	if item_type == "System":
+	if item_type in ["System", "Input", "Variables", "Node2D", "AnimationPlayer", "Node"]:
 		return true
 	var _data: Dictionary = event_sheet_file.data
 	if not _data.has("blocks"):
@@ -446,7 +463,7 @@ static func create_block(event_sheet_class, block: Dictionary, parent_block: Dic
 # Create an event or action
 static func create_condition(event_sheet_class, block_body: VBoxContainer, condition_class: String, condition: Dictionary) -> Button:
 	if condition_class == "event":
-		var event_type: String = condition.type
+		var event_type: String = condition.get("type", "standart")
 		match event_type:
 			"standart":
 				var event_body: Button = event_sheet_class.event_body.instantiate()
@@ -456,7 +473,7 @@ static func create_condition(event_sheet_class, block_body: VBoxContainer, condi
 				event_body.block_body = block_body
 				return event_body
 	elif condition_class == "action":
-		var event_type: String = condition.type
+		var event_type: String = condition.get("type", "standart")
 		match event_type:
 			"standart":
 				var action_body: Button = event_sheet_class.action_body.instantiate()
@@ -476,11 +493,11 @@ static func _paste_items(event_sheet_class, clipboard_object: Object):
 		for _data in _clipboard_array:
 			if _data.has("class"):
 				var _duplicated_data = _data.duplicate(true)
-				match _duplicated_data.class:
+				match _duplicated_data.get("class", ""):
 					"block":
 						if !_to_block.is_empty():
-							unique_block(_duplicated_data, _to_block.level + 1)
-							_to_block.childrens.append(_duplicated_data)
+							unique_block(_duplicated_data, _to_block.get("level", 0) + 1)
+							_to_block.get("childrens", []).append(_duplicated_data)
 							var root_block = create_blocks(event_sheet_class, _duplicated_data, _to_block)
 							event_sheet_class.block_items.update_events(root_block)
 							event_sheet_class.block_items.update_lines()
@@ -493,16 +510,16 @@ static func _paste_items(event_sheet_class, clipboard_object: Object):
 					"event":
 						if !_to_block.is_empty():
 							unique_condition(_duplicated_data)
-							_to_block.events.append(_duplicated_data)
-							var block_body = get_block_body(_to_block.uuid, event_sheet_class.block_items)
-							var condition_body = create_condition(event_sheet_class, block_body, _duplicated_data.class, _duplicated_data)
+							_to_block.get("events", []).append(_duplicated_data)
+							var block_body = get_block_body(_to_block.get("uuid", ""), event_sheet_class.block_items)
+							var condition_body = create_condition(event_sheet_class, block_body, _duplicated_data.get("class", ""), _duplicated_data)
 							_objects_data.append(condition_body)
 					"action":
 						if !_to_block.is_empty():
 							unique_condition(_duplicated_data)
-							_to_block.actions.append(_duplicated_data)
-							var block_body = get_block_body(_to_block.uuid, event_sheet_class.block_items)
-							var condition_body = create_condition(event_sheet_class, block_body, _duplicated_data.class, _duplicated_data)
+							_to_block.get("actions", []).append(_duplicated_data)
+							var block_body = get_block_body(_to_block.get("uuid", ""), event_sheet_class.block_items)
+							var condition_body = create_condition(event_sheet_class, block_body, _duplicated_data.get("class", ""), _duplicated_data)
 							_objects_data.append(condition_body)
 	clipboard_object.set_meta("objects_data", _objects_data)
 
@@ -516,37 +533,37 @@ static func _remove_items(event_sheet_class, clipboard_object: Object):
 
 # Create selected items
 static func _add_item(event_sheet_class, item_parent, item):
-	match item.data.class:
+	match item.data.get("class", ""):
 		"block":
 			if item_parent is String and !item_parent.is_empty():
 				item_parent = get_block_body(item_parent, event_sheet_class.block_items)
 			
-			if "data" in item_parent: item_parent.data.childrens.append(item.data)
+			if "data" in item_parent: item_parent.data.get("childrens", []).append(item.data)
 			else: event_sheet_class.event_sheet_data.blocks.append(item.data)
 			item_parent.add_child(item)
 		"event":
-			item.block_body.data.events.append(item.data)
+			item.block_body.data.get("events", []).append(item.data)
 			item.block_body.block_events.add_child(item)
 		"action":
-			item.block_body.data.actions.append(item.data)
+			item.block_body.data.get("actions", []).append(item.data)
 			item.block_body.block_actions.add_child(item)
 	save_event_sheet_data()
 
 # Delete selected item
 static func _remove_item(event_sheet_class, item_parent, item):
-	match item.data.class:
+	match item.data.get("class", ""):
 		"block":
 			if item_parent is String and !item_parent.is_empty():
 				item_parent = get_block_body(item_parent, event_sheet_class.block_items)
 			
-			if "data" in item_parent: item_parent.data.childrens.erase(item.data)
+			if "data" in item_parent: item_parent.data.get("childrens", []).erase(item.data)
 			else: event_sheet_class.event_sheet_data.blocks.erase(item.data)
 			item_parent.remove_child(item)
 			if "data" in item_parent: item_parent.data = item_parent.data
 		"event":
-			item.block_body.data.events.erase(item.data)
+			item.block_body.data.get("events", []).erase(item.data)
 			item.block_body.block_events.remove_child(item)
 		"action":
-			item.block_body.data.actions.erase(item.data)
+			item.block_body.data.get("actions", []).erase(item.data)
 			item.block_body.block_actions.remove_child(item)
 	save_event_sheet_data()

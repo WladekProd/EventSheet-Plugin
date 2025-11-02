@@ -10,10 +10,25 @@ var global_block_id: int = 0
 # Run the ready script at game startup
 func _ready() -> void:
 	if !Engine.is_editor_hint():
-		# Используем улучшенную систему выполнения
+		# Приоритет: компилированный скрипт
 		if event_sheet_file and event_sheet_file.data.has("blocks"):
+			# Отключаем компиляцию, используем только runtime
+			# var compiled_script = EventSheetRuntime.compile_event_sheet(event_sheet_file.data)
+			# if compiled_script:
+			# 	set_script(compiled_script)
+			# 	return
+			
+			# Резерв: типизированное выполнение
 			for block in event_sheet_file.data.blocks:
-				EventSheetRuntime.execute_block(block, self)
+				if block.has("events") and block.events.size() > 0:
+					for event in block.events:
+						var event_name = event.get("name", "")
+						if event_name == "Ready":
+							EventSheetRuntime.execute_block_typed(block, self)
+							break
+						elif event_name == "Wait":
+							_execute_wait_block(block)
+							break
 		else:
 			# Резервное выполнение через сгенерированный скрипт
 			if final_script:
@@ -74,11 +89,17 @@ func _process(delta: float) -> void:
 			if root:
 				update_scene_tree(root)
 	else:
-		# Выполнение блоков с событиями _process
-		if event_sheet_file and event_sheet_file.data.has("blocks"):
+		# Выполнение блоков с событиями _process (только если не скомпилировано)
+		if event_sheet_file and event_sheet_file.data.has("blocks") and get_script() == preload("res://addons/event_sheet/source/nodes/EventSheet.gd"):
 			for block in event_sheet_file.data.blocks:
 				if block.has("events"):
 					for event in block.events:
-						if event.get("name", "") == "Every tick":
-							EventSheetRuntime.execute_block(block, self)
+						var event_name = event.get("name", "")
+						if event_name in ["Every tick", "Process"]:
+							EventSheetRuntime.execute_block_typed(block, self)
 							break
+
+func _execute_wait_block(block: Dictionary):
+	# Используем асинхронный исполнитель
+	var AsyncExecutor = preload("res://addons/event_sheet/source/runtime/async_executor.gd")
+	AsyncExecutor.execute_wait_block(block, self)

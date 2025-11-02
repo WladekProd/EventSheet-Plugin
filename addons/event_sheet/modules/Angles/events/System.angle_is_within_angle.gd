@@ -59,3 +59,31 @@ static func get_info(_params: Dictionary = params()) -> String:
 		"angle_b": _params["angle_b"]["value"],
 		"max_difference": _params["max_difference"]["value"],
 	})
+
+static func execute(_params: Dictionary, context: Node = null) -> bool:
+	var angle_a = float(_params.get("angle_a", {}).get("value", "0"))
+	var angle_b = float(_params.get("angle_b", {}).get("value", "0"))
+	var max_diff = float(_params.get("max_difference", {}).get("value", "10"))
+	
+	return abs(angle_a - angle_b) <= max_diff
+
+static func execute_typed(typed_params, context: Node = null) -> bool:
+	var angle_a_param = typed_params.get_parameter("angle_a")
+	var angle_b_param = typed_params.get_parameter("angle_b")
+	var max_diff_param = typed_params.get_parameter("max_difference")
+	
+	if not angle_a_param or not angle_b_param or not max_diff_param:
+		return false
+	
+	var angle_a = angle_a_param.get_typed_value()
+	var angle_b = angle_b_param.get_typed_value()
+	var max_diff = max_diff_param.get_typed_value()
+	
+	if angle_a is String and angle_a.is_valid_float():
+		angle_a = float(angle_a)
+	if angle_b is String and angle_b.is_valid_float():
+		angle_b = float(angle_b)
+	if max_diff is String and max_diff.is_valid_float():
+		max_diff = float(max_diff)
+	
+	return abs(angle_a - angle_b) <= max_diff

@@ -51,9 +51,9 @@ static func get_template(_params: Dictionary = params()) -> String:
 	var value = _params.get("value", {}).get("value", "1")
 	var scope = _params.get("scope", {}).get("value", "Global")
 	
-	var scope_enum = "VariableManager.VariableScope.GLOBAL" if scope == "Global" else "VariableManager.VariableScope.LOCAL"
+	var scope_enum = "0" if scope == "Global" else "1"  # Use numeric values
 	
-	return """VariableManager.set_variable("{var_name}", VariableManager.get_variable("{var_name}", {scope}) + {value}, {scope})""".format({
+	return """if Engine.has_singleton(\"VariableManager\"): Engine.get_singleton(\"VariableManager\").set_variable(\"{var_name}\", Engine.get_singleton(\"VariableManager\").get_variable(\"{var_name}\", {scope}) + {value}, {scope})""".format({
 		"var_name": var_name,
 		"value": value,
 		"scope": scope_enum
@@ -78,14 +78,25 @@ static func execute(_params: Dictionary, context: Node = null):
 	if var_name.is_empty():
 		return
 	
-	var scope = VariableManager.VariableScope.GLOBAL if scope_str == "Global" else VariableManager.VariableScope.LOCAL
-	var current_value = VariableManager.get_variable(var_name, scope)
+	if not Engine.has_singleton("VariableManager"):
+		return
 	
+	var scope = 0 if scope_str == "Global" else 1  # Use numeric values
+	var current_value = Engine.get_singleton("VariableManager").get_variable(var_name, scope)
+	
+	# Преобразуем текущее значение
 	if current_value == null:
 		current_value = 0
+	elif current_value is String and current_value.is_valid_float():
+		current_value = float(current_value)
+	elif current_value is String:
+		current_value = 0
 	
+	# Преобразуем добавляемое значение
 	var add_value = value
 	if value is String and value.is_valid_float():
 		add_value = float(value)
+	elif value is String:
+		add_value = 0
 	
-	VariableManager.set_variable(var_name, current_value + add_value, scope)
+	Engine.get_singleton("VariableManager").set_variable(var_name, current_value + add_value, scope)
