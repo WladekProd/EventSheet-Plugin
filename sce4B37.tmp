@@ -8,27 +8,13 @@
 [sub_resource type="GDScript" id="GDScript_u3cyc"]
 script/source = "extends Node2D
 
-var test = 123
-var test4 = \"fdgdfg\"
-var gfhfhg123 = \"fghfgh456\"
-@onready var sprite_2d = $\"Sprite2D\"
 
 func _init():
-	pass
 
 func _process(delta: float):
-	if 2 > 1:
-	if 2 > 1:
-		if sprite_2d:
-			sprite_2d.position = Vector2(500, 500)
-		print(\"123\")
+	print(\"compare\")
 
 func _ready():
-	var test5 = true
-	var test3 = 7676
-	var test2 = 456
-	var gfhgf = \"ghfgh\"
-	var fergrg = \"gergegergerg\"
 	set_process_input(true)
 	set_process_unhandled_input(true)
 	set_physics_process(true)

@@ -491,8 +491,12 @@ item_3/id = 3
 
 [node name="Editor" type="PopupMenu" parent="VBoxContainer/MenuBar/LeftMenuBar"]
 auto_translate_mode = 1
-item_count = 1
+item_count = 3
 item_0/text = "Editor Settings"
+item_1/text = "Debug Window"
+item_1/id = 1
+item_2/text = "Variables Panel"
+item_2/id = 2
 
 [node name="Donate" type="Button" parent="VBoxContainer/MenuBar"]
 visible = false

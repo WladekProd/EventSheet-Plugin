@@ -42,13 +42,30 @@ static func get_object_metadata(object_path: String = "") -> Dictionary:
 	}
 
 static func get_template(_params: Dictionary = params()) -> String:
-	return """{object}.set_position(Vector2({x}, {y}))""".format({
-		"x": _params["x"]["value"],
-		"y": _params["y"]["value"]
+	var x_value = _params.get("x", {}).get("value", "0")
+	var y_value = _params.get("y", {}).get("value", "0")
+	return """{object}.position = Vector2({x}, {y})""".format({
+		"x": x_value,
+		"y": y_value
 	})
 
 static func get_info(_params: Dictionary = params()) -> String:
+	var x_value = _params.get("x", {}).get("value", "0")
+	var y_value = _params.get("y", {}).get("value", "0")
 	return """Set position: {x}, {y}""".format({
-		"x": _params["x"]["value"],
-		"y": _params["y"]["value"],
+		"x": x_value,
+		"y": y_value
 	})
+
+# Прямое выполнение в рантайме
+static func execute(_params: Dictionary, context: Node = null):
+	if not context or not context is Node2D:
+		return
+	
+	var x_value = _params.get("x", {}).get("value", "0")
+	var y_value = _params.get("y", {}).get("value", "0")
+	
+	var x = float(x_value) if x_value.is_valid_float() else 0.0
+	var y = float(y_value) if y_value.is_valid_float() else 0.0
+	
+	context.position = Vector2(x, y)

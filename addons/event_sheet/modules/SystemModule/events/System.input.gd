@@ -20,7 +20,7 @@ static func get_object_metadata(object_path: String = "") -> Dictionary:
 	}
 
 static func get_template(_params: Dictionary = params()) -> String:
-	return """func _input(event: InputEvent) -> void:""".format({ })
+	return "func _input(event: InputEvent) -> void:"
 
 static func get_info(_params: Dictionary = params()) -> String:
 	return """Input""".format({ })

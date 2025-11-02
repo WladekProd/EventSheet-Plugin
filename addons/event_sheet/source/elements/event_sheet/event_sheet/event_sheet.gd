@@ -15,6 +15,8 @@ var theme_colors: Dictionary = {
 @onready var _window: Control = $Window
 @onready var block_items: VBoxContainer = $VBoxContainer/HSplitContainer/ScrollContainer/Control/Blocks
 @onready var code_editor: CodeEdit = $VBoxContainer/HSplitContainer/CodeEdit
+@onready var debug_panel: Control = null
+@onready var variables_panel: Control = null
 
 var result_script: String = ""
 
@@ -31,7 +33,7 @@ var has_hover: bool
 
 var current_popup_menu: String = "general"
 var popup_menus: Dictionary = {
-	"general": ["Add Event", "Add Blank Event", "Add Group"]
+	"general": ["Add Event", "Add Action", "", "Add Group", "Add Comment", "", "Paste"]
 }
 
 
@@ -39,72 +41,25 @@ var popup_menus: Dictionary = {
 
 
 func _input(event: InputEvent) -> void:
-	if visible and ESUtils.is_plugin_screen and !_window.visible and !ESUtils.is_editing:
+	if visible and ESUtils.is_plugin_screen and _window and !_window.visible and !ESUtils.is_editing:
 		if event is InputEventKey:
-			if event.keycode == KEY_CTRL and event.pressed:
-				ESUtils.is_ctrl_pressed = true
-			else:
-				ESUtils.is_ctrl_pressed = false
-			if !event.ctrl_pressed:
-				if !event.shift_pressed:
-					ESUtils.is_split_pressed = false
-					if event.keycode == KEY_E and event.pressed:
-						# Add or create an event
-						if ESUtils.selected_items.size() == 1:
-							var selected_item = ESUtils.selected_items[0].object
-							var selected_block
-							if selected_item is VBoxContainer:
-								selected_block = selected_item.block_resource
-							_window.show_add_window("event", "standart", selected_block)
-						else:
-							if ESUtils.selected_items.size() > 1:
-								ESUtils.unselect_all()
-							_window.show_add_window("event", "standart")
-					if event.keycode == KEY_A and event.pressed and ESUtils.selected_items.size() == 1:
-						# Add an action
-						var selected_item = ESUtils.selected_items[0].object
-						var selected_block
-						if selected_item is VBoxContainer:
-							selected_block = selected_item.block_resource
-						_window.show_add_window("action", "standart", selected_block)
-					if event.keycode == KEY_G and event.pressed:
-						# Create a group
-						_window.show_add_group()
-					if event.keycode == KEY_Q and event.pressed:
-						# Create a comment
-						_on_finish_data({
-							"block_type": "comment",
-							"block_condition_type": "",
-							"block_data": { "comment_text": "test" }
-						}, {})
-					if event.keycode == KEY_V and event.pressed:
-						# Create a variable
-						_window.show_add_variable()
-					if event.keycode == KEY_C and event.pressed:
-						# Add a class
-						_window.show_add_class()
-					if event.keycode == KEY_DELETE and event.pressed and !ESUtils.selected_items.is_empty():
-						# Delete block
-						remove_data()
-				else: pass
-			else:
-				if event.keycode == KEY_C and event.pressed:
-					if ESUtils.selected_items.size() > 0:
-						ESUtils.clipboard_items.clear()
-						for item in ESUtils.selected_items:
-							
-							ESUtils.clipboard_items.append(item.object.data)
-						
-						DisplayServer.clipboard_set(str(ESUtils.clipboard_items))
-				if event.keycode == KEY_V and event.pressed:
-					if ESUtils.clipboard_items.size() > 0:
-						paste_data()
-				
-				if !event.shift_pressed: pass
-				else: pass
+			if event.keycode == KEY_CTRL:
+				ESUtils.is_ctrl_pressed = event.pressed
+			if event.keycode == KEY_DELETE and event.pressed and !ESUtils.selected_items.is_empty():
+				remove_data()
 		if event is InputEventMouseButton:
+			if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+				# Check if mouse is over the event sheet area
+				var scroll_container = $VBoxContainer/HSplitContainer/ScrollContainer
+				var local_pos = scroll_container.global_position
+				var size = scroll_container.size
+				var mouse_pos = event.global_position
+				
+				if (mouse_pos.x >= local_pos.x and mouse_pos.x <= local_pos.x + size.x and 
+					mouse_pos.y >= local_pos.y and mouse_pos.y <= local_pos.y + size.y):
+					_show_context_menu(event.global_position)
+					get_viewport().set_input_as_handled()
 			if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-				# Select block
 				if !ESUtils.selected_items.is_empty():
 					if ESUtils.is_ctrl_pressed:
 						return
@@ -115,21 +70,28 @@ func _input(event: InputEvent) -> void:
 					ESUtils.unselect_all()
 					if ESUtils.hovered_select and ESUtils.hovered_select is VBoxContainer:
 						ESUtils.hovered_select._select()
-			if event.button_index == MOUSE_BUTTON_LEFT and event.double_click and has_hover:
-				# Create a block
-				_window.show_add_window(Types.ConditionType.EVENTS, Types.BlockType.STANDART)
 
 func _ready() -> void:
-	#if !EditorInterface.get_editor_settings().settings_changed.is_connected(_on_editor_settings_change):
-		#EditorInterface.get_editor_settings().settings_changed.connect(_on_editor_settings_change)
 	if !_window.finish_data.is_connected(_on_finish_data):
 		_window.finish_data.connect(_on_finish_data)
+	
+	# Connect popup menu signal (already connected in .tscn)
+	# Connect scroll container gui_input
+	var scroll_container = $VBoxContainer/HSplitContainer/ScrollContainer
+	if not scroll_container.gui_input.is_connected(_on_scroll_container_gui_input):
+		scroll_container.gui_input.connect(_on_scroll_container_gui_input)
+	
+	# Connect to variable changes to regenerate code
+	if VariableManager and not VariableManager.variable_changed.is_connected(_on_variable_changed):
+		VariableManager.variable_changed.connect(_on_variable_changed)
+	
 	ESUtils.selected_items.clear()
 	ESUtils.is_editing = false
 	ESUtils.is_dragging = false
 	ESUtils.dragging_data = {}
-	#code_editor.text = result_script
-	#_on_editor_settings_change()
+	
+	# Инициализация систем
+	_setup_variables_panel()
 
 func _process(delta: float) -> void:
 	pass
@@ -148,12 +110,13 @@ func load_event_sheet():
 	
 	for item in block_items.get_children():
 		item.queue_free()
-		item.free()
 	
-	for block in event_sheet_data.blocks:
-		ESUtils.create_blocks(self, block)
+	if event_sheet_data and event_sheet_data.has("blocks"):
+		for block in event_sheet_data.blocks:
+			ESUtils.create_blocks(self, block)
 	
-	block_items.update_lines()
+	if block_items.has_method("update_lines"):
+		block_items.update_lines()
 	generate_code()
 
 # Delete selected block
@@ -198,13 +161,14 @@ func paste_data():
 
 # Generate a script from the event sheet
 func generate_code():
-	var _script = ScriptGeneration.generate_code(self)
-	current_node.final_script = _script
+	if current_node:
+		var _script = ScriptGeneration.generate_code(self)
+		current_node.final_script = _script
 
 # Event Sheet Inputs
 func _on_scroll_container_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT or event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			if !selected_content.is_empty():
 				selected_content.clear()
 			for item in get_tree().get_nodes_in_group("selectable"):
@@ -217,34 +181,95 @@ func _on_scroll_container_gui_input(event: InputEvent) -> void:
 		
 		# Event Sheet - Right Click
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-			var mouse_pos = Vector2i(event.global_position) + get_window().position
-			_popup_menu.clear()
-			for item in popup_menus["general"]:
-				if item == "":
-					_popup_menu.add_separator()
-				else:
-					_popup_menu.add_item(item)
-			_popup_menu.set_size(Vector2(0, 0))
-			_popup_menu.set_position(mouse_pos)
-			_popup_menu.show()
+			_show_context_menu(event.global_position)
 
 # Popup Menu Pressed
 func _on_popup_menu_index_pressed(index: int) -> void:
-	if current_popup_menu == "general":
-		match index:
-			0: _window.show_add_window(Types.ConditionType.EVENTS, Types.BlockType.STANDART)
-			1: pass # add_blank_body()
-			2: _window.show_add_group()
+	var item_text = _popup_menu.get_item_text(index)
+	
+	match item_text:
+		"Copy":
+			ESUtils.clipboard_items.clear()
+			for item in ESUtils.selected_items:
+				ESUtils.clipboard_items.append(item.object.data)
+			DisplayServer.clipboard_set(str(ESUtils.clipboard_items))
+		"Delete":
+			remove_data()
+		"Add Event":
+			_handle_context_action("event")
+		"Add Action":
+			_handle_context_action("action")
+		"Add Group":
+			_window.show_add_group()
+		"Add Comment":
+			_handle_context_comment()
+		"Paste":
+			_handle_context_paste()
+
+# Handle context-aware actions
+func _handle_context_action(action_type: String):
+	var context_block = get_meta("context_block", {})
+	if not context_block.is_empty():
+		_window.show_add_window(action_type, "standart", context_block)
+	elif ESUtils.selected_items.size() == 1:
+		var selected_item = ESUtils.selected_items[0].object
+		var selected_block = {}
+		if selected_item is VBoxContainer:
+			selected_block = selected_item.block_resource if selected_item.has_method("block_resource") else {}
+		_window.show_add_window(action_type, "standart", selected_block)
+	else:
+		_window.show_add_window(action_type, "standart", {})
+
+# Handle context-aware comment creation
+func _handle_context_comment():
+	_on_finish_data({
+		"block_type": "comment",
+		"block_condition_type": "",
+		"block_data": { "comment_text": "New comment" }
+	}, {})
+
+# Handle context-aware paste
+func _handle_context_paste():
+	if ESUtils.clipboard_items.size() > 0:
+		# Set context block for paste operation
+		var context_block = get_meta("context_block", {})
+		if not context_block.is_empty():
+			# Select the context block temporarily for paste
+			ESUtils.selected_items.clear()
+			# Find the visual block and select it
+			var visual_block = _find_visual_block_by_data(context_block)
+			if visual_block:
+				ESUtils.selected_items.append({"object": visual_block, "class": "Block"})
+		paste_data()
+
+# Find visual block by data
+func _find_visual_block_by_data(block_data: Dictionary) -> VBoxContainer:
+	if block_data.has("uuid"):
+		return ESUtils.get_block_body(block_data.uuid, block_items)
+	return null
 
 # Editor Bar Pressed
 func _on_editor_bar_pressed(id: int) -> void:
 	match id:
 		0: _window.show_editor_settings()
+		1: _show_debug_window()
+		2: _toggle_variables_panel()
 
 # Scene Bar Pressed
 func _on_scene_bar_pressed(id: int) -> void:
 	match id:
-		0: pass
+		0: # Add Event
+			_window.show_add_window("event", "standart")
+		1: # Add Group
+			_window.show_add_group()
+		2: # Add Variable
+			_window.show_add_variable()
+		3: # Add Comment
+			_on_finish_data({
+				"block_type": "comment",
+				"block_condition_type": "",
+				"block_data": { "comment_text": "New comment" }
+			}, {})
 
 func _on_add_action(block):
 	_window.show_add_window("action", "standart", block)
@@ -360,6 +385,91 @@ func _drop_data_block(from_item: Variant, to_item: Variant, move_type: Types.Mov
 #func _on_editor_settings_change():
 	#code_editor.visible = ESUtils.get_setting("code_editor_enable")
 
+# Отладка через консоль
+func toggle_debug(enabled: bool):
+	EventSheetDebugger.set_debugging(enabled)
+	print("EventSheet Debug: ", "Enabled" if enabled else "Disabled")
+
+func clear_debug_log():
+	EventSheetDebugger.clear_debug_data()
+	print("EventSheet Debug: Log cleared")
+
+# Показ окна отладки
+func _show_debug_window():
+	# Простое окно без диалогов
+	var debug_window = Window.new()
+	debug_window.title = "EventSheet Debugger"
+	debug_window.size = Vector2i(600, 400)
+	debug_window.unresizable = false
+	
+	var vbox = VBoxContainer.new()
+	vbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	vbox.add_theme_constant_override("separation", 10)
+	
+	# Кнопки управления
+	var hbox = HBoxContainer.new()
+	var debug_btn = Button.new()
+	debug_btn.text = "Toggle Debug"
+	debug_btn.pressed.connect(func(): toggle_debug(!EventSheetDebugger.is_debugging))
+	hbox.add_child(debug_btn)
+	
+	var clear_btn = Button.new()
+	clear_btn.text = "Clear Log"
+	clear_btn.pressed.connect(clear_debug_log)
+	hbox.add_child(clear_btn)
+	
+	var close_btn = Button.new()
+	close_btn.text = "Close"
+	close_btn.pressed.connect(func(): debug_window.queue_free())
+	hbox.add_child(close_btn)
+	
+	vbox.add_child(hbox)
+	
+	# Лог отладки
+	var log_list = ItemList.new()
+	log_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	
+	# Заполняем лог
+	var logs = EventSheetDebugger.get_execution_log()
+	for log_entry in logs:
+		var level_text = ""
+		match log_entry.level:
+			0: # ERROR
+				level_text = "[ERROR]"
+			1: # WARNING
+				level_text = "[WARN]"
+			_:
+				level_text = "[INFO]"
+		log_list.add_item("%s %s %s" % [log_entry.timestamp, level_text, log_entry.message])
+	
+	vbox.add_child(log_list)
+	
+	debug_window.add_child(vbox)
+	
+	# Check if window already has a parent before adding to root
+	if not debug_window.get_parent():
+		get_tree().root.add_child(debug_window)
+	debug_window.popup_centered()
+
+func _setup_variables_panel():
+	var panel_script = preload("res://addons/event_sheet/elements/variables/variables_panel.gd")
+	variables_panel = VBoxContainer.new()
+	variables_panel.set_script(panel_script)
+	variables_panel.name = "Variables Panel"
+	variables_panel.custom_minimum_size = Vector2(250, 0)
+	variables_panel.visible = false
+	
+	# Добавляем панель слева от основного контента
+	var hsplit = $VBoxContainer/HSplitContainer
+	hsplit.add_child(variables_panel)
+	hsplit.move_child(variables_panel, 0)
+
+func _toggle_variables_panel():
+	if variables_panel:
+		variables_panel.visible = !variables_panel.visible
+		if variables_panel.visible and variables_panel.has_method("_refresh_variables"):
+			variables_panel._refresh_variables()
+
 func _on_theme_changed() -> void:
 	var background_color: Color = EditorInterface.get_editor_theme().get_color("background", "Editor")
 	
@@ -374,3 +484,63 @@ func _on_scroll_container_mouse_entered() -> void:
 
 func _on_scroll_container_mouse_exited() -> void:
 	has_hover = false
+
+# Handle variable changes and regenerate code
+func _on_variable_changed(name: String, value: Variant, scope):
+	if current_node:
+		generate_code()
+
+# Show context menu at position
+func _show_context_menu(mouse_pos: Vector2):
+	# Find block under mouse cursor
+	var block_under_mouse = _find_block_under_mouse(mouse_pos)
+	
+	_popup_menu.clear()
+	
+	# Add context-sensitive menu items
+	if ESUtils.selected_items.size() > 0:
+		_popup_menu.add_item("Copy")
+		_popup_menu.add_item("Delete")
+		_popup_menu.add_separator()
+	
+	# Add general menu items
+	for item in popup_menus["general"]:
+		if item == "":
+			_popup_menu.add_separator()
+		else:
+			_popup_menu.add_item(item)
+	
+	# Store the block under mouse for later use
+	set_meta("context_block", block_under_mouse)
+	_popup_menu.position = Vector2i(mouse_pos)
+	_popup_menu.popup()
+
+# Find block under mouse position
+func _find_block_under_mouse(mouse_pos: Vector2) -> Dictionary:
+	# Search through all blocks recursively
+	return _search_blocks_recursive(block_items, mouse_pos)
+
+func _search_blocks_recursive(container: Node, mouse_pos: Vector2) -> Dictionary:
+	if not container:
+		return {}
+	
+	for child in container.get_children():
+		if not child:
+			continue
+			
+		if child is VBoxContainer:
+			# Check if mouse is over this block
+			var block_rect = Rect2(child.global_position, child.size)
+			if block_rect.has_point(mouse_pos):
+				if child.has_meta("data"):
+					return child.get_meta("data")
+				elif "data" in child and child.data is Dictionary:
+					return child.data
+		
+		# Search in child containers recursively
+		if child.get_child_count() > 0:
+			var result = _search_blocks_recursive(child, mouse_pos)
+			if not result.is_empty():
+				return result
+	
+	return {}

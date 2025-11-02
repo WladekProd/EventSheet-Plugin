@@ -15,7 +15,10 @@ config/features=PackedStringArray("4.3")
 
 [autoload]
 
+ESUtils="*res://addons/event_sheet/source/utils/event_sheet_utils.gd"
 EventSheetUtils="*res://addons/event_sheet/source/utils/event_sheet_utils.gd"
+EventSheetDebugger="*res://addons/event_sheet/source/debug/event_sheet_debugger.gd"
+VariableManager="*res://addons/event_sheet/source/variables/variable_manager.gd"
 
 [editor_plugins]
 

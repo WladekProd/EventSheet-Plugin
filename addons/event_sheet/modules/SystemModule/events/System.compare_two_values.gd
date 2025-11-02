@@ -54,15 +54,39 @@ static func get_object_metadata(object_path: String = "") -> Dictionary:
 	}
 
 static func get_template(_params: Dictionary = params()) -> String:
+	var value_a = _params.get("value_a", {}).get("value", "0")
+	var comparison = _params.get("comparison", {}).get("value", "==")
+	var value_b = _params.get("value_b", {}).get("value", "0")
 	return """if {value_a} {comparison} {value_b}:""".format({
-		"value_a": _params["value_a"]["value"],
-		"comparison": _params["comparison"]["value"],
-		"value_b": _params["value_b"]["value"],
+		"value_a": value_a,
+		"comparison": comparison,
+		"value_b": value_b
 	})
 
 static func get_info(_params: Dictionary = params()) -> String:
+	var value_a = _params.get("value_a", {}).get("value", "0")
+	var comparison = _params.get("comparison", {}).get("value", "==")
+	var value_b = _params.get("value_b", {}).get("value", "0")
 	return """{value_a} {comparison} {value_b}""".format({
-		"value_a": _params["value_a"]["value"],
-		"comparison": _params["comparison"]["value"],
-		"value_b": _params["value_b"]["value"],
+		"value_a": value_a,
+		"comparison": comparison,
+		"value_b": value_b
 	})
+
+# Прямое выполнение в рантайме
+static func execute(_params: Dictionary, context: Node = null) -> bool:
+	var value_a = _params.get("value_a", {}).get("value", "0")
+	var comparison = _params.get("comparison", {}).get("value", "==")
+	var value_b = _params.get("value_b", {}).get("value", "0")
+	
+	var a = float(value_a) if value_a.is_valid_float() else value_a
+	var b = float(value_b) if value_b.is_valid_float() else value_b
+	
+	match comparison:
+		"==": return a == b
+		"!=": return a != b
+		"<": return a < b
+		"<=": return a <= b
+		">": return a > b
+		">=": return a >= b
+		_: return false

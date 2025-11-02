@@ -7,6 +7,10 @@ var event_sheet_instance
 
 func _enter_tree():
 	add_autoload_singleton("EventSheetUtils", "res://addons/event_sheet/source/utils/event_sheet_utils.gd")
+	add_autoload_singleton("EventSheetRuntime", "res://addons/event_sheet/source/runtime/event_sheet_runtime.gd")
+	add_autoload_singleton("EventSheetDebugger", "res://addons/event_sheet/source/debug/event_sheet_debugger.gd")
+	add_autoload_singleton("EventSheetErrorHandler", "res://addons/event_sheet/source/debug/error_handler.gd")
+	add_autoload_singleton("VariableManager", "res://addons/event_sheet/source/variables/variable_manager.gd")
 	
 	ESUtils.undo_redo = get_undo_redo()
 	
@@ -33,7 +37,11 @@ func _exit_tree():
 	if ESUtils.scene_tree_editor_tree and ESUtils.scene_tree_editor_tree.button_clicked.is_connected(_on_scene_tree_button_clicked):
 		ESUtils.scene_tree_editor_tree.button_clicked.disconnect(_on_scene_tree_button_clicked)
 	
-	remove_autoload_singleton("EventSheetUtils")
+	# Безопасное удаление автозагрузок
+	var autoloads = ["EventSheetUtils", "EventSheetRuntime", "EventSheetDebugger", "EventSheetErrorHandler", "VariableManager"]
+	for autoload_name in autoloads:
+		if ProjectSettings.has_setting("autoload/" + autoload_name):
+			remove_autoload_singleton(autoload_name)
 	
 	if event_sheet_instance:
 		event_sheet_instance.queue_free()
@@ -52,12 +60,9 @@ func _get_plugin_icon():
 	return load("res://addons/event_sheet/resources/icons/event_sheet_small.png")
 
 func _on_scene_change(scene: Node) -> void:
-	#if "EventSheet" in scene:
-		##print('Changed scene to %s' % (scene.name if scene else "empty"))
-		#if ESUtils.is_plugin_screen:
-			##open_event_sheet_editor(scene.event_sheet_data, scene)
-			#print(scene.name)
-	pass
+	if scene and "event_sheet_file" in scene:
+		if ESUtils.is_plugin_screen:
+			open_event_sheet_editor(scene.event_sheet_file, scene)
 
 func _on_screen_change(screen_name: String) -> void:
 	ESUtils.is_plugin_screen = screen_name == _get_plugin_name()
@@ -69,9 +74,12 @@ func _on_scene_tree_button_clicked(item, column: int, id: int, mouse_button_inde
 		open_event_sheet_editor(node.event_sheet_file, node)
 
 func open_event_sheet_editor(event_sheet_file: JSON = null, node = null):
-	if event_sheet_instance.current_node != node:
-		event_sheet_instance.event_sheet_file = event_sheet_file
-		event_sheet_instance.event_sheet_data = event_sheet_file.data
-		event_sheet_instance.current_node = node
-		event_sheet_instance.load_event_sheet()
-	EditorInterface.set_main_screen_editor(_get_plugin_name())
+	if event_sheet_instance and event_sheet_instance.has_method("load_event_sheet"):
+		var current_node_value = event_sheet_instance.get("current_node")
+		if current_node_value != node:
+			if event_sheet_file:
+				event_sheet_instance.event_sheet_file = event_sheet_file
+				event_sheet_instance.event_sheet_data = event_sheet_file.data if event_sheet_file.data else {}
+				event_sheet_instance.set("current_node", node)
+				event_sheet_instance.load_event_sheet()
+			EditorInterface.set_main_screen_editor(_get_plugin_name())

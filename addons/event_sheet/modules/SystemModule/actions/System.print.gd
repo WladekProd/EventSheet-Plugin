@@ -30,11 +30,20 @@ static func get_object_metadata(object_path: String = "") -> Dictionary:
 	}
 
 static func get_template(_params: Dictionary = params()) -> String:
+	var text_value = _params.get("text", {}).get("value", '""')
 	return """print({text})""".format({
-		"text": _params["text"]["value"]
+		"text": text_value
 	})
 
 static func get_info(_params: Dictionary = params()) -> String:
+	var text_value = _params.get("text", {}).get("value", '""')
 	return """Print: {text}""".format({
-		"text": _params["text"]["value"]
+		"text": text_value
 	})
+
+# Прямое выполнение в рантайме
+static func execute(_params: Dictionary, context: Node = null):
+	var text_value = _params.get("text", {}).get("value", '""')
+	if text_value.begins_with('"') and text_value.ends_with('"'):
+		text_value = text_value.substr(1, text_value.length() - 2)
+	print(text_value)

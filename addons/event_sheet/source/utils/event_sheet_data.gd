@@ -25,6 +25,14 @@ static func get_static_objects(condition_type) -> Array:
 			"type": "Input",
 			"path": "",
 			"condition_type": condition_type,
+		},
+		{
+			"icon": "res://addons/event_sheet/resources/icons/global.svg",
+			"disable_color": false,
+			"name": "Variables",
+			"type": "Variables",
+			"path": "",
+			"condition_type": condition_type,
 		}
 	]
 

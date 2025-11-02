@@ -34,9 +34,9 @@ static func get_object_metadata(object_path: String = "") -> Dictionary:
 
 static func get_template(_params: Dictionary = params()) -> String:
 	if _params.process.value == "Process":
-		return """func _process(delta: float) -> void:""".format({ })
+		return "func _process(delta: float) -> void:"
 	else:
-		return """func _physics_process(delta: float) -> void:""".format({ })
+		return "func _physics_process(delta: float) -> void:"
 
 static func get_info(_params: Dictionary = params()) -> String:
 	if _params.process.value == "Process":

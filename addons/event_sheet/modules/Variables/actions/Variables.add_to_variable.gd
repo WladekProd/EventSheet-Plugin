@@ -11,26 +11,17 @@ static func params() -> Dictionary:
 			},
 			"value": ""
 		},
-		"comparison": {
-			"order": 1,
-			"name": "Comparison",
-			"type": {
-				"name": "select",
-				"data": ["==", "!=", "<", "<=", ">", ">="]
-			},
-			"value": "=="
-		},
 		"value": {
-			"order": 2,
+			"order": 1,
 			"name": "Value",
 			"type": {
 				"name": "string",
 				"data": []
 			},
-			"value": "0"
+			"value": "1"
 		},
 		"scope": {
-			"order": 3,
+			"order": 2,
 			"name": "Scope",
 			"type": {
 				"name": "select",
@@ -42,11 +33,11 @@ static func params() -> Dictionary:
 
 static func get_condition_metadata(object_path: String = "") -> Dictionary:
 	return {
-		"name": "Compare Variable",
+		"name": "Add to Variable",
 		"category": Types.Category.VARIABLE,
-		"icon": preload("res://addons/event_sheet/resources/icons/local.svg"),
+		"icon": preload("res://addons/event_sheet/resources/icons/global.svg"),
 		"change_icon_color": true,
-		"description": "Compare variable with value."
+		"description": "Add value to variable."
 	}
 
 static func get_object_metadata(object_path: String = "") -> Dictionary:
@@ -57,58 +48,44 @@ static func get_object_metadata(object_path: String = "") -> Dictionary:
 
 static func get_template(_params: Dictionary = params()) -> String:
 	var var_name = _params.get("variable_name", {}).get("value", "")
-	var comparison = _params.get("comparison", {}).get("value", "==")
-	var value = _params.get("value", {}).get("value", "0")
+	var value = _params.get("value", {}).get("value", "1")
 	var scope = _params.get("scope", {}).get("value", "Global")
 	
 	var scope_enum = "VariableManager.VariableScope.GLOBAL" if scope == "Global" else "VariableManager.VariableScope.LOCAL"
 	
-	return """if VariableManager.get_variable("{var_name}", {scope}) {comparison} {value}:""".format({
+	return """VariableManager.set_variable("{var_name}", VariableManager.get_variable("{var_name}", {scope}) + {value}, {scope})""".format({
 		"var_name": var_name,
-		"comparison": comparison,
 		"value": value,
 		"scope": scope_enum
 	})
 
 static func get_info(_params: Dictionary = params()) -> String:
 	var var_name = _params.get("variable_name", {}).get("value", "")
-	var comparison = _params.get("comparison", {}).get("value", "==")
-	var value = _params.get("value", {}).get("value", "0")
+	var value = _params.get("value", {}).get("value", "1")
 	var scope = _params.get("scope", {}).get("value", "Global")
 	
-	return """{scope} variable "{var_name}" {comparison} {value}""".format({
+	return """Add {value} to {scope} variable "{var_name}" """.format({
 		"var_name": var_name,
-		"comparison": comparison,
 		"value": value,
-		"scope": scope
+		"scope": scope.to_lower()
 	})
 
-static func execute(_params: Dictionary, context: Node = null) -> bool:
+static func execute(_params: Dictionary, context: Node = null):
 	var var_name = _params.get("variable_name", {}).get("value", "")
-	var comparison = _params.get("comparison", {}).get("value", "==")
-	var value = _params.get("value", {}).get("value", "0")
+	var value = _params.get("value", {}).get("value", "1")
 	var scope_str = _params.get("scope", {}).get("value", "Global")
 	
 	if var_name.is_empty():
-		return false
+		return
 	
 	var scope = VariableManager.VariableScope.GLOBAL if scope_str == "Global" else VariableManager.VariableScope.LOCAL
-	var var_value = VariableManager.get_variable(var_name, scope)
+	var current_value = VariableManager.get_variable(var_name, scope)
 	
-	if var_value == null:
-		return false
+	if current_value == null:
+		current_value = 0
 	
-	var converted_value = value
+	var add_value = value
 	if value is String and value.is_valid_float():
-		converted_value = float(value)
-	elif value is String and value.to_lower() in ["true", "false"]:
-		converted_value = value.to_lower() == "true"
+		add_value = float(value)
 	
-	match comparison:
-		"==": return var_value == converted_value
-		"!=": return var_value != converted_value
-		"<": return var_value < converted_value
-		"<=": return var_value <= converted_value
-		">": return var_value > converted_value
-		">=": return var_value >= converted_value
-		_: return false
+	VariableManager.set_variable(var_name, current_value + add_value, scope)

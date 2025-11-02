@@ -1,16 +1,14 @@
-[gd_scene load_steps=7 format=3 uid="uid://1pej4df0pxlq"]
+[gd_scene load_steps=8 format=3 uid="uid://1pej4df0pxlq"]
 
 [ext_resource type="Script" path="res://addons/event_sheet/source/nodes/EventSheet.gd" id="2_3cc1c"]
 [ext_resource type="JSON" path="res://demo_project/event_sheets/event_sheet_1.json" id="3_tvi5e"]
 [ext_resource type="Texture2D" uid="uid://cmwl07hf2qbwl" path="res://icon.svg" id="4_vvoxj"]
+[ext_resource type="Script" path="res://test_variables.gd" id="5_test"]
 [ext_resource type="Texture2D" uid="uid://b5fio4vb6m01y" path="res://icon2.svg" id="6_ijjpy"]
 
-[sub_resource type="GDScript" id="GDScript_u3cyc"]
+[sub_resource type="GDScript" id="GDScript_m7jmp"]
 script/source = "extends Node2D
 
-var test = 123
-var test4 = \"fdgdfg\"
-var gfhfhg123 = \"fghfgh456\"
 @onready var sprite_2d = $\"Sprite2D\"
 
 func _init():
@@ -18,17 +16,11 @@ func _init():
 
 func _process(delta: float):
 	if 2 > 1:
-	if 2 > 1:
 		if sprite_2d:
-			sprite_2d.position = Vector2(500, 500)
+			sprite_2d.position = Vector2(0, 0)
 		print(\"123\")
 
 func _ready():
-	var test5 = true
-	var test3 = 7676
-	var test2 = 456
-	var gfhgf = \"ghfgh\"
-	var fergrg = \"gergegergerg\"
 	set_process_input(true)
 	set_process_unhandled_input(true)
 	set_physics_process(true)
@@ -63,7 +55,7 @@ extends Marker2D
 [node name="Node2D" type="Node2D"]
 script = ExtResource("2_3cc1c")
 event_sheet_file = ExtResource("3_tvi5e")
-final_script = SubResource("GDScript_u3cyc")
+final_script = SubResource("GDScript_m7jmp")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(53, 55)
@@ -80,3 +72,6 @@ visible = false
 modulate = Color(1, 1, 1, 0.435294)
 scale = Vector2(5.00073, 5.00073)
 texture = ExtResource("4_vvoxj")
+
+[node name="VariableTest" type="Node" parent="Sprite2D"]
+script = ExtResource("5_test")

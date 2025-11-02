@@ -1,25 +1,7 @@
 {
 	"blocks": [
 		{
-			"class": "block",
-			"level": 0,
-			"parameters": {
-				"class_value": "1"
-			},
-			"type": "class",
-			"uuid": "bdfe73fc-1d80-4dc5-9937-312718672278"
-		},
-		{
-			"class": "block",
-			"level": 0,
-			"parameters": {
-				"variable_is_global": true,
-				"variable_name": "speed",
-				"variable_type": "2",
-				"variable_value": "1.2"
-			},
-			"type": "variable",
-			"uuid": "edf0cea5-f6fc-45ee-a065-6a589e3f0493"
+
 		},
 		{
 			"actions": [
@@ -30,150 +12,6 @@
 						"condition_type": "action",
 						"disable_color": true,
 						"icon": "res://icon2.svg",
-						"is_current": true,
-						"name": "Sprite2D",
-						"path": ".",
-						"type": "Sprite2D"
-					},
-					"parameters": {
-						"x": {
-							"name": "X",
-							"order": 0,
-							"type": {
-								"data": [],
-								"name": "string"
-							},
-							"value": "266"
-						},
-						"y": {
-							"name": "Y",
-							"order": 1,
-							"type": {
-								"data": [],
-								"name": "string"
-							},
-							"value": "266"
-						}
-					},
-					"script": "res://addons/event_sheet/modules//SystemModule/actions/Node2D.set_position.gd",
-					"type": "standart",
-					"uuid": "b9b9982e-e955-4e9a-9da7-84cfb8f81b22"
-				}
-			],
-			"childrens": [
-				{
-					"actions": [
-						{
-							"class": "action",
-							"name": "Set position",
-							"object": {
-								"condition_type": "action",
-								"disable_color": true,
-								"icon": "res://icon2.svg",
-								"is_current": true,
-								"name": "Sprite2D",
-								"path": ".",
-								"type": "Sprite2D"
-							},
-							"parameters": {
-								"x": {
-									"name": "X",
-									"order": 0,
-									"type": {
-										"data": [],
-										"name": "string"
-									},
-									"value": "sprite_2d.position.x + speed"
-								},
-								"y": {
-									"name": "Y",
-									"order": 1,
-									"type": {
-										"data": [],
-										"name": "string"
-									},
-									"value": "sprite_2d.position.y + speed"
-								}
-							},
-							"script": "res://addons/event_sheet/modules//SystemModule/actions/Node2D.set_position.gd",
-							"type": "standart",
-							"uuid": "dfc59c90-c6dd-40c2-80b3-fe9bf3083696"
-						}
-					],
-					"childrens": [],
-					"class": "block",
-					"events": [
-						{
-							"class": "event",
-							"name": "Process",
-							"object": {
-								"condition_type": "event",
-								"disable_color": false,
-								"icon": "res://addons/event_sheet/resources/icons/system.svg",
-								"name": "System",
-								"path": "",
-								"type": "System"
-							},
-							"parameters": {
-								"process": {
-									"name": "Process",
-									"order": 0,
-									"type": {
-										"data": [
-											"Process",
-											"Physics process"
-										],
-										"name": "select"
-									},
-									"value": "Process"
-								}
-							},
-							"script": "res://addons/event_sheet/modules//SystemModule/events/System.process.gd",
-							"type": "standart",
-							"uuid": "78596908-4d87-40e3-b0f1-0385ed014b74"
-						}
-					],
-					"expand": true,
-					"level": 1,
-					"type": "standart",
-					"uuid": "74ff91cc-062c-4a21-a45a-a57d6c4f448e"
-				}
-			],
-			"class": "block",
-			"events": [
-				{
-					"class": "event",
-					"name": "Ready",
-					"object": {
-						"condition_type": "event",
-						"disable_color": false,
-						"icon": "res://addons/event_sheet/resources/icons/system.svg",
-						"name": "System",
-						"path": "",
-						"type": "System"
-					},
-					"parameters": {
-
-					},
-					"script": "res://addons/event_sheet/modules//SystemModule/events/System.ready.gd",
-					"type": "standart",
-					"uuid": "371c730d-dfe3-46c0-9420-63ed2f07ba5c"
-				}
-			],
-			"expand": true,
-			"level": 0,
-			"type": "standart",
-			"uuid": "9828718f-0dc6-472d-9204-f93d9e6d54e1"
-		},
-		{
-			"actions": [
-				{
-					"class": "action",
-					"name": "Set position",
-					"object": {
-						"condition_type": "action",
-						"disable_color": true,
-						"icon": "res://icon.svg",
 						"is_current": false,
 						"name": "Sprite2D",
 						"path": "Sprite2D",
@@ -187,7 +25,7 @@
 								"data": [],
 								"name": "string"
 							},
-							"value": "355"
+							"value": "500"
 						},
 						"y": {
 							"name": "Y",
@@ -196,98 +34,260 @@
 								"data": [],
 								"name": "string"
 							},
-							"value": "355"
+							"value": "500"
 						}
 					},
 					"script": "res://addons/event_sheet/modules//SystemModule/actions/Node2D.set_position.gd",
 					"type": "standart",
-					"uuid": "90e4442b-67f9-421e-be9d-8a100764e0e4"
+					"uuid": "8423a125-c309-499b-a35e-7370a1ff9c91"
+				},
+				{
+					"class": "action",
+					"name": "Print",
+					"object": {
+						"condition_type": "action",
+						"disable_color": false,
+						"icon": "res://addons/event_sheet/resources/icons/system.svg",
+						"name": "System",
+						"path": "",
+						"type": "System"
+					},
+					"parameters": {
+						"text": {
+							"name": "Text",
+							"order": 0,
+							"type": {
+								"data": [],
+								"name": "string"
+							},
+							"value": "\"123\""
+						}
+					},
+					"script": "res://addons/event_sheet/modules//SystemModule/actions/System.print.gd",
+					"type": "standart",
+					"uuid": "3898769e-5439-4083-baee-5d37b8200c19"
+				},
+				{
+					"class": "action",
+					"name": "Print",
+					"object": {
+						"condition_type": "action",
+						"disable_color": false,
+						"icon": "res://addons/event_sheet/resources/icons/system.svg",
+						"name": "System",
+						"path": "",
+						"type": "System"
+					},
+					"parameters": {
+						"text": {
+							"name": "Text",
+							"order": 0,
+							"type": {
+								"data": [],
+								"name": "string"
+							},
+							"value": "\"123\""
+						}
+					},
+					"script": "res://addons/event_sheet/modules//SystemModule/actions/System.print.gd",
+					"type": "standart",
+					"uuid": "4afb68cf-1e15-4918-ac1b-23001adb664c"
+				},
+				{
+					"class": "action",
+					"name": "Print",
+					"object": {
+						"condition_type": "action",
+						"disable_color": false,
+						"icon": "res://addons/event_sheet/resources/icons/system.svg",
+						"name": "System",
+						"path": "",
+						"type": "System"
+					},
+					"parameters": {
+						"text": {
+							"name": "Text",
+							"order": 0,
+							"type": {
+								"data": [],
+								"name": "string"
+							},
+							"value": "\"\""
+						}
+					},
+					"script": "res://addons/event_sheet/modules//SystemModule/actions/System.print.gd",
+					"type": "standart",
+					"uuid": "256b72e3-8eaa-48be-b5e7-af71bd33a7ce"
+				}
+			],
+			"childrens": [],
+			"class": "block",
+			"events": [
+				{
+					"class": "event",
+					"name": "Compare two values",
+					"object": {
+						"condition_type": "event",
+						"disable_color": false,
+						"icon": "res://addons/event_sheet/resources/icons/system.svg",
+						"name": "System",
+						"path": "",
+						"type": "System"
+					},
+					"parameters": {
+						"comparison": {
+							"name": "Comparison",
+							"order": 1,
+							"type": {
+								"data": [],
+								"name": "select"
+							},
+							"value": ">"
+						},
+						"value_a": {
+							"name": "Value A",
+							"order": 0,
+							"type": {
+								"data": [],
+								"name": "string"
+							},
+							"value": "2"
+						},
+						"value_b": {
+							"name": "Value B",
+							"order": 2,
+							"type": {
+								"data": [],
+								"name": "string"
+							},
+							"value": "1"
+						}
+					},
+					"script": "res://addons/event_sheet/modules//SystemModule/events/System.compare_two_values.gd",
+					"type": "standart",
+					"uuid": "0f410364-39a0-42ad-87ff-1807939f407a"
+				},
+				{
+					"class": "event",
+					"name": "Compare two values",
+					"object": {
+						"condition_type": "event",
+						"disable_color": false,
+						"icon": "res://addons/event_sheet/resources/icons/system.svg",
+						"name": "System",
+						"path": "",
+						"type": "System"
+					},
+					"parameters": {
+						"comparison": {
+							"name": "Comparison",
+							"order": 1,
+							"type": {
+								"data": [],
+								"name": "select"
+							},
+							"value": ">"
+						},
+						"value_a": {
+							"name": "Value A",
+							"order": 0,
+							"type": {
+								"data": [],
+								"name": "string"
+							},
+							"value": "2"
+						},
+						"value_b": {
+							"name": "Value B",
+							"order": 2,
+							"type": {
+								"data": [],
+								"name": "string"
+							},
+							"value": "1"
+						}
+					},
+					"script": "res://addons/event_sheet/modules//SystemModule/events/System.compare_two_values.gd",
+					"type": "standart",
+					"uuid": "fd344487-9225-40c8-a772-5b9d408c66fb"
+				}
+			],
+			"expand": true,
+			"level": 0,
+			"type": "standart",
+			"uuid": "ce45d77f-e96d-4483-ae5a-ab96049cf5f0"
+		},
+		{
+			"actions": [
+				{
+					"class": "action",
+					"name": "Print",
+					"object": {
+						"condition_type": "action",
+						"disable_color": false,
+						"icon": "res://addons/event_sheet/resources/icons/system.svg",
+						"name": "System",
+						"path": "",
+						"type": "System"
+					},
+					"parameters": {
+						"text": {
+							"name": "Text",
+							"order": 0,
+							"type": {
+								"data": [],
+								"name": "string"
+							},
+							"value": "\"\""
+						}
+					},
+					"script": "res://addons/event_sheet/modules//SystemModule/actions/System.print.gd",
+					"type": "standart",
+					"uuid": "16384573-db4c-462b-8cc9-e3252d5721b0"
+				},
+				{
+					"class": "action",
+					"name": "Print",
+					"object": {
+						"condition_type": "action",
+						"disable_color": false,
+						"icon": "res://addons/event_sheet/resources/icons/system.svg",
+						"name": "System",
+						"path": "",
+						"type": "System"
+					},
+					"parameters": {
+						"text": {
+							"name": "Text",
+							"order": 0,
+							"type": {
+								"data": [],
+								"name": "string"
+							},
+							"value": "\"\""
+						}
+					},
+					"script": "res://addons/event_sheet/modules//SystemModule/actions/System.print.gd",
+					"type": "standart",
+					"uuid": "f93e5f32-cc0b-4116-ad0f-b60aa96216d8"
 				}
 			],
 			"childrens": [
 				{
-					"actions": [
-						{
-							"class": "action",
-							"name": "Set position",
-							"object": {
-								"condition_type": "action",
-								"disable_color": true,
-								"icon": "res://icon.svg",
-								"is_current": false,
-								"name": "Sprite2D",
-								"path": "Sprite2D",
-								"type": "Sprite2D"
-							},
-							"parameters": {
-								"x": {
-									"name": "X",
-									"order": 0,
-									"type": {
-										"data": [],
-										"name": "string"
-									},
-									"value": "sprite_2d_1.position.x + speed + 0.5"
-								},
-								"y": {
-									"name": "Y",
-									"order": 1,
-									"type": {
-										"data": [],
-										"name": "string"
-									},
-									"value": "sprite_2d_1.position.y + speed + 0.5"
-								}
-							},
-							"script": "res://addons/event_sheet/modules//SystemModule/actions/Node2D.set_position.gd",
-							"type": "standart",
-							"uuid": "3958c180-fdac-4328-8ff1-4adea241a982"
-						}
-					],
-					"childrens": [],
 					"class": "block",
-					"events": [
-						{
-							"class": "event",
-							"name": "Process",
-							"object": {
-								"condition_type": "event",
-								"disable_color": false,
-								"icon": "res://addons/event_sheet/resources/icons/system.svg",
-								"name": "System",
-								"path": "",
-								"type": "System"
-							},
-							"parameters": {
-								"process": {
-									"name": "Process",
-									"order": 0,
-									"type": {
-										"data": [
-											"Process",
-											"Physics process"
-										],
-										"name": "select"
-									},
-									"value": "Process"
-								}
-							},
-							"script": "res://addons/event_sheet/modules//SystemModule/events/System.process.gd",
-							"type": "standart",
-							"uuid": "0f46a3b7-29c6-42e0-9aa8-06497f8a1bf3"
-						}
-					],
-					"expand": true,
 					"level": 1,
-					"type": "standart",
-					"uuid": "4fe816f0-7818-4b75-b528-f8f0f8e56644"
+					"parameters": {
+						"comment_text": "New comment"
+					},
+					"type": "comment",
+					"uuid": "3ef51dd0-f648-4f52-92ed-690529f6e566"
 				}
 			],
 			"class": "block",
 			"events": [
 				{
 					"class": "event",
-					"name": "Ready",
+					"name": "Every tick",
 					"object": {
 						"condition_type": "event",
 						"disable_color": false,
@@ -299,92 +299,88 @@
 					"parameters": {
 
 					},
-					"script": "res://addons/event_sheet/modules//SystemModule/events/System.ready.gd",
+					"script": "res://addons/event_sheet/modules//SystemModule/events/System.every_tick.gd",
 					"type": "standart",
-					"uuid": "4b91d473-7084-4846-83ad-506c8259d392"
+					"uuid": "ef51e949-193c-41c7-a7a3-5e97203f8331"
 				}
 			],
 			"expand": true,
 			"level": 0,
 			"type": "standart",
-			"uuid": "f74754c2-7c31-4f59-bab5-8ad1d1e84177"
+			"uuid": "b6f4be6c-4862-4a55-bee9-261a64e7c7fb"
 		},
 		{
-
-		},
-		{
-			"actions": [],
-			"childrens": [
+			"actions": [
 				{
-					"actions": [
-						{
-							"class": "action",
-							"name": "Print",
-							"object": {
-								"condition_type": "action",
-								"disable_color": false,
-								"icon": "res://addons/event_sheet/resources/icons/system.svg",
-								"name": "System",
-								"path": "",
-								"type": "System"
+					"class": "action",
+					"name": "Print",
+					"object": {
+						"condition_type": "action",
+						"disable_color": false,
+						"icon": "res://addons/event_sheet/resources/icons/system.svg",
+						"name": "System",
+						"path": "",
+						"type": "System"
+					},
+					"parameters": {
+						"text": {
+							"name": "Text",
+							"order": 0,
+							"type": {
+								"data": [],
+								"name": "string"
 							},
-							"parameters": {
-								"text": {
-									"name": "Text",
-									"order": 0,
-									"type": {
-										"data": [],
-										"name": "string"
-									},
-									"value": "\"fire\""
-								}
-							},
-							"script": "res://addons/event_sheet/modules//SystemModule/actions/System.print.gd",
-							"type": "standart",
-							"uuid": "c9bade90-8723-4bc3-b37d-1d95ffbe2bbc"
+							"value": "\"\""
 						}
-					],
-					"childrens": [],
-					"class": "block",
-					"events": [
-						{
-							"class": "event",
-							"name": "Is action pressed",
-							"object": {
-								"condition_type": "event",
-								"disable_color": false,
-								"icon": "res://addons/event_sheet/resources/icons/input.svg",
-								"name": "Input",
-								"path": "",
-								"type": "Input"
-							},
-							"parameters": {
-								"action": {
-									"name": "Action name",
-									"order": 1,
-									"type": {
-										"data": [],
-										"name": "select"
-									},
-									"value": "attack"
-								}
-							},
-							"script": "res://addons/event_sheet/modules//SystemModule/events/input/Input.is_action_pressed.gd",
-							"type": "standart",
-							"uuid": "b564b554-2e42-4acb-b2fe-a804cfacd9d5"
-						}
-					],
-					"expand": true,
-					"level": 1,
+					},
+					"script": "res://addons/event_sheet/modules//SystemModule/actions/System.print.gd",
 					"type": "standart",
-					"uuid": "35bfd1e6-1c75-43d9-86a4-bd7cdf0918bc"
+					"uuid": "8664c210-3d82-4907-99fa-ad6683933a5f"
 				}
 			],
+			"childrens": [],
+			"class": "block",
+			"events": [],
+			"expand": true,
+			"level": 0,
+			"type": "standart",
+			"uuid": "605ec025-760e-4d70-9e3e-f5c4f83eeb6a"
+		},
+		{
+			"actions": [
+				{
+					"class": "action",
+					"name": "Print",
+					"object": {
+						"condition_type": "action",
+						"disable_color": false,
+						"icon": "res://addons/event_sheet/resources/icons/system.svg",
+						"name": "System",
+						"path": "",
+						"type": "System"
+					},
+					"parameters": {
+						"text": {
+							"name": "Text",
+							"order": 0,
+							"type": {
+								"data": [],
+								"name": "string"
+							},
+							"value": "\"\""
+						}
+					},
+					"script": "res://addons/event_sheet/modules//SystemModule/actions/System.print.gd",
+					"type": "standart",
+					"uuid": "496780f9-b9b2-4d4b-bc0f-56897daa550e"
+				}
+			],
+			"childrens": [],
 			"class": "block",
 			"events": [
 				{
 					"class": "event",
-					"name": "Input",
+					"name": "Every tick",
 					"object": {
 						"condition_type": "event",
 						"disable_color": false,
@@ -396,15 +392,45 @@
 					"parameters": {
 
 					},
-					"script": "res://addons/event_sheet/modules//SystemModule/events/System.input.gd",
+					"script": "res://addons/event_sheet/modules//SystemModule/events/System.every_tick.gd",
 					"type": "standart",
-					"uuid": "584b1250-2720-49e8-a36a-e7dc350dfd99"
+					"uuid": "01cea5cf-5a25-43de-be8c-60bb93599bb8"
 				}
 			],
 			"expand": true,
 			"level": 0,
 			"type": "standart",
-			"uuid": "0d8ab6b1-49a7-4ddd-93b5-58d810cb8f1b"
+			"uuid": "70e92e9b-e54f-4008-84a0-a780ecf5517a"
+		},
+		{
+			"childrens": [],
+			"class": "block",
+			"expand": true,
+			"level": 0,
+			"parameters": {
+				"group_description": "test",
+				"group_name": "test"
+			},
+			"type": "group",
+			"uuid": "99f8178e-3ef1-4d06-86a7-4cbfee88a20f"
+		},
+		{
+			"class": "block",
+			"level": 0,
+			"parameters": {
+				"comment_text": "New comment"
+			},
+			"type": "comment",
+			"uuid": "503ee1db-8b3d-40dc-96f8-db04d30b423f"
+		},
+		{
+			"class": "block",
+			"level": 0,
+			"parameters": {
+				"comment_text": "New comment"
+			},
+			"type": "comment",
+			"uuid": "685ce78a-a260-4389-b379-58304646c850"
 		}
 	],
 	"name": "EventSheet 1",

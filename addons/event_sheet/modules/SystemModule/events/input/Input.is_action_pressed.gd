@@ -30,11 +30,20 @@ static func get_object_metadata(object_path: String = "") -> Dictionary:
 	}
 
 static func get_template(_params: Dictionary = params()) -> String:
+	var action_value = _params.get("action", {}).get("value", "")
 	return """if event.is_action_pressed("{action}"):""".format({
-		"action": _params["action"]["value"]
+		"action": action_value
 	})
 
 static func get_info(_params: Dictionary = params()) -> String:
+	var action_value = _params.get("action", {}).get("value", "")
 	return """Is action pressed: {action}""".format({
-		"action": _params["action"]["value"]
+		"action": action_value
 	})
+
+# Прямое выполнение в рантайме
+static func execute(_params: Dictionary, context: Node = null) -> bool:
+	var action_value = _params.get("action", {}).get("value", "")
+	if context and context.has_method("_input"):
+		return Input.is_action_pressed(action_value)
+	return false

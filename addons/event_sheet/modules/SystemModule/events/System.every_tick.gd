@@ -19,7 +19,7 @@ static func get_object_metadata(object_path: String = "") -> Dictionary:
 	}
 
 static func get_template(_params: Dictionary = params()) -> String:
-	return """func _process(delta: float) -> void:""".format({ })
+	return "func _process(delta: float) -> void:"
 
 static func get_info(_params: Dictionary = params()) -> String:
 	return """Every tick""".format({ })

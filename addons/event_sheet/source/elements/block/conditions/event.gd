@@ -63,7 +63,8 @@ func _on_gui_input(event: InputEvent) -> void:
 			ESUtils.is_dragging_finished = false
 			if !button_pressed:
 				_select()
-			else: is_dragged = true
+			else: 
+				is_dragged = true
 		elif event.is_released():
 			if !ESUtils.is_ctrl_pressed and !is_hovered:
 				is_dragged = true
@@ -71,9 +72,11 @@ func _on_gui_input(event: InputEvent) -> void:
 				ESUtils.unselect_all()
 			ESUtils.is_dragging_finished = true
 		if event.button_index == MOUSE_BUTTON_LEFT and event.double_click:
-			block_body.change.emit(data, self)
+			if block_body and block_body.has_signal("change"):
+				block_body.change.emit(data, self)
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-			block_body.context_menu.emit()
+			if block_body and block_body.has_signal("context_menu"):
+				block_body.context_menu.emit()
 
 func _on_theme_changed() -> void:
 	var accent_color: Color = EditorInterface.get_editor_theme().get_color("accent_color", "Editor")

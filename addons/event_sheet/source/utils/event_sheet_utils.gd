@@ -1,6 +1,5 @@
 @tool
 extends Node
-class_name ESUtils
 
 const Data = preload("res://addons/event_sheet/source/utils/event_sheet_data.gd")
 const Types = preload("res://addons/event_sheet/source/utils/event_sheet_types.gd")
@@ -9,9 +8,21 @@ const Plugin = preload("res://addons/event_sheet/plugin.gd")
 
 # Variables for the Godot object tree hook
 static var base_control = EditorInterface.get_base_control() if Engine.is_editor_hint() else null
-static var scene_tree_dock = base_control.find_children("Scene", "", true, false)[0] if Engine.is_editor_hint() else null
-static var scene_tree_editor = find_child_by_class(scene_tree_dock, 'SceneTreeEditor') if Engine.is_editor_hint() else null
-static var scene_tree_editor_tree: Tree = ESUtils.find_child_by_class(scene_tree_editor, 'Tree') if Engine.is_editor_hint() else null
+static var scene_tree_dock = null
+static var scene_tree_editor = null
+static var scene_tree_editor_tree: Tree = null
+
+# Initialize editor tree references safely
+static func _init_editor_tree():
+	if not Engine.is_editor_hint() or not base_control:
+		return
+	
+	var scene_children = base_control.find_children("Scene", "", true, false)
+	if scene_children.size() > 0:
+		scene_tree_dock = scene_children[0]
+		scene_tree_editor = find_child_by_class(scene_tree_dock, 'SceneTreeEditor')
+		if scene_tree_editor:
+			scene_tree_editor_tree = find_child_by_class(scene_tree_editor, 'Tree')
 
 # Variables of the currently open event sheet
 static var current_scene: Node = null
@@ -121,12 +132,11 @@ static func get_node_icon_texture(node: NodePath) -> Texture2D:
 
 # Get node name
 static func get_node_name(node_path: NodePath) -> String:
-	if ESUtils.current_scene.has_node(node_path):
+	if ESUtils.current_scene and ESUtils.current_scene.has_node(node_path):
 		var _node = ESUtils.current_scene.get_node_or_null(node_path)
-		if !_node: return ""
-		return _node.name
-	else:
-		return ""
+		if _node:
+			return _node.name
+	return ""
 
 # Fix the path
 static func ensure_trailing_slash(path: String) -> String:
@@ -189,10 +199,13 @@ static func sort_selected_items_by_block_number() -> Array:
 	return ESUtils.selected_items
 
 # Find a child object by class
-static func find_child_by_class(node:Node, cls:String):
+static func find_child_by_class(node: Node, cls: String):
+	if not node:
+		return null
 	for child in node.get_children():
 		if child.get_class() == cls:
 			return child
+	return null
 
 # Deselect an item
 static func unselect_item(uuid: String):
@@ -218,18 +231,19 @@ static func unselect_all():
 
 # Save Event Sheet to JSON file
 static func save_event_sheet_data():
-	if current_scene:
+	if current_scene and current_scene.event_sheet_file:
 		var _file_path = current_scene.event_sheet_file.resource_path
-		var _data_string = JSON.stringify(current_scene.event_sheet_file.data, "\t")
-		var _file = FileAccess.open(_file_path, FileAccess.WRITE)
-		if _file:
-			_file.store_line(_data_string)
-			_file.close()
-			EditorInterface.get_resource_filesystem().update_file(_file_path)
-			EditorInterface.get_resource_filesystem().scan()
-			EditorInterface.get_resource_filesystem().scan_sources()
-		else:
-			print("Failed open file")
+		if _file_path and not _file_path.is_empty():
+			var _data_string = JSON.stringify(current_scene.event_sheet_file.data, "\t")
+			var _file = FileAccess.open(_file_path, FileAccess.WRITE)
+			if _file:
+				_file.store_line(_data_string)
+				_file.close()
+				if EditorInterface.get_resource_filesystem():
+					EditorInterface.get_resource_filesystem().update_file(_file_path)
+					EditorInterface.get_resource_filesystem().scan()
+			else:
+				print("Failed to open file: ", _file_path)
 
 # Find all the scripts in the path
 static func find_gd_files_in_paths(resource_paths: Array, object_path_or_type) -> Dictionary:

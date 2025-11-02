@@ -29,7 +29,7 @@ static func get_object_metadata(object_path: String = "") -> Dictionary:
 	}
 
 static func get_template(_params: Dictionary = params()) -> String:
-	return """if is_instance_valid({object}):""".format({
+	return """if get_node_or_null("{object}") != null:""".format({
 		"object": _params["object"]["value"],
 	})
 

@@ -13,6 +13,7 @@ const ClassType: Array = [
 	"Debug",
 	"Input",
 	"Array",
+	"Variables",
 ]
 
 # Types of blocks
