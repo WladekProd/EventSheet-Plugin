@@ -28,5 +28,5 @@ After all actions, there are sub-events that can check for other conditions, cre
 
 ## Authors
 
-- [@wladekprod](https://github.com/WladekProd)
+- [@wladekprod](https://github.com/WladekProd), [@daemonchik](https://github.com/daemonchik)
 this could be your name.
